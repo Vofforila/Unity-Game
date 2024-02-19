@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "645805313005",
+    "firebase_url": "https://tryhard-party-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "tryhard-party",
+    "storage_bucket": "tryhard-party.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:645805313005:android:e8b3331d6041a321fd35e4",
+        "android_client_info": {
+          "package_name": "com.iss.tryhardparty"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "645805313005-7h3r0fsd1t1jm25m81opno7aje4i7jds.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBQtwLWnTQU0mEnvg74UXFcpuTA1v0aMi8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "645805313005-7h3r0fsd1t1jm25m81opno7aje4i7jds.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
