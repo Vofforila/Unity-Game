@@ -25,6 +25,7 @@
 
 #My Files
 /Assets/Firebase
+/Assets/ExternalDependencyManager
 
 # Visual Studio cache directory
 .vs/
