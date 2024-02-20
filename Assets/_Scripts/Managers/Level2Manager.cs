@@ -53,18 +53,18 @@ namespace Host
             changeDetector = GetChangeDetector(ChangeDetector.Source.SimulationState);
         }
 
-        public override void Render()
-        {
-            foreach (var change in changeDetector.DetectChanges(this, out var previousBuffer, out var currentBuffer))
-            {
-                switch (change)
-                {
-                    case nameof(Player):
-                        AddScore();
-                        break;
-                }
-            }
-        }
+        /*   public override void Render()
+           {
+               foreach (var change in changeDetector.DetectChanges(this, out var previousBuffer, out var currentBuffer))
+               {
+                   switch (change)
+                   {
+                       case nameof(Player):
+                           AddScore();
+                           break;
+                   }
+               }
+           }*/
 
         public void PlayeLevel2Event()
         {
@@ -76,9 +76,9 @@ namespace Host
             }
         }
 
-        public void AddScore()
-        {
-        }
+        /*   public void AddScore()
+           {
+           }*/
 
         public void UpdateGameState(GameState newState)
         {
@@ -105,14 +105,15 @@ namespace Host
 
         public void StartLevel()
         {
-            networkPlayerDictionary = spawnManager.SpawnNetwork(2);
+            networkPlayerDictionary = spawnManager.SpawnNetworkPlayers(2);
             UpdateGameState(GameState.Racing);
         }
 
         public IEnumerator IRacing()
         {
-            FinishPlace = 4;
-            yield return new WaitUntil(() => FinishPlace != 0);
+            FinishPlace = Runner.SessionInfo.PlayerCount;
+            yield return new WaitUntil(() => FinishPlace == 0);
+            yield return new WaitForEndOfFrame();
             UpdateGameState(GameState.DespawnPlayers);
         }
 
@@ -127,7 +128,7 @@ namespace Host
 
         public void EndLevel()
         {
-            /*  playLevel3Event.Invoke();*/
+            playLevel3Event.Invoke();
         }
     }
 }

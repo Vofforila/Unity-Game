@@ -78,7 +78,7 @@ namespace Host
 
         public void StartLevel()
         {
-            networkPlayerDictionary = spawnManager.SpawnNetwork(1);
+            networkPlayerDictionary = spawnManager.SpawnNetworkPlayers(1);
             UpdateGameState(GameState.PlayerTurn);
         }
 
@@ -95,6 +95,7 @@ namespace Host
 
                 yield return new WaitUntil(() => PlayerTurn == false);
             }
+            yield return new WaitForSeconds(5f);
             UpdateGameState(GameState.DespawnPlayers);
         }
 

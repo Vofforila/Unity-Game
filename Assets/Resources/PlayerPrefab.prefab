@@ -212,9 +212,9 @@ MonoBehaviour:
   firestore: {fileID: 11400000, guid: 883b834f3dfdf5a45aee970fc4e238bd, type: 2}
   playerVisuals: {fileID: 4247071038701250945}
   gameUIListener: {fileID: 3245071185819889457}
-  playerRigidbody: {fileID: 3831566781766287119}
   size: {x: 3, y: 3, z: 3}
   constrains: 010001000000
+  score: 0
 --- !u!114 &4247071038701250945
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -309,9 +309,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0a591d221a634417e9827eb58e17de84, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  SyncScale: 0
+  SyncScale: 1
   SyncParent: 0
-  _interpolationTarget: {fileID: 3910748650469720097}
+  _interpolationTarget: {fileID: 0}
   UsePreciseRotation: 0
   UseRenderSleepThresholds: 1
   RenderThresholds:
