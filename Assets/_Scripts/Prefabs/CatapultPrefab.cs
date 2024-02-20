@@ -67,6 +67,9 @@ namespace TryhardParty
         {
             isFiring = false;
 
+
+            // Test the animations
+
             animator.Play("Firing");
             Instantiate(boulderPrefab, firepoint.transform.position, Quaternion.Euler(0f, -180f, 0f));
             yield return new WaitForSecondsRealtime(2f);
