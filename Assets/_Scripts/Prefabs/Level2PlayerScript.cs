@@ -16,27 +16,22 @@ namespace Player
     {
         [Header("Scriptable")]
         [SerializeField] private LocalData localData;
-
         [SerializeField] private Firestore firestore;
 
         [Header("Internal")]
         [SerializeField] internal PlayerVisuals playerVisuals;
-
         [SerializeField] internal GameUIListener gameUIListener;
 
         [Networked] private TickTimer KeyCooldown { get; set; }
         [Networked] private float HorseSpeed { get; set; }
         [Networked] public NetworkButtons ButtonsPrevious { get; set; }
+        [Networked] private PlayerRef WinningPlayer { get; set; }
+        private ChangeDetector changeDetector;
 
-        [SerializeField] private Rigidbody playerRigidbody;
-
-        // This is the backing value for our virtual bool.
-        // Read Only
+        [Header("Read Only")]
         [SerializeField] private Vector3 size = new(2f, 2f, 2f);
-
         [SerializeField] private bool[] constrains = { false, false, false, true, true, true };
-        private int score;
-        private int finishPlace;
+        [SerializeField] private int score;
 
         private void Awake()
         {
@@ -48,14 +43,20 @@ namespace Player
 
         public void Init()
         {
-            finishPlace = 4;
-            HorseSpeed = 1f;
-            KeyCooldown = TickTimer.CreateFromSeconds(Runner, 0.2f);
-            EnablePlayer(true);
+            if (localData.currentLvl == 2)
+            {
+                HorseSpeed = 1f;
+                KeyCooldown = TickTimer.CreateFromSeconds(Runner, 0.2f);
+            }
         }
 
         public override void Spawned()
         {
+            if (localData.currentLvl == 2)
+            {
+                EnablePlayer(true);
+            }
+            changeDetector = GetChangeDetector(ChangeDetector.Source.SimulationState);
         }
 
         // Client
@@ -83,6 +84,16 @@ namespace Player
 
         public override void Render()
         {
+            foreach (var change in changeDetector.DetectChanges(this, out var previousBuffer, out var currentBuffer))
+            {
+                switch (change)
+                {
+                    case nameof(WinningPlayer):
+                        Debug.Log("Run");
+                        EnablePlayer(false);
+                        break;
+                }
+            }
         }
 
         public void EnablePlayer(bool _var)
@@ -95,19 +106,12 @@ namespace Player
 
         public void MakeHorseRun()
         {
-            playerRigidbody.MovePosition(transform.position + HorseSpeed * Runner.DeltaTime * transform.forward);
+            transform.position += HorseSpeed * Runner.DeltaTime * transform.forward;
         }
 
         // Check Collision
         public void OnTriggerEnter(Collider other)
         {
-            // Make a 3d Rigid Body Component
-            // Make diffrent scenarios for it
-            // Check Collision
-            // Make Score
-
-            // ON Client Once
-
             // Update score
             if (Object.HasInputAuthority && other.gameObject.CompareTag("Finish"))
             {
@@ -119,9 +123,6 @@ namespace Player
         [Rpc(sources: RpcSources.InputAuthority, targets: RpcTargets.StateAuthority)]
         private void RPC_PlayerFinished(PlayerRef _player)
         {
-            Level2Manager.Instance.FinishPlace--;
-            Level2Manager.Instance.Player = _player;
-
             if (Level2Manager.Instance.FinishPlace == 1)
             {
                 score = 250;
@@ -142,6 +143,9 @@ namespace Player
                 score = 500;
                 gameUIListener.AddScore(score);
             }
+
+            WinningPlayer = _player;
+            Level2Manager.Instance.FinishPlace--;
         }
     }
 }

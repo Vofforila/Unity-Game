@@ -12,8 +12,11 @@ namespace Host
     {
         [Header("Player")]
         [SerializeField] private NetworkPrefabRef playerPrefab;
+        [SerializeField] private List<Transform> playerSpawnPoints;
 
-        [SerializeField] private List<Transform> spawnPoints;
+        [Header("Catapult")]
+        [SerializeField] private List<Transform> catapultSpawnPoints;
+        [SerializeField] private NetworkPrefabRef catapultPrefab;
 
         [Header("Camera")]
         [SerializeField] private GameObject playerCameraPrefab;
@@ -31,11 +34,11 @@ namespace Host
         }
 
         // Host
-        public Dictionary<PlayerRef, NetworkObject> SpawnNetwork(int _level)
+        public Dictionary<PlayerRef, NetworkObject> SpawnNetworkPlayers(int _level)
         {
             Dictionary<PlayerRef, NetworkObject> networkPlayerDictionary = new();
             int i = 0;
-            int x = spawnPoints.Count;
+            int x = playerSpawnPoints.Count;
             foreach (PlayerRef player in Runner.ActivePlayers)
             {
                 if (i == x)
@@ -43,7 +46,7 @@ namespace Host
                     i = 0;
                 }
                 // Spawn Player
-                NetworkObject networkPlayer = Runner.Spawn(playerPrefab, spawnPoints[i].position, spawnPoints[i].rotation, player,
+                NetworkObject networkPlayer = Runner.Spawn(playerPrefab, playerSpawnPoints[i].position, playerSpawnPoints[i].rotation, player,
                     (Runner, o) =>
                     {
                         switch (_level)
@@ -71,14 +74,26 @@ namespace Host
 
                 // Teleport Player to SpawnLocation
                 /* NetworkTransform networkTransform = networkPlayer.GetComponent<NetworkTransform>();
-                 networkTransform.Teleport(spawnPoints[i].position, spawnPoints[i].rotation);*/
+                 networkTransform.Teleport(playerSpawnPoints[i].position, playerSpawnPoints[i].rotation);*/
 
                 NetworkRigidbody3D playerRigidbody = networkPlayer.GetComponent<NetworkRigidbody3D>();
-                playerRigidbody.Teleport(spawnPoints[i].position, spawnPoints[i].rotation);
+                playerRigidbody.Teleport(playerSpawnPoints[i].position, playerSpawnPoints[i].rotation);
 
                 i++;
             }
             return networkPlayerDictionary;
+        }
+
+        public IEnumerator ISpawnCatapults()
+        {
+            foreach (Transform catapultSpawnPoint in catapultSpawnPoints)
+            {
+                NetworkObject networkCatapult = Runner.Spawn(catapultPrefab, catapultSpawnPoint.position, catapultSpawnPoint.rotation);
+
+                NetworkTransform networkCatapultTransform = networkCatapult.GetComponent<NetworkTransform>();
+                networkCatapultTransform.Teleport(catapultSpawnPoint.position, catapultSpawnPoint.rotation);
+                yield return new WaitForSecondsRealtime(10f);
+            }
         }
     }
 }

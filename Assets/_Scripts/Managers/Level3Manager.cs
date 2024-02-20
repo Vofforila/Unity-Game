@@ -6,106 +6,103 @@ using TryhardParty;
 using UnityEngine;
 using UnityEngine.Events;
 
-namespace Player
+namespace Host
 {
-    public class Level3Manager : MonoBehaviour
+    public class Level3Manager : NetworkBehaviour
     {
-        [Header("Scriptable")]
-        public LocalData localData;
-        public Firestore firestore;
+        public enum GameState
+        {
+            StartLevel = 0,
+            SpawnEnemies = 1,
+            IsPlayerAlive = 2,
+            DespawnPlayers = 3,
+            EndLevel = 4
+        }
 
-        [Header("Prefab")]
-        [SerializeField]
-        private NetworkPrefabRef playerPrefab;
-
-        [SerializeField]
-        private GameObject cameraPrefab;
-
-        [SerializeField]
-        private GameObject catapultPrefab;
+        [Header("Internal")]
+        [SerializeField] internal SpawnManager spawnManager;
+        [SerializeField] private LocalData localData;
 
         [Header("Events")]
-        public UnityEvent loadLevel4Event;
+        [SerializeField] private UnityEvent playLevel4Event;
 
-        private List<NetworkObject> instanciatedPlayer;
-        private int playersAlive;
-        internal FusionManager fusionManager;
-        private Transform spawnPoint;
-        private List<Transform> spawnPointList;
+        private Dictionary<PlayerRef, NetworkObject> networkPlayerDictionary;
 
-        /*
+        public GameState State;
+
+        public static Level3Manager Instance;
+
         private void Awake()
         {
-            fusionManager = GameObject.Find("FusionManager").GetComponent<FusionManager>();
-            GameObject.Instantiate(cameraPrefab, new Vector3(0, 15, -15), Quaternion.Euler(45f, 0, 0));
-            StartCoroutine(TipPanel());
+            Instance = this;
+            networkPlayerDictionary = new();
         }
 
-        public IEnumerator TipPanel()
+        public void Start()
         {
-            yield return new WaitForSecondsRealtime(5f);
-            GameObject.Find("GameTip").SetActive(false);
+            spawnManager.SpawnLocal(false);
         }
 
-        public void PlayLevel3Event()
+        public void PlayeLevel3Event()
         {
             Debug.Log("Callback");
-            StartCoroutine(SpawnPlayers());
-        }
-
-        public IEnumerator SpawnPlayers()
-        {
-            StartCoroutine(PlayLevel3());
-
-            instanciatedPlayer = new();
-            playersAlive = 4;
-
-            // Get SpawnPoints
-            spawnPoint = GameObject.Find("SpawnPoints").transform;
-            spawnPointList = new();
-            for (int i = 0; i < spawnPoint.childCount; i++)
-                spawnPointList.Add(spawnPoint.GetChild(i));
-
-            // Spawn Player
-            for (int i = 0; i < localData.playerListData.Count; i++)
+            if (Object.HasStateAuthority)
             {
-                PlayerData playerData = localData.playerListData[i];
-                NetworkObject networkPlayer = fusionManager.runner.Spawn(playerPrefab, Vector3.zero, Quaternion.identity, playerData.PlayerRef);
-
-                NetworkTransform networkTransform = networkPlayer.GetComponent<NetworkTransform>();
-                networkTransform.Teleport(spawnPointList[i].position);
-
-                instanciatedPlayer.Add(networkPlayer);
-            }
-
-            spawnPoint = GameObject.Find("CatapultSpawnPoints").transform;
-            for (int i = 0; i < spawnPoint.childCount; i++)
-            {
-                GameObject.Instantiate(catapultPrefab, spawnPoint.GetChild(i).position, spawnPoint.GetChild(i).rotation);
-                yield return new WaitForSecondsRealtime(6f);
+                localData.currentLvl = 1;
+                UpdateGameState(GameState.StartLevel);
             }
         }
 
-        public void DestroyPlayerEvent()
+        public void UpdateGameState(GameState newState)
         {
-            Debug.Log("Callback");
-            for (int i = 0; i < localData.playerListData.Count; i++)
+            State = newState;
+            switch (newState)
             {
-                PlayerData playerData = localData.playerListData[i];
-                if (playerData.Username == firestore.accountFirebase.User)
-                {
-                    fusionManager.runner.Despawn(instanciatedPlayer[i]);
-                    playersAlive--;
-                }
+                case GameState.StartLevel:
+                    StartLevel();
+                    break;
+                case GameState.SpawnEnemies:
+                    SpawnEnemies();
+                    break;
+                case GameState.IsPlayerAlive:
+                    StartCoroutine(IIsPlayerAlive());
+                    break;
+
+                case GameState.DespawnPlayers:
+                    DespawnPlayers();
+                    break;
+                case GameState.EndLevel:
+                    EndLevel();
+                    break;
             }
         }
 
-        public IEnumerator PlayLevel3()
+        public void StartLevel()
         {
-            yield return new WaitUntil(() => playersAlive == 0);
-            Debug.Log("Load Level 4 - Event");
-            loadLevel4Event.Invoke();
+            networkPlayerDictionary = spawnManager.SpawnNetworkPlayers(3);
+            UpdateGameState(GameState.SpawnEnemies);
         }
-            */
+
+        public void SpawnEnemies()
+        {
+            StartCoroutine(spawnManager.ISpawnCatapults());
+            UpdateGameState(GameState.IsPlayerAlive);
+        }
+
+        public IEnumerator IIsPlayerAlive()
+        {
+            yield return null;
+
+            UpdateGameState(GameState.DespawnPlayers);
+        }
+
+        public void DespawnPlayers()
+        {
+            UpdateGameState(GameState.EndLevel);
+        }
+
+        public void EndLevel()
+        {
+        }
     }
 }

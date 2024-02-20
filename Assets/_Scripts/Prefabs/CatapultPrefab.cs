@@ -7,7 +7,7 @@ using UnityEngine.Events;
 
 namespace TryhardParty
 {
-    public class CatapultPrefab : MonoBehaviour
+    public class CatapultPrefab : NetworkBehaviour
     {
         [Header("Scriptable")]
         public LocalData localData;
@@ -17,31 +17,61 @@ namespace TryhardParty
         [Header("Prefab")]
         public GameObject boulderPrefab;
 
-        private bool finish;
+        private bool isFiring;
 
         [SerializeField]
         private Animator animator;
 
-        private void Awake()
+        /*   public override void Spawned()
+           {
+               finish = true;
+           }
+
+           public override void FixedUpdateNetwork()
+           {
+               if (Object.HasStateAuthority)
+               {
+                   if (finish == true)
+                   {
+                       StartCoroutine(SpawnProjectile());
+                   }
+               }
+           }
+
+           public IEnumerator SpawnProjectile()
+           {
+               finish = false;
+               animator.enabled = true;
+               Instantiate(boulderPrefab, firepoint.transform.position, Quaternion.Euler(0f, -180f, 0f));
+               yield return new WaitForSeconds(0.25f);
+               animator.enabled = false;
+               yield return new WaitForSecondsRealtime(2f);
+               finish = true;
+           }
+       }*/
+
+        public void Start()
         {
-            finish = true;
+            isFiring = true;
         }
 
-        public void Update()
+        public void FixedUpdate()
         {
-            if (finish == true)
+            if (isFiring == true)
+            {
                 StartCoroutine(SpawnProjectile());
+            }
         }
 
         public IEnumerator SpawnProjectile()
         {
-            finish = false;
-            animator.enabled = true;
-            GameObject.Instantiate(boulderPrefab, firepoint.transform.position, Quaternion.Euler(0f, -180f, 0f));
-            yield return new WaitForSeconds(0.25f);
-            animator.enabled = false;
+            isFiring = false;
+
+            animator.Play("Firing");
+            Instantiate(boulderPrefab, firepoint.transform.position, Quaternion.Euler(0f, -180f, 0f));
             yield return new WaitForSecondsRealtime(2f);
-            finish = true;
+            animator.Play("Idle");
+            isFiring = true;
         }
     }
 }

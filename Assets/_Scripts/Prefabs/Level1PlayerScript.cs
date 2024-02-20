@@ -52,17 +52,23 @@ namespace Player
         // Start before Sync
         public void Init()
         {
-            curve = GameObject.Find("Curve").GetComponent<QuadraticCurve>();
-            sampleTime = 2f;
-            jumpPosition = 0;
-            IsJumping = false;
-            score = 0;
-            EnablePlayer(false);
+            if (localData.currentLvl == 1)
+            {
+                curve = GameObject.Find("Curve").GetComponent<QuadraticCurve>();
+                sampleTime = 2f;
+                jumpPosition = 0;
+                IsJumping = false;
+                score = 0;
+            }
         }
 
         // Disable player
         public override void Spawned()
         {
+            if (localData.currentLvl == 1)
+            {
+                EnablePlayer(false);
+            }
             changeDetector = GetChangeDetector(ChangeDetector.Source.SimulationState);
         }
 
