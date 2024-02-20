@@ -4,6 +4,7 @@ using UnityEngine;
 using Fusion;
 using PlayerCamera;
 using Player;
+using Fusion.Addons.Physics;
 
 namespace Host
 {
@@ -11,10 +12,12 @@ namespace Host
     {
         [Header("Player")]
         [SerializeField] private NetworkPrefabRef playerPrefab;
+
         [SerializeField] private List<Transform> spawnPoints;
 
         [Header("Camera")]
         [SerializeField] private GameObject playerCameraPrefab;
+
         [SerializeField] private Transform cameraSpawnPoint;
 
         // Local
@@ -48,6 +51,7 @@ namespace Host
                             case 1:
                                 o.GetComponent<Level1PlayerScript>().Init();
                                 break;
+
                             case 2:
                                 o.GetComponent<Level2PlayerScript>().Init();
                                 break;
@@ -55,6 +59,7 @@ namespace Host
                                  case 3:
                                      o.GetComponent<Level3PlayerScript>().Init();
                                      break;
+
                                  case 4:
                                      o.GetComponent<Level4PlayerScript>().Init();
                                      break;*/
@@ -65,8 +70,11 @@ namespace Host
                 networkPlayerDictionary.Add(player, networkPlayer);
 
                 // Teleport Player to SpawnLocation
-                NetworkTransform networkTransform = networkPlayer.GetComponent<NetworkTransform>();
-                networkTransform.Teleport(spawnPoints[i].position, spawnPoints[i].rotation);
+                /* NetworkTransform networkTransform = networkPlayer.GetComponent<NetworkTransform>();
+                 networkTransform.Teleport(spawnPoints[i].position, spawnPoints[i].rotation);*/
+
+                NetworkRigidbody3D playerRigidbody = networkPlayer.GetComponent<NetworkRigidbody3D>();
+                playerRigidbody.Teleport(spawnPoints[i].position, spawnPoints[i].rotation);
 
                 i++;
             }
