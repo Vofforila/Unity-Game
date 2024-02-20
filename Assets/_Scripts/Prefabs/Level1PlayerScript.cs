@@ -15,11 +15,13 @@ namespace Player
     {
         [Header("Scriptable")]
         [SerializeField] private LocalData localData;
+
         [SerializeField] private LocalInputData localInputData;
         [SerializeField] private ServerData serverData;
 
         [Header("Internal")]
         [SerializeField] internal PlayerVisuals playerVisuals;
+
         [SerializeField] internal GameUIListener gameUIListener;
         [HideInInspector] internal QuadraticCurve curve;
 
@@ -31,7 +33,8 @@ namespace Player
 
         [Header("Read Only")]
         [SerializeField] private float speed = 0.8f;
-        [SerializeField] private Vector3 size = new(3f, 3f, 3f);
+
+        [SerializeField] private Vector3 size = new(1f, 1f, 1f);
         [SerializeField] private int score;
         [SerializeField] private int jumpPosition;
         private Vector3 NewPosition;

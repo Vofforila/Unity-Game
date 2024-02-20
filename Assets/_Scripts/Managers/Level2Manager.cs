@@ -7,6 +7,7 @@ using UnityEngine.Events;
 
 namespace Host
 {
+    // SingleTon
     public class Level2Manager : NetworkBehaviour
     {
         public enum GameState
@@ -19,16 +20,22 @@ namespace Host
 
         [Header("Internal")]
         [SerializeField] internal SpawnManager spawnManager;
+
         [SerializeField] private LocalData localData;
 
         [Header("Events")]
         [SerializeField] private UnityEvent playLevel3Event;
+
+        [Networked] public int FinishPlace { get; set; }
+        [Networked] public PlayerRef Player { get; set; }
 
         private Dictionary<PlayerRef, NetworkObject> networkPlayerDictionary;
 
         public GameState State;
 
         public static Level2Manager Instance;
+
+        private ChangeDetector changeDetector;
 
         private void Awake()
         {
@@ -41,6 +48,24 @@ namespace Host
             spawnManager.SpawnLocal(false);
         }
 
+        public override void Spawned()
+        {
+            changeDetector = GetChangeDetector(ChangeDetector.Source.SimulationState);
+        }
+
+        public override void Render()
+        {
+            foreach (var change in changeDetector.DetectChanges(this, out var previousBuffer, out var currentBuffer))
+            {
+                switch (change)
+                {
+                    case nameof(Player):
+                        AddScore();
+                        break;
+                }
+            }
+        }
+
         public void PlayeLevel2Event()
         {
             Debug.Log("Callback");
@@ -51,6 +76,10 @@ namespace Host
             }
         }
 
+        public void AddScore()
+        {
+        }
+
         public void UpdateGameState(GameState newState)
         {
             State = newState;
@@ -59,12 +88,15 @@ namespace Host
                 case GameState.StartLevel:
                     StartLevel();
                     break;
+
                 case GameState.Racing:
                     StartCoroutine(IRacing());
                     break;
+
                 case GameState.DespawnPlayers:
                     DespawnPlayers();
                     break;
+
                 case GameState.EndLevel:
                     EndLevel();
                     break;
@@ -74,12 +106,14 @@ namespace Host
         public void StartLevel()
         {
             networkPlayerDictionary = spawnManager.SpawnNetwork(2);
-            /* UpdateGameState(GameState.Racing);*/
+            UpdateGameState(GameState.Racing);
         }
 
         public IEnumerator IRacing()
         {
-            yield return new WaitForEndOfFrame();
+            FinishPlace = 4;
+            yield return new WaitUntil(() => FinishPlace != 0);
+            UpdateGameState(GameState.DespawnPlayers);
         }
 
         public void DespawnPlayers()
