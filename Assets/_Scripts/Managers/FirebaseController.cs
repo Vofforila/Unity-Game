@@ -12,7 +12,6 @@ namespace TryhardParty
     public class FirebaseController : MonoBehaviour
     {
         [Header("Test")]
-        public bool testGame = false;
         public bool test = false;
         public bool test2 = false;
         public bool test3 = false;
