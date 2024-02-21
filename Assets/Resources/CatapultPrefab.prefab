@@ -165,8 +165,8 @@ MonoBehaviour:
   localData: {fileID: 11400000, guid: 9ae0573c8cfccd741b7423eb0db11b79, type: 2}
   firestore: {fileID: 11400000, guid: 883b834f3dfdf5a45aee970fc4e238bd, type: 2}
   firepoint: {fileID: 5938778893432341651}
-  boulderPrefab: {fileID: 7515449244066252435, guid: 305cd7addc6763b429ccf8bbd86c8be4,
-    type: 3}
+  boulderPrefab:
+    RawGuidValue: 305cd7addc6763b429ccf8bbd86c8be4
   animator: {fileID: 3671797819008494321}
 --- !u!114 &3361363212985193942
 MonoBehaviour:

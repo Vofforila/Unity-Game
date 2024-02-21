@@ -12,10 +12,12 @@ namespace Host
     {
         [Header("Player")]
         [SerializeField] private NetworkPrefabRef playerPrefab;
+
         [SerializeField] private List<Transform> playerSpawnPoints;
 
         [Header("Catapult")]
         [SerializeField] private List<Transform> catapultSpawnPoints;
+
         [SerializeField] private NetworkPrefabRef catapultPrefab;
 
         [Header("Camera")]
@@ -58,14 +60,14 @@ namespace Host
                             case 2:
                                 o.GetComponent<Level2PlayerScript>().Init();
                                 break;
-                                /*
-                                 case 3:
-                                     o.GetComponent<Level3PlayerScript>().Init();
-                                     break;
 
-                                 case 4:
-                                     o.GetComponent<Level4PlayerScript>().Init();
-                                     break;*/
+                            case 3:
+                                o.GetComponent<Level3PlayerScript>().Init();
+                                break;
+
+                                /*case 4:
+                                    o.GetComponent<Level4PlayerScript>().Init();
+                                    break;*/
                         }
                     }
                     );

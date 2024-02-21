@@ -21,6 +21,7 @@ namespace Host
 
         [Header("Internal")]
         [SerializeField] internal SpawnManager spawnManager;
+
         [SerializeField] private LocalData localData;
 
         [Header("Events")]
@@ -61,9 +62,11 @@ namespace Host
                 case GameState.StartLevel:
                     StartLevel();
                     break;
+
                 case GameState.SpawnEnemies:
                     SpawnEnemies();
                     break;
+
                 case GameState.IsPlayerAlive:
                     StartCoroutine(IIsPlayerAlive());
                     break;
@@ -71,6 +74,7 @@ namespace Host
                 case GameState.DespawnPlayers:
                     DespawnPlayers();
                     break;
+
                 case GameState.EndLevel:
                     EndLevel();
                     break;

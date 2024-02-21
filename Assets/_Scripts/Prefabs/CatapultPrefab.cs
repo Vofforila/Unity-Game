@@ -2,62 +2,40 @@ using Data;
 using Fusion;
 using System.Collections;
 using System.Collections.Generic;
+using TryhardParty;
 using UnityEngine;
 using UnityEngine.Events;
 
-namespace TryhardParty
+namespace Proxy
 {
     public class CatapultPrefab : NetworkBehaviour
     {
         [Header("Scriptable")]
-        public LocalData localData;
-        public Firestore firestore;
-        public Transform firepoint;
+        [SerializeField] private LocalData localData;
+
+        [SerializeField] private Firestore firestore;
+        [SerializeField] private Transform firepoint;
 
         [Header("Prefab")]
-        public GameObject boulderPrefab;
+        [SerializeField] private NetworkPrefabRef boulderPrefab;
 
-        private bool isFiring;
+        [Networked] private bool IsFiring { get; set; }
 
-        [SerializeField]
-        private Animator animator;
+        [Networked] private bool FinishedFiring { get; set; }
 
-        /*   public override void Spawned()
-           {
-               finish = true;
-           }
-
-           public override void FixedUpdateNetwork()
-           {
-               if (Object.HasStateAuthority)
-               {
-                   if (finish == true)
-                   {
-                       StartCoroutine(SpawnProjectile());
-                   }
-               }
-           }
-
-           public IEnumerator SpawnProjectile()
-           {
-               finish = false;
-               animator.enabled = true;
-               Instantiate(boulderPrefab, firepoint.transform.position, Quaternion.Euler(0f, -180f, 0f));
-               yield return new WaitForSeconds(0.25f);
-               animator.enabled = false;
-               yield return new WaitForSecondsRealtime(2f);
-               finish = true;
-           }
-       }*/
+        [Header("Animator")]
+        [SerializeField] private Animator animator;
 
         public void Start()
         {
-            isFiring = true;
+            IsFiring = true;
         }
 
-        public void FixedUpdate()
+        public override void FixedUpdateNetwork()
         {
-            if (isFiring == true)
+            FinishedFiring = animator.GetCurrentAnimatorStateInfo(0).IsName("Firing");
+
+            if (IsFiring == true)
             {
                 StartCoroutine(SpawnProjectile());
             }
@@ -65,16 +43,19 @@ namespace TryhardParty
 
         public IEnumerator SpawnProjectile()
         {
-            isFiring = false;
-
-
+            IsFiring = false;
             // Test the animations
 
-            animator.Play("Firing");
-            Instantiate(boulderPrefab, firepoint.transform.position, Quaternion.Euler(0f, -180f, 0f));
-            yield return new WaitForSecondsRealtime(2f);
-            animator.Play("Idle");
-            isFiring = true;
+            animator.SetBool("IsFiring", true);
+
+            Runner.Spawn(boulderPrefab, firepoint.transform.position, firepoint.transform.rotation);
+
+            yield return new WaitUntil(() => FinishedFiring == true);
+
+            animator.SetBool("IsFiring", false);
+            yield return new WaitForSecondsRealtime(5f);
+
+            IsFiring = true;
         }
     }
 }
