@@ -5,6 +5,7 @@ using Fusion;
 using PlayerCamera;
 using Player;
 using Fusion.Addons.Physics;
+using Proxy;
 
 namespace Host
 {
@@ -90,7 +91,12 @@ namespace Host
         {
             foreach (Transform catapultSpawnPoint in catapultSpawnPoints)
             {
-                NetworkObject networkCatapult = Runner.Spawn(catapultPrefab, catapultSpawnPoint.position, catapultSpawnPoint.rotation);
+                NetworkObject networkCatapult = Runner.Spawn(catapultPrefab, catapultSpawnPoint.position, catapultSpawnPoint.rotation, inputAuthority: null,
+                        (Runner, o) =>
+                        {
+                            o.GetComponent<CatapultPrefab>().Init();
+                        }
+                        );
 
                 NetworkTransform networkCatapultTransform = networkCatapult.GetComponent<NetworkTransform>();
                 networkCatapultTransform.Teleport(catapultSpawnPoint.position, catapultSpawnPoint.rotation);

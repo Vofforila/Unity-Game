@@ -45,6 +45,7 @@ namespace Host
 
         public void Start()
         {
+            localData.currentLvl = 2;
             spawnManager.SpawnLocal(false);
         }
 
@@ -53,32 +54,14 @@ namespace Host
             changeDetector = GetChangeDetector(ChangeDetector.Source.SimulationState);
         }
 
-        /*   public override void Render()
-           {
-               foreach (var change in changeDetector.DetectChanges(this, out var previousBuffer, out var currentBuffer))
-               {
-                   switch (change)
-                   {
-                       case nameof(Player):
-                           AddScore();
-                           break;
-                   }
-               }
-           }*/
-
         public void PlayeLevel2Event()
         {
             Debug.Log("Callback");
             if (Object.HasStateAuthority)
             {
-                localData.currentLvl = 2;
                 UpdateGameState(GameState.StartLevel);
             }
         }
-
-        /*   public void AddScore()
-           {
-           }*/
 
         public void UpdateGameState(GameState newState)
         {

@@ -22,6 +22,7 @@ namespace Host
         [Header("Internal")]
         [SerializeField] internal SpawnManager spawnManager;
 
+        [Header("Scriptable")]
         [SerializeField] private LocalData localData;
 
         [Header("Events")]
@@ -42,6 +43,7 @@ namespace Host
         public void Start()
         {
             spawnManager.SpawnLocal(false);
+            localData.currentLvl = 3;
         }
 
         public void PlayeLevel3Event()
@@ -49,7 +51,6 @@ namespace Host
             Debug.Log("Callback");
             if (Object.HasStateAuthority)
             {
-                localData.currentLvl = 1;
                 UpdateGameState(GameState.StartLevel);
             }
         }
@@ -84,7 +85,7 @@ namespace Host
         public void StartLevel()
         {
             networkPlayerDictionary = spawnManager.SpawnNetworkPlayers(3);
-            UpdateGameState(GameState.SpawnEnemies);
+            /*UpdateGameState(GameState.SpawnEnemies);*/
         }
 
         public void SpawnEnemies()

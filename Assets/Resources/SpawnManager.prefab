@@ -47,11 +47,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerPrefab:
     RawGuidValue: 909191e3770690749812dd00226eb23d
-  spawnPoints:
-  - {fileID: 0}
+  playerSpawnPoints: []
+  catapultSpawnPoints: []
+  catapultPrefab:
+    RawGuidValue: 82a361271fe31194ea7d73614d326f0a
   playerCameraPrefab: {fileID: 4411292575758493992, guid: 15b2aca56d9946a42a8f7a1de23bc92a,
     type: 3}
-  cameraSpawnPoint: {fileID: 0}
+  cameraSpawnPoint: {fileID: 8662417000067518786, guid: 15b2aca56d9946a42a8f7a1de23bc92a,
+    type: 3}
 --- !u!114 &6533889625042139916
 MonoBehaviour:
   m_ObjectHideFlags: 0

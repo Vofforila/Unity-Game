@@ -14,18 +14,16 @@ using UnityEngine.SceneManagement;
 namespace TryhardParty
 {
     public class FusionManager : MonoBehaviour, INetworkRunnerCallbacks
-
     {
         [Header("Test")]
         public bool test = false;
 
         [Header("Fusion")]
-        [HideInInspector]
-        public NetworkRunner runner;
+        [HideInInspector] public NetworkRunner runner;
 
         [Header("Scriptable")]
-        public Firestore firestore;
-        public LocalData localData;
+        [SerializeField] private Firestore firestore;
+        [SerializeField] private LocalData localData;
 
         [SerializeField] private NetworkPrefabRef lobbyManagerPrefab;
         [SerializeField] private NetworkPrefabRef lobbyManagerTestPrefab;
@@ -36,14 +34,6 @@ namespace TryhardParty
         public UnityEvent playLevel3Event;
         public UnityEvent playLevel4Event;
 
-        // Variables
-        [HideInInspector]
-        public List<PlayerRef> playersInGame = new();
-
-        private LayerMask targetLayer;
-
-        private NetworkInputData inputData = new NetworkInputData();
-
         private void Awake()
         {
             // Disable firestore duplication
@@ -53,9 +43,6 @@ namespace TryhardParty
             runner = gameObject.AddComponent<NetworkRunner>();
 
             localData.playerList = new();
-
-            // Used for Input
-            targetLayer = LayerMask.GetMask("HitZone");
         }
 
         // Test GUI
@@ -129,7 +116,6 @@ namespace TryhardParty
 
         public async void LoadLevel1()
         {
-            localData.currentLvl = 1;
             await runner.LoadScene(SceneRef.FromIndex(1), LoadSceneMode.Single);
             Debug.Log("Play Level 1 - Event");
             playLevel1Event.Invoke();
@@ -138,7 +124,6 @@ namespace TryhardParty
         public async void LoadLevel2Event()
         {
             Debug.Log("Callback");
-            localData.currentLvl = 2;
             await runner.LoadScene(SceneRef.FromIndex(2), LoadSceneMode.Single);
             Debug.Log("Play Level 2 - Event");
             playLevel2Event.Invoke();
@@ -147,7 +132,6 @@ namespace TryhardParty
         public async void LoadLevel3Event()
         {
             Debug.Log("Callback");
-            localData.currentLvl = 3;
             await runner.LoadScene(SceneRef.FromIndex(3), LoadSceneMode.Single);
             Debug.Log("Play Level 3 - Event");
             playLevel3Event.Invoke();
@@ -156,7 +140,6 @@ namespace TryhardParty
         public async void LoadLevel4Event()
         {
             Debug.Log("Callback");
-            localData.currentLvl = 4;
             await runner.LoadScene(SceneRef.FromIndex(4), LoadSceneMode.Single);
             Debug.Log("Play Level 4 - Event");
             playLevel4Event.Invoke();
@@ -312,36 +295,8 @@ namespace TryhardParty
             Debug.Log("6");
         }
 
-        // Resetting Input
         public void OnInput(NetworkRunner runner, NetworkInput input)
         {
-            /* input.Set(inputData);
-             inputData = default;*/
-        }
-
-        // Getting the Input
-        private void Update()
-        {
-            /* // Keybinds
-             if (Input.GetKey(KeyCode.Z))
-             {
-                 inputData.jump = true;
-                 inputData.horseAcceleration = true;
-             }
-             if (Input.GetKey(KeyCode.X))
-             {
-                 inputData.takeMoney = true;
-             }
-             // Mouse Click
-             if (Input.GetMouseButton(1))
-             {
-                 Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-
-                 if (Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, targetLayer))
-                 {
-                     inputData.clickPosition = hit.point;
-                 }
-             }*/
         }
 
         public void OnInputMissing(NetworkRunner runner, PlayerRef player, NetworkInput input)

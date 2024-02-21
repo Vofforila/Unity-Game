@@ -43,6 +43,7 @@ namespace Host
 
         public void Start()
         {
+            localData.currentLvl = 1;
             spawnManager.SpawnLocal(false);
         }
 
