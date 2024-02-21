@@ -2,42 +2,59 @@ using Data;
 using Fusion;
 using System.Collections;
 using System.Collections.Generic;
+using TryhardParty;
 using UnityEngine;
 using UnityEngine.Events;
 
-namespace TryhardParty
+namespace Proxy
 {
-    public class BoulderPrefab : MonoBehaviour
+    public class BoulderPrefab : NetworkBehaviour
     {
         [Header("Scriptable")]
-        public LocalData localData;
-        public Firestore firestore;
+        [SerializeField] private LocalData localData;
+
+        [SerializeField] private Firestore firestore;
 
         [Header("Curve")]
         public QuadraticCurve curve;
-        public Transform A;
-        public Transform B;
-        public Transform C;
+
+        [SerializeField] private Transform A;
+        [SerializeField] private Transform B;
+        [SerializeField] private Transform C;
 
         private float sampleTime;
+        private Vector3 NewPosition;
+        private Vector3 NewRotation;
         private readonly float speed = 0.8f;
 
-        public void Start()
+        public override void Spawned()
         {
             MoveCurve();
         }
 
-        public void Update()
+        public override void FixedUpdateNetwork()
         {
             if (sampleTime <= 1f)
             {
+                // Calculate Trajectory
                 sampleTime += Time.deltaTime * speed;
-                transform.position = curve.Evaluate(sampleTime);
-                transform.forward = curve.Evaluate(sampleTime + 0.001f) - transform.position;
-            }
-            if (sampleTime >= 1f)
-            {
-                Destroy(transform.parent.gameObject);
+                NewPosition = curve.Evaluate(sampleTime);
+                NewRotation = curve.Evaluate(sampleTime + 0.001f) - transform.position;
+
+                // Update Player
+                if (NewRotation != Vector3.zero)
+                {
+                    transform.position = NewPosition;
+                    transform.forward = NewRotation;
+                }
+                if (sampleTime >= 1)
+                {
+                    // Reset Player rotation
+                    transform.rotation = Quaternion.Euler(0f, 90f, 0f);
+                    transform.position = NewPosition;
+
+                    Destroy(transform.parent.gameObject);
+                }
             }
         }
 

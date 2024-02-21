@@ -5,17 +5,20 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.AI;
 using Data;
+using TryhardParty;
 
-namespace TryhardParty
+namespace Player
 {
     public class Level3PlayerScript : NetworkBehaviour
     {
         [Header("Scriptable")]
         public LocalData localData;
+
         public Firestore firestore;
 
         [Header("Event")]
         public UnityEvent updateScoreBoardEvent;
+
         public UnityEvent destroyPlayerEvent;
 
         private Vector3 clickPosition;
@@ -24,6 +27,10 @@ namespace TryhardParty
 
         private int finishPlace;
         private int score;
+
+        public void Init()
+        {
+        }
 
         /*
         private void Start()
