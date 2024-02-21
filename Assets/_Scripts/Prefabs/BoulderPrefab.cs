@@ -12,7 +12,6 @@ namespace Proxy
     {
         [Header("Scriptable")]
         [SerializeField] private LocalData localData;
-
         [SerializeField] private Firestore firestore;
 
         [Header("Curve")]
@@ -41,7 +40,7 @@ namespace Proxy
                 NewPosition = curve.Evaluate(sampleTime);
                 NewRotation = curve.Evaluate(sampleTime + 0.001f) - transform.position;
 
-                // Update Player
+                // Update Trajectory
                 if (NewRotation != Vector3.zero)
                 {
                     transform.position = NewPosition;
@@ -49,17 +48,18 @@ namespace Proxy
                 }
                 if (sampleTime >= 1)
                 {
-                    // Reset Player rotation
+                    // Reset Rotation
                     transform.rotation = Quaternion.Euler(0f, 90f, 0f);
                     transform.position = NewPosition;
 
-                    Destroy(transform.parent.gameObject);
+                    Runner.Despawn(Object.GetComponent<NetworkObject>());
                 }
             }
         }
 
         public void MoveCurve()
         {
+            // Setting the Arena size
             float x;
             float y;
             float z;
@@ -67,9 +67,11 @@ namespace Proxy
             y = Random.Range(11, 13);
             z = Random.Range(-24, 24);
 
+            // Moving the Curve to the Target Position
             B.position = new Vector3(x, 0, z);
             C.localPosition = new Vector3((B.localPosition.x - 2) / 2, y, B.localPosition.z / 2);
 
+            // Moving the Projectile
             sampleTime = 0f;
         }
     }

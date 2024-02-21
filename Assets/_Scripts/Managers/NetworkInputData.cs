@@ -3,8 +3,13 @@ using UnityEngine;
 
 internal enum GameButton
 {
-    Z = 1,
-    X = 2,
+    LeftClick = 1,
+    RightClick = 2,
+    MiddleMouse = 3,
+    Z = 4,
+    X = 5,
+    C = 6,
+    V = 7,
 }
 
 public struct NetworkInputData : INetworkInput

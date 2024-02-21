@@ -37,7 +37,7 @@ namespace Player
         {
             if (localData.currentLvl != 2)
             {
-                this.enabled = false;
+                enabled = false;
             }
         }
 

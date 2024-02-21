@@ -20,13 +20,12 @@ namespace Proxy
         [SerializeField] private NetworkPrefabRef boulderPrefab;
 
         [Networked] private bool IsFiring { get; set; }
-
         [Networked] private bool FinishedFiring { get; set; }
 
         [Header("Animator")]
         [SerializeField] private Animator animator;
 
-        public void Start()
+        public void Init()
         {
             IsFiring = true;
         }

@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace PlayerCamera
 {
-    public class CameraManager : MonoBehaviour
+    public class CameraManager : NetworkBehaviour
     {
         public float cameraSpeed = 20f;
 
