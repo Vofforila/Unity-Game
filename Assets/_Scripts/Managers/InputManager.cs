@@ -46,15 +46,13 @@ public class InputManager : SimulationBehaviour, INetworkRunnerCallbacks
         inputData.GameButton.Set(GameButton.Z, Input.GetKey(KeyCode.Z));
 
         inputData.GameButton.Set(GameButton.X, Input.GetKey(KeyCode.X));
-<<<<<<< Updated upstream
-=======
+
         inputData.GameButton.Set(GameButton.C, Input.GetKey(KeyCode.C));
         inputData.GameButton.Set(GameButton.V, Input.GetKey(KeyCode.V));
 
         inputData.GameButton.Set(GameButton.LeftClick, Input.GetMouseButton(0));
         inputData.GameButton.Set(GameButton.RightClick, Input.GetMouseButton(1));
         inputData.GameButton.Set(GameButton.MiddleMouse, Input.GetMouseButton(2));
->>>>>>> Stashed changes
     }
 
     public void OnConnectedToServer(NetworkRunner runner)

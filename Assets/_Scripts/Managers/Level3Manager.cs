@@ -83,13 +83,11 @@ namespace Host
 
         public void StartLevel()
         {
-<<<<<<< Updated upstream
-            networkPlayerDictionary = spawnManager.SpawnNetworkPlayers(3);
+            networkPlayerDictionary = spawnManager.SpawnNetworkPlayers(_level: 3, _isKinetic: false);
             UpdateGameState(GameState.SpawnEnemies);
-=======
+
             networkPlayerDictionary = spawnManager.SpawnNetworkPlayers(_level: 3, _isKinetic: true);
             /*UpdateGameState(GameState.SpawnEnemies);*/
->>>>>>> Stashed changes
         }
 
         public void SpawnEnemies()
