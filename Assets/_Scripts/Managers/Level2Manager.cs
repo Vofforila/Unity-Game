@@ -105,7 +105,7 @@ namespace Host
 
         public void StartLevel()
         {
-            networkPlayerDictionary = spawnManager.SpawnNetworkPlayers(2);
+            networkPlayerDictionary = spawnManager.SpawnNetworkPlayers(_level: 2, _isKinetic: true);
             UpdateGameState(GameState.Racing);
         }
 

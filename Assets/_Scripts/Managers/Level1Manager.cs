@@ -78,7 +78,7 @@ namespace Host
 
         public void StartLevel()
         {
-            networkPlayerDictionary = spawnManager.SpawnNetworkPlayers(1);
+            networkPlayerDictionary = spawnManager.SpawnNetworkPlayers(_level: 1, _isKinetic: true);
             UpdateGameState(GameState.PlayerTurn);
         }
 

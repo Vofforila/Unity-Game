@@ -45,6 +45,8 @@ namespace Player
         {
             if (localData.currentLvl == 2)
             {
+                WinningPlayer = PlayerRef.None;
+                Debug.Log("Init");
                 HorseSpeed = 1f;
                 KeyCooldown = TickTimer.CreateFromSeconds(Runner, 0.2f);
             }
@@ -101,7 +103,7 @@ namespace Player
             // Enable Visuals
             playerVisuals.SetVisuals(_var);
             playerVisuals.SetSize(size);
-            playerVisuals.SetRigidbody(true, constrains, 10);
+            /*  playerVisuals.SetRigidbody(true, constrains, 10);*/
         }
 
         public void MakeHorseRun()

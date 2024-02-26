@@ -58,6 +58,8 @@ namespace UI
                     case nameof(Username):
                         gameUIManager.UpdateUserName(Object.InputAuthority, Username.ToString());
                         break;
+                    default:
+                        break;
                 }
             }
         }

@@ -99,8 +99,11 @@ GameObject:
   - component: {fileID: 4247071038701250945}
   - component: {fileID: 3245071185819889457}
   - component: {fileID: 4558926125654976763}
+<<<<<<< Updated upstream
   - component: {fileID: 3831566781766287119}
   - component: {fileID: 797729213171205794}
+=======
+>>>>>>> Stashed changes
   m_Layer: 7
   m_Name: PlayerPrefab
   m_TagString: Player
@@ -215,6 +218,32 @@ MonoBehaviour:
   size: {x: 3, y: 3, z: 3}
   constrains: 010001000000
   score: 0
+<<<<<<< Updated upstream
+=======
+--- !u!114 &5866569610233304301
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9108376757321683601}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5dbbef65488988848b21590b8d3aedb5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  localData: {fileID: 11400000, guid: 9ae0573c8cfccd741b7423eb0db11b79, type: 2}
+  firestore: {fileID: 11400000, guid: 883b834f3dfdf5a45aee970fc4e238bd, type: 2}
+  playerVisuals: {fileID: 4247071038701250945}
+  playerCamera: {fileID: 0}
+  size: {x: 0.8, y: 0.8, z: 0.8}
+  constrains: 000000000100
+  mass: 10
+  MaxHitDistance: 1000
+  targetLayer:
+    serializedVersion: 2
+    m_Bits: 0
+>>>>>>> Stashed changes
 --- !u!114 &4247071038701250945
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -227,7 +256,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6b5b61fd763a3654c8e1a0043f4531b2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerRigidbody: {fileID: 3831566781766287119}
+  playerRigidbody: {fileID: 0}
 --- !u!114 &3245071185819889457
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -269,6 +298,7 @@ MonoBehaviour:
   - {fileID: -3580030170417942761}
   - {fileID: 4247071038701250945}
   - {fileID: 3245071185819889457}
+<<<<<<< Updated upstream
   - {fileID: 797729213171205794}
 --- !u!54 &3831566781766287119
 Rigidbody:
@@ -319,3 +349,5 @@ MonoBehaviour:
     Position: 0.01
     Rotation: 0.01
     Scale: 0.01
+=======
+>>>>>>> Stashed changes

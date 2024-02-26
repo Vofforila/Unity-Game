@@ -36,7 +36,7 @@ namespace Host
         }
 
         // Host
-        public Dictionary<PlayerRef, NetworkObject> SpawnNetworkPlayers(int _level)
+        public Dictionary<PlayerRef, NetworkObject> SpawnNetworkPlayers(int _level, bool _isKinetic)
         {
             Dictionary<PlayerRef, NetworkObject> networkPlayerDictionary = new();
             int i = 0;
@@ -51,6 +51,9 @@ namespace Host
                 NetworkObject networkPlayer = Runner.Spawn(playerPrefab, playerSpawnPoints[i].position, playerSpawnPoints[i].rotation, player,
                     (Runner, o) =>
                     {
+                        NetworkTransform networkTransform = o.AddBehaviour<NetworkTransform>();
+
+                        networkTransform.Teleport(playerSpawnPoints[i].position, playerSpawnPoints[i].rotation);
                         switch (_level)
                         {
                             case 1:
@@ -74,13 +77,21 @@ namespace Host
                 // Add Player to Dictionary
                 networkPlayerDictionary.Add(player, networkPlayer);
 
-                // Teleport Player to SpawnLocation
-                /* NetworkTransform networkTransform = networkPlayer.GetComponent<NetworkTransform>();
-                 networkTransform.Teleport(playerSpawnPoints[i].position, playerSpawnPoints[i].rotation);*/
+                /* // Teleport Player to SpawnLocation
+                 if (_isKinetic)
+                 {
+                     NetworkTransform networkTransform = networkPlayer.AddBehaviour<NetworkTransform>();
 
-                NetworkRigidbody3D playerRigidbody = networkPlayer.GetComponent<NetworkRigidbody3D>();
-                playerRigidbody.Teleport(playerSpawnPoints[i].position, playerSpawnPoints[i].rotation);
-
+                     networkTransform.Teleport(playerSpawnPoints[i].position, playerSpawnPoints[i].rotation);
+                 }
+                 else
+                 {
+                     networkPlayer.gameObject.AddComponent<Rigidbody>();
+                     networkPlayer.AddBehaviour<NetworkRigidbody3D>();
+                     NetworkRigidbody3D playerRigidbody = networkPlayer.GetComponent<NetworkRigidbody3D>();
+                     playerRigidbody.Teleport(playerSpawnPoints[i].position, playerSpawnPoints[i].rotation);
+                 }
+ */
                 i++;
             }
             return networkPlayerDictionary;
