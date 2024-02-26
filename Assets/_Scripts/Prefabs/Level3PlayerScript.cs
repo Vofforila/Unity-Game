@@ -47,19 +47,6 @@ namespace Player
 
         private Transform playerCamera;
 
-        private void Awake()
-        {
-            if (localData.currentLvl != 3)
-            {
-                enabled = false;
-            }
-            playerCamera = GameObject.Find("CameraPrefab(Clone)").transform;
-            targetLayer = LayerMask.GetMask("HitZone");
-
-            Destroy(gameObject.GetComponent<NetworkRigidbody3D>());
-            Destroy(gameObject.GetComponent<Rigidbody>());
-        }
-
         public void Init()
         {
             if (localData.currentLvl == 3)
