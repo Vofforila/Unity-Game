@@ -50,21 +50,7 @@ namespace Host
 
         public override void Spawned()
         {
-            changeDetector = GetChangeDetector(ChangeDetector.Source.SimulationState);
         }
-
-        /*   public override void Render()
-           {
-               foreach (var change in changeDetector.DetectChanges(this, out var previousBuffer, out var currentBuffer))
-               {
-                   switch (change)
-                   {
-                       case nameof(Player):
-                           AddScore();
-                           break;
-                   }
-               }
-           }*/
 
         public void PlayeLevel2Event()
         {
@@ -75,10 +61,6 @@ namespace Host
                 UpdateGameState(GameState.StartLevel);
             }
         }
-
-        /*   public void AddScore()
-           {
-           }*/
 
         public void UpdateGameState(GameState newState)
         {

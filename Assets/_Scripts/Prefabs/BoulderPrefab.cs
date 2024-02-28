@@ -16,8 +16,7 @@ namespace Proxy
         [SerializeField] private Firestore firestore;
 
         [Header("Curve")]
-        public QuadraticCurve curve;
-
+        [SerializeField] private QuadraticCurve curve;
         [SerializeField] private Transform A;
         [SerializeField] private Transform B;
         [SerializeField] private Transform C;
@@ -37,7 +36,7 @@ namespace Proxy
             if (sampleTime <= 1f)
             {
                 // Calculate Trajectory
-                sampleTime += Time.deltaTime * speed;
+                sampleTime += Runner.DeltaTime * speed;
                 NewPosition = curve.Evaluate(sampleTime);
                 NewRotation = curve.Evaluate(sampleTime + 0.001f) - transform.position;
 
