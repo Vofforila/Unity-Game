@@ -22,6 +22,7 @@ namespace Host
         [Header("Internal")]
         [SerializeField] internal SpawnManager spawnManager;
 
+        [Header("Scriptable")]
         [SerializeField] private LocalData localData;
 
         [Header("Events")]
@@ -31,6 +32,7 @@ namespace Host
 
         public GameState State;
 
+        // Singleton
         public static Level3Manager Instance;
 
         private void Awake()
@@ -83,13 +85,14 @@ namespace Host
 
         public void StartLevel()
         {
+            spawnManager.SpawnNetworkPlayers(_level: 3, _isKinematic: false);
             /*UpdateGameState(GameState.SpawnEnemies);*/
         }
 
         public void SpawnEnemies()
         {
-            StartCoroutine(spawnManager.ISpawnCatapults());
-            UpdateGameState(GameState.IsPlayerAlive);
+            /* StartCoroutine(spawnManager.ISpawnCatapults());
+             UpdateGameState(GameState.IsPlayerAlive);*/
         }
 
         public IEnumerator IIsPlayerAlive()

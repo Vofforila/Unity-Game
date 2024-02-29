@@ -1286,6 +1286,11 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: -6761843966815975400, guid: 909191e3770690749812dd00226eb23d,
+        type: 3}
+      propertyPath: SortKey
+      value: 672958755
+      objectReference: {fileID: 0}
     - target: {fileID: 4558926125654976763, guid: 909191e3770690749812dd00226eb23d,
         type: 3}
       propertyPath: SortKey
@@ -1857,7 +1862,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   spawnManager: {fileID: 1159400845}
-  localData: {fileID: 0}
+  localData: {fileID: 11400000, guid: 9ae0573c8cfccd741b7423eb0db11b79, type: 2}
   playerTurnEvent:
     m_PersistentCalls:
       m_Calls:
@@ -4346,6 +4351,36 @@ PrefabInstance:
       propertyPath: spawnPoints.Array.data[0]
       value: 
       objectReference: {fileID: 448328779}
+    - target: {fileID: 7326080847779085158, guid: 0337db9551ea0204ca68c604901dea80,
+        type: 3}
+      propertyPath: playerPrefabR.RawGuidValue.Array.data[0]
+      value: 8399220417034817936
+      objectReference: {fileID: 0}
+    - target: {fileID: 7326080847779085158, guid: 0337db9551ea0204ca68c604901dea80,
+        type: 3}
+      propertyPath: playerPrefabR.RawGuidValue.Array.data[1]
+      value: 4445736874490532504
+      objectReference: {fileID: 0}
+    - target: {fileID: 7326080847779085158, guid: 0337db9551ea0204ca68c604901dea80,
+        type: 3}
+      propertyPath: playerPrefabT.RawGuidValue.Array.data[0]
+      value: -8875871407273084712
+      objectReference: {fileID: 0}
+    - target: {fileID: 7326080847779085158, guid: 0337db9551ea0204ca68c604901dea80,
+        type: 3}
+      propertyPath: playerPrefabT.RawGuidValue.Array.data[1]
+      value: -206662524011526709
+      objectReference: {fileID: 0}
+    - target: {fileID: 7326080847779085158, guid: 0337db9551ea0204ca68c604901dea80,
+        type: 3}
+      propertyPath: catapultPrefab.RawGuidValue.Array.data[0]
+      value: -7777185358547934334
+      objectReference: {fileID: 0}
+    - target: {fileID: 7326080847779085158, guid: 0337db9551ea0204ca68c604901dea80,
+        type: 3}
+      propertyPath: catapultPrefab.RawGuidValue.Array.data[1]
+      value: 751874970722991594
+      objectReference: {fileID: 0}
     - target: {fileID: 8900625277852377983, guid: 0337db9551ea0204ca68c604901dea80,
         type: 3}
       propertyPath: m_Name

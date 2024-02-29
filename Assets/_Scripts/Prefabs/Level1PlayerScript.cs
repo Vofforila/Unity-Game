@@ -32,11 +32,17 @@ namespace Player
         private ChangeDetector changeDetector;
 
         [Header("Read Only")]
-        [SerializeField] private float speed = 0.8f;
-
+        [Header("Object")]
         [SerializeField] private Vector3 size = new(1f, 1f, 1f);
+        [SerializeField] private bool isKinematic = true;
+        [SerializeField] private bool[] constrains;
+        [SerializeField] private float mass;
+
+        [Header("Game")]
         [SerializeField] private int score;
+        [SerializeField] private float speed = 0.8f;
         [SerializeField] private int jumpPosition;
+
         private Vector3 NewPosition;
         private Vector3 NewRotation;
         private float sampleTime;
@@ -62,12 +68,12 @@ namespace Player
             }
         }
 
-        // Disable player
         public override void Spawned()
         {
+            // Disable player
             if (localData.currentLvl == 1)
             {
-                EnablePlayer(false);
+                playerVisuals.SetPlayer(_visuals: false, _size: size, _isKinematic: isKinematic, _constrains: constrains, _mass: mass);
             }
             changeDetector = GetChangeDetector(ChangeDetector.Source.SimulationState);
         }
@@ -113,7 +119,7 @@ namespace Player
                 switch (change)
                 {
                     case nameof(CurrentPlayerTurn):
-                        EnablePlayer(CurrentPlayerTurn == Object.InputAuthority);
+                        playerVisuals.SetVisuals(CurrentPlayerTurn == Object.InputAuthority);
                         break;
                 }
             }
@@ -125,13 +131,6 @@ namespace Player
             QuadraticCurveManager.Instance.A.position = QuadraticCurveManager.Instance.startPosition.position;
             QuadraticCurveManager.Instance.B.position = QuadraticCurveManager.Instance.startPosition.position;
             CurrentPlayerTurn = Level1Manager.Instance.Player;
-        }
-
-        public void EnablePlayer(bool _var)
-        {
-            // Enable Visuals
-            playerVisuals.SetVisuals(_var);
-            playerVisuals.SetSize(size);
         }
 
         public void MakePlayerJump()

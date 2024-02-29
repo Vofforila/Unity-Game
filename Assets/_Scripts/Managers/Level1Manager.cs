@@ -19,7 +19,12 @@ namespace Host
 
         [Header("Internal")]
         [SerializeField] internal SpawnManager spawnManager;
+
+        [Header("Scriptable")]
         [SerializeField] private LocalData localData;
+
+        [Header("Game")]
+        public GameState State;
 
         [Header("Events")]
         [SerializeField] private UnityEvent playerTurnEvent;
@@ -30,10 +35,8 @@ namespace Host
 
         private Dictionary<PlayerRef, NetworkObject> networkPlayerDictionary;
 
-        public GameState State;
-
         // Singleton
-        public static Level1Manager Instance;
+        [HideInInspector] public static Level1Manager Instance;
 
         private void Awake()
         {
@@ -78,7 +81,7 @@ namespace Host
 
         public void StartLevel()
         {
-            networkPlayerDictionary = spawnManager.SpawnNetworkPlayers(_level: 1, _isKinetic: true);
+            networkPlayerDictionary = spawnManager.SpawnNetworkPlayers(_level: 1, _isKinematic: true);
             UpdateGameState(GameState.PlayerTurn);
         }
 

@@ -217,7 +217,7 @@ namespace TryhardParty
                 GameMode = GameMode.Host,
                 SessionName = firestore.accountFirebase.User,
                 Scene = scene,
-                SceneManager = gameObject.AddComponent<NetworkSceneManagerDefault>()
+                SceneManager = gameObject.AddComponent<NetworkSceneManagerDefault>(),
             });
 
             if (result.Ok)

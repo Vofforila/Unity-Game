@@ -26,18 +26,21 @@ namespace Player
         [Networked] private float HorseSpeed { get; set; }
         [Networked] public NetworkButtons ButtonsPrevious { get; set; }
         [Networked] private PlayerRef WinningPlayer { get; set; }
+
         private ChangeDetector changeDetector;
 
         [Header("Read Only")]
         [SerializeField] private Vector3 size = new(2f, 2f, 2f);
         [SerializeField] private bool[] constrains = { false, false, false, true, true, true };
+        [SerializeField] private bool isKinematic = true;
+        [SerializeField] private float mass = 0;
         [SerializeField] private int score;
 
         private void Awake()
         {
             if (localData.currentLvl != 2)
             {
-                this.enabled = false;
+                enabled = false;
             }
         }
 
@@ -46,7 +49,6 @@ namespace Player
             if (localData.currentLvl == 2)
             {
                 WinningPlayer = PlayerRef.None;
-                Debug.Log("Init");
                 HorseSpeed = 1f;
                 KeyCooldown = TickTimer.CreateFromSeconds(Runner, 0.2f);
             }
@@ -56,7 +58,7 @@ namespace Player
         {
             if (localData.currentLvl == 2)
             {
-                EnablePlayer(true);
+                playerVisuals.SetPlayer(_visuals: true, _size: size, _isKinematic: isKinematic, _constrains: constrains, _mass: mass);
             }
             changeDetector = GetChangeDetector(ChangeDetector.Source.SimulationState);
         }
@@ -92,18 +94,11 @@ namespace Player
                 {
                     case nameof(WinningPlayer):
                         Debug.Log("Run");
-                        EnablePlayer(false);
+                        playerVisuals.SetVisuals(false);
+
                         break;
                 }
             }
-        }
-
-        public void EnablePlayer(bool _var)
-        {
-            // Enable Visuals
-            playerVisuals.SetVisuals(_var);
-            playerVisuals.SetSize(size);
-            /*  playerVisuals.SetRigidbody(true, constrains, 10);*/
         }
 
         public void MakeHorseRun()

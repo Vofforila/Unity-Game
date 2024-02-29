@@ -11,7 +11,9 @@ namespace Host
     public class SpawnManager : NetworkBehaviour
     {
         [Header("Player")]
-        [SerializeField] private NetworkPrefabRef playerPrefab;
+        private NetworkPrefabRef playerPrefab;
+        [SerializeField] private NetworkPrefabRef playerPrefabR;
+        [SerializeField] private NetworkPrefabRef playerPrefabT;
 
         [Header("Catapult")]
         [SerializeField] private NetworkPrefabRef catapultPrefab;
@@ -34,11 +36,14 @@ namespace Host
         }
 
         // Host
-        public Dictionary<PlayerRef, NetworkObject> SpawnNetworkPlayers(int _level, bool _isKinetic)
+        public Dictionary<PlayerRef, NetworkObject> SpawnNetworkPlayers(int _level, bool _isKinematic)
         {
+            Dictionary<PlayerRef, NetworkObject> networkPlayerDictionary = new();
+
+            // Get SpawnPoints
             Transform[] playerSpawnPoints = GameObject.Find("SpawnPoints").GetComponentsInChildren<Transform>();
 
-            Dictionary<PlayerRef, NetworkObject> networkPlayerDictionary = new();
+            // Spawn Every Player on a Spawnpoint
             int i = 0;
             int x = playerSpawnPoints.Length;
             foreach (PlayerRef player in Runner.ActivePlayers)
@@ -47,6 +52,13 @@ namespace Host
                 {
                     i = 0;
                 }
+
+                if (_isKinematic)
+                {
+                    playerPrefab = playerPrefabT;
+                }
+                else playerPrefab = playerPrefabR;
+
                 // Spawn Player
                 NetworkObject networkPlayer = Runner.Spawn(playerPrefab, playerSpawnPoints[i].position, playerSpawnPoints[i].rotation, player,
                     (Runner, o) =>
@@ -65,27 +77,24 @@ namespace Host
                                 o.GetComponent<Level3PlayerScript>().Init();
                                 break;
 
-                                /*case 4:
-                                    o.GetComponent<Level4PlayerScript>().Init();
-                                    break;*/
+                                /* case 4:
+                                     o.GetComponent<Level4PlayerScript>().Init();
+                                     break;*/
                         }
-                    }
-                    );
+                    });
+
                 // Add Player to Dictionary
                 networkPlayerDictionary.Add(player, networkPlayer);
 
                 // Teleport Player to SpawnLocation
-                if (_isKinetic)
+                if (_isKinematic)
                 {
-                    NetworkTransform networkTransform = networkPlayer.AddBehaviour<NetworkTransform>();
-                    Baker.Bake(networkPlayer.gameObject);
-                    networkTransform.Teleport(playerSpawnPoints[i].position, playerSpawnPoints[i].rotation);
+                    NetworkTransform playerTransform = networkPlayer.GetComponent<NetworkTransform>();
+                    playerTransform.Teleport(playerSpawnPoints[i].position, playerSpawnPoints[i].rotation);
                 }
                 else
                 {
-                    networkPlayer.gameObject.AddComponent<Rigidbody>();
-                    NetworkRigidbody3D playerRigidbody = networkPlayer.AddBehaviour<NetworkRigidbody3D>();
-                    Baker.Bake(networkPlayer.gameObject);
+                    NetworkRigidbody3D playerRigidbody = networkPlayer.GetComponent<NetworkRigidbody3D>();
                     playerRigidbody.Teleport(playerSpawnPoints[i].position, playerSpawnPoints[i].rotation);
                 }
 

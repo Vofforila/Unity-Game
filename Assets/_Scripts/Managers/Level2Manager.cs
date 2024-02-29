@@ -21,21 +21,22 @@ namespace Host
         [Header("Internal")]
         [SerializeField] internal SpawnManager spawnManager;
 
+        [Header("Scriptable")]
         [SerializeField] private LocalData localData;
+
+        [Header("Game")]
+        public GameState State;
 
         [Header("Events")]
         [SerializeField] private UnityEvent playLevel3Event;
 
-        [Networked] public int FinishPlace { get; set; }
-        [Networked] public PlayerRef Player { get; set; }
+        [Networked, HideInInspector] public int FinishPlace { get; set; }
+        [Networked, HideInInspector] public PlayerRef Player { get; set; }
 
         private Dictionary<PlayerRef, NetworkObject> networkPlayerDictionary;
 
-        public GameState State;
-
-        public static Level2Manager Instance;
-
-        private ChangeDetector changeDetector;
+        // Singleton
+        [HideInInspector] public static Level2Manager Instance;
 
         private void Awake()
         {
@@ -87,7 +88,7 @@ namespace Host
 
         public void StartLevel()
         {
-            networkPlayerDictionary = spawnManager.SpawnNetworkPlayers(_level: 2, _isKinetic: true);
+            networkPlayerDictionary = spawnManager.SpawnNetworkPlayers(_level: 2, _isKinematic: true);
             UpdateGameState(GameState.Racing);
         }
 

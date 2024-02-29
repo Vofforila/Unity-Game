@@ -272,6 +272,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7326080847779085158, guid: 0337db9551ea0204ca68c604901dea80,
         type: 3}
+      propertyPath: playerPrefab1
+      value: 
+      objectReference: {fileID: 9108376757321683601, guid: 909191e3770690749812dd00226eb23d,
+        type: 3}
+    - target: {fileID: 7326080847779085158, guid: 0337db9551ea0204ca68c604901dea80,
+        type: 3}
       propertyPath: cameraSpawnPoint
       value: 
       objectReference: {fileID: 1428009284}
@@ -300,6 +306,36 @@ PrefabInstance:
       propertyPath: spawnPoints.Array.data[3]
       value: 
       objectReference: {fileID: 1266850191}
+    - target: {fileID: 7326080847779085158, guid: 0337db9551ea0204ca68c604901dea80,
+        type: 3}
+      propertyPath: playerPrefabR.RawGuidValue.Array.data[0]
+      value: 8399220417034817936
+      objectReference: {fileID: 0}
+    - target: {fileID: 7326080847779085158, guid: 0337db9551ea0204ca68c604901dea80,
+        type: 3}
+      propertyPath: playerPrefabR.RawGuidValue.Array.data[1]
+      value: 4445736874490532504
+      objectReference: {fileID: 0}
+    - target: {fileID: 7326080847779085158, guid: 0337db9551ea0204ca68c604901dea80,
+        type: 3}
+      propertyPath: playerPrefabT.RawGuidValue.Array.data[0]
+      value: -8875871407273084712
+      objectReference: {fileID: 0}
+    - target: {fileID: 7326080847779085158, guid: 0337db9551ea0204ca68c604901dea80,
+        type: 3}
+      propertyPath: playerPrefabT.RawGuidValue.Array.data[1]
+      value: -206662524011526709
+      objectReference: {fileID: 0}
+    - target: {fileID: 7326080847779085158, guid: 0337db9551ea0204ca68c604901dea80,
+        type: 3}
+      propertyPath: catapultPrefab.RawGuidValue.Array.data[0]
+      value: -7777185358547934334
+      objectReference: {fileID: 0}
+    - target: {fileID: 7326080847779085158, guid: 0337db9551ea0204ca68c604901dea80,
+        type: 3}
+      propertyPath: catapultPrefab.RawGuidValue.Array.data[1]
+      value: 751874970722991594
+      objectReference: {fileID: 0}
     - target: {fileID: 8900625277852377983, guid: 0337db9551ea0204ca68c604901dea80,
         type: 3}
       propertyPath: m_Name
@@ -715,6 +751,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   spawnManager: {fileID: 176881377}
   localData: {fileID: 11400000, guid: 9ae0573c8cfccd741b7423eb0db11b79, type: 2}
+  State: 0
+  _FinishPlace: 0
   playLevel3Event:
     m_PersistentCalls:
       m_Calls:
@@ -730,8 +768,6 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-  _FinishPlace: 0
-  State: 0
 --- !u!114 &629340611
 MonoBehaviour:
   m_ObjectHideFlags: 0

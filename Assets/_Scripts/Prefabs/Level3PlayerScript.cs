@@ -23,8 +23,6 @@ namespace Player
 
         public UnityEvent destroyPlayerEvent;
 
-        private Vector3 clickPosition;
-
         private int finishPlace;
         private int score;
 
@@ -36,8 +34,6 @@ namespace Player
         public LayerMask targetLayer;
 
         [Header("Agent Settings")]
-        private float offset = 1.5f;
-        private NavMeshSurface navMesh;
         private NavMeshAgent agent;
 
         [Networked] private TickTimer KeyCooldown { get; set; }
@@ -45,7 +41,13 @@ namespace Player
 
         internal PlayerVisuals playerVisuals;
 
-        private Transform playerCamera;
+        public void Awake()
+        {
+            if (localData.currentLvl != 3)
+            {
+                enabled = false;
+            }
+        }
 
         public void Init()
         {
@@ -60,9 +62,8 @@ namespace Player
         {
             if (localData.currentLvl == 3)
             {
-                agent = gameObject.GetComponent<NavMeshAgent>();
-
-                EnablePlayer(true);
+                agent = gameObject.AddComponent<NavMeshAgent>();
+                playerVisuals.SetPlayer(_visuals: true, _size: size, _isKinematic: false, _constrains: constrains, _mass: mass);
             }
         }
 
@@ -81,28 +82,18 @@ namespace Player
 
                 if (pressed.IsSet(GameButton.LeftClick) && KeyCooldown.Expired(Runner) == true)
                 {
-                    /* Debug.Log("Move");
-                     Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-                     if (Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, targetLayer))
-                     {
-                         ClickPosition = hit.point;
-                     }
-
-                     MovePlayer(inputData.clickPosition);
-                     KeyCooldown = TickTimer.CreateFromSeconds(Runner, 0.2f);*/
+                    Debug.Log("Move");
+                    Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+                    if (Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, targetLayer))
+                    {
+                        if (Object.HasStateAuthority)
+                        {
+                            MovePlayer(hit.point);
+                        }
+                    }
+                    KeyCooldown = TickTimer.CreateFromSeconds(Runner, 0.2f);
                 }
             }
-
-            /*MovePlayer(ClickPosition);*/
-        }
-
-        public void EnablePlayer(bool _var)
-        {
-            // Enable Visuals
-
-            playerVisuals.SetVisuals(_var);
-            playerVisuals.SetSize(size);
-            playerVisuals.SetRigidbody(true, constrains, mass);
         }
 
         public void MovePlayer(Vector3 _clickPosition)
