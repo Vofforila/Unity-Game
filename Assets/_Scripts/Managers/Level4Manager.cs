@@ -5,16 +5,42 @@ using System.Collections.Generic;
 using TryhardParty;
 using Unity.AI.Navigation;
 using UnityEngine;
-using UnityEngine.AI;
 using UnityEngine.Events;
 
-namespace Player
+namespace Host
 {
-    public class Level4Manager : MonoBehaviour
+    // Singleton
+    public class Level4Manager : NetworkBehaviour
     {
+        public enum GameState
+        {
+            Loading = 0,
+            StartLevel = 1,
+            SpawnEnemies = 2,
+            IsPlayerAlive = 3,
+            DespawnPlayers = 4,
+            EndLevel = 5,
+        }
+
+        [Header("Internal")]
+        [SerializeField] internal SpawnManager spawnManager;
+
         [Header("Scriptable")]
-        public LocalData localData;
-        public Firestore firestore;
+        [SerializeField] private LocalData localData;
+
+        [Header("Game")]
+        public GameState State;
+
+        [Header("Events")]
+        [SerializeField] private UnityEvent playLevel3Event;
+
+        [Networked, HideInInspector] public int FinishPlace { get; set; }
+        [Networked, HideInInspector] public PlayerRef Player { get; set; }
+
+        private Dictionary<PlayerRef, NetworkObject> networkPlayerDictionary;
+
+        // Singleton
+        [HideInInspector] public static Level4Manager Instance;
 
         [Header("Prefab")]
         [SerializeField]
@@ -38,6 +64,89 @@ namespace Player
         private Transform spawnPoint;
         private List<Transform> spawnPointList;
         public NavMeshSurface navMeshSurface;
+
+        private void Awake()
+        {
+            Instance = this;
+            localData.currentLvl = 4;
+            networkPlayerDictionary = new();
+        }
+
+        public void Start()
+        {
+            spawnManager.SpawnLocal(false);
+        }
+
+        public override void Spawned()
+        {
+            UpdateGameState(GameState.Loading);
+        }
+
+        public void PlayeLevel2Event()
+        {
+            Debug.Log("Callback");
+            if (Object.HasStateAuthority)
+            {
+                UpdateGameState(GameState.StartLevel);
+            }
+        }
+
+        public void UpdateGameState(GameState newState)
+        {
+            State = newState;
+            switch (newState)
+            {
+                case GameState.Loading:
+                    break;
+                case GameState.StartLevel:
+                    StartLevel();
+                    break;
+                case GameState.SpawnEnemies:
+                    SpawnEnemies();
+                    break;
+                case GameState.IsPlayerAlive:
+                    StartCoroutine(IIsPlayerAlive());
+                    break;
+                case GameState.DespawnPlayers:
+                    DespawnPlayers();
+                    break;
+                case GameState.EndLevel:
+                    EndLevel();
+                    break;
+            }
+        }
+
+        public void StartLevel()
+        {
+            spawnManager.SpawnNetworkPlayers(_level: 4, _isKinematic: true);
+            UpdateGameState(GameState.SpawnEnemies);
+        }
+
+        public void SpawnEnemies()
+        {
+            StartCoroutine(spawnManager.ISpawnCatapults());
+            UpdateGameState(GameState.IsPlayerAlive);
+        }
+
+        public IEnumerator IIsPlayerAlive()
+        {
+            FinishPlace = Runner.SessionInfo.PlayerCount;
+            yield return new WaitUntil(() => FinishPlace == 0);
+            UpdateGameState(GameState.DespawnPlayers);
+        }
+
+        public void DespawnPlayers()
+        {
+            foreach (PlayerRef player in Runner.ActivePlayers)
+            {
+                Runner.Despawn(networkPlayerDictionary[player]);
+            }
+            UpdateGameState(GameState.EndLevel);
+        }
+
+        public void EndLevel()
+        {
+        }
 
         /*
         private void Awake()

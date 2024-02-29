@@ -4,7 +4,7 @@ using System.Globalization;
 using UnityEngine;
 using Fusion;
 
-namespace TryhardParty
+namespace SpecialFunction
 {
     [CreateAssetMenu(fileName = "SpecialFunctions", menuName = "Utilities/SpecialFunctions")]
     public class SpecialFunctions : ScriptableObject

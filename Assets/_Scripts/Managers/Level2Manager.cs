@@ -12,10 +12,11 @@ namespace Host
     {
         public enum GameState
         {
-            StartLevel = 0,
-            Racing = 1,
-            DespawnPlayers = 2,
-            EndLevel = 3
+            Loading = 0,
+            StartLevel = 1,
+            Racing = 2,
+            DespawnPlayers = 3,
+            EndLevel = 4,
         }
 
         [Header("Internal")]
@@ -41,6 +42,7 @@ namespace Host
         private void Awake()
         {
             Instance = this;
+            localData.currentLvl = 2;
             networkPlayerDictionary = new();
         }
 
@@ -51,6 +53,7 @@ namespace Host
 
         public override void Spawned()
         {
+            UpdateGameState(GameState.Loading);
         }
 
         public void PlayeLevel2Event()
@@ -58,7 +61,6 @@ namespace Host
             Debug.Log("Callback");
             if (Object.HasStateAuthority)
             {
-                localData.currentLvl = 2;
                 UpdateGameState(GameState.StartLevel);
             }
         }
@@ -68,6 +70,8 @@ namespace Host
             State = newState;
             switch (newState)
             {
+                case GameState.Loading:
+                    break;
                 case GameState.StartLevel:
                     StartLevel();
                     break;

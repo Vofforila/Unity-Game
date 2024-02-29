@@ -21,9 +21,6 @@ namespace Host
         [Header("Camera")]
         [SerializeField] private GameObject playerCameraPrefab;
 
-        private static NetworkObjectBaker _baker;
-        private static NetworkObjectBaker Baker => _baker ??= new NetworkObjectBaker();
-
         // Local
         public void SpawnLocal(bool _enableCamera)
         {
@@ -48,6 +45,7 @@ namespace Host
             int x = playerSpawnPoints.Length;
             foreach (PlayerRef player in Runner.ActivePlayers)
             {
+                i++;
                 if (i == x)
                 {
                     i = 0;
@@ -97,8 +95,6 @@ namespace Host
                     NetworkRigidbody3D playerRigidbody = networkPlayer.GetComponent<NetworkRigidbody3D>();
                     playerRigidbody.Teleport(playerSpawnPoints[i].position, playerSpawnPoints[i].rotation);
                 }
-
-                i++;
             }
             return networkPlayerDictionary;
         }
@@ -106,14 +102,19 @@ namespace Host
         public IEnumerator ISpawnCatapults()
         {
             Transform[] catapultSpawnPoints = GameObject.Find("CatapultSpawnPoints").GetComponentsInChildren<Transform>();
-            foreach (Transform catapultSpawnPoint in catapultSpawnPoints)
+            for (int i = 1; i <= catapultSpawnPoints.Length - 1; i++)
             {
-                NetworkObject networkCatapult = Runner.Spawn(catapultPrefab, catapultSpawnPoint.position, catapultSpawnPoint.rotation);
+                NetworkObject networkCatapult = Runner.Spawn(catapultPrefab, catapultSpawnPoints[i].position, catapultSpawnPoints[i].rotation);
 
                 NetworkTransform networkCatapultTransform = networkCatapult.GetComponent<NetworkTransform>();
-                networkCatapultTransform.Teleport(catapultSpawnPoint.position, catapultSpawnPoint.rotation);
-                yield return new WaitForSecondsRealtime(10f);
+                networkCatapultTransform.Teleport(catapultSpawnPoints[i].position, catapultSpawnPoints[i].rotation);
+                yield return new WaitForSecondsRealtime(1f);
             }
+        }
+
+        public IEnumerator ISpawnFallingBlox()
+        {
+            yield return null;
         }
     }
 }

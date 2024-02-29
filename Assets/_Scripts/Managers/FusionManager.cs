@@ -40,10 +40,6 @@ namespace TryhardParty
         [HideInInspector]
         public List<PlayerRef> playersInGame = new();
 
-        private LayerMask targetLayer;
-
-        private NetworkInputData inputData = new NetworkInputData();
-
         private void Awake()
         {
             // Disable firestore duplication
@@ -53,9 +49,6 @@ namespace TryhardParty
             runner = gameObject.AddComponent<NetworkRunner>();
 
             localData.playerList = new();
-
-            // Used for Input
-            targetLayer = LayerMask.GetMask("HitZone");
         }
 
         // Test GUI
@@ -312,36 +305,8 @@ namespace TryhardParty
             Debug.Log("6");
         }
 
-        // Resetting Input
         public void OnInput(NetworkRunner runner, NetworkInput input)
         {
-            /* input.Set(inputData);
-             inputData = default;*/
-        }
-
-        // Getting the Input
-        private void Update()
-        {
-            /* // Keybinds
-             if (Input.GetKey(KeyCode.Z))
-             {
-                 inputData.jump = true;
-                 inputData.horseAcceleration = true;
-             }
-             if (Input.GetKey(KeyCode.X))
-             {
-                 inputData.takeMoney = true;
-             }
-             // Mouse Click
-             if (Input.GetMouseButton(1))
-             {
-                 Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-
-                 if (Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, targetLayer))
-                 {
-                     inputData.clickPosition = hit.point;
-                 }
-             }*/
         }
 
         public void OnInputMissing(NetworkRunner runner, PlayerRef player, NetworkInput input)

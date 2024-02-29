@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.19415876, g: 0.24306792, b: 0.33053505, a: 1}
+  m_IndirectSpecularColor: {r: 0.1941591, g: 0.24306844, b: 0.33053577, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -4744,9 +4744,9 @@ MonoBehaviour:
   playerBanner3: {fileID: 457487098}
   playerBanner4: {fileID: 1674785605}
   chatBoxPanel: {fileID: 4463933315480743254}
-  matchStatisticsPanel: {fileID: 0}
-  rankPointsGained: {fileID: 0}
-  playersStatisticPanel: {fileID: 0}
+  matchStatisticsPanel: {fileID: 1306618777}
+  rankPointsGained: {fileID: 1713760702}
+  playersStatisticPanel: {fileID: 1306618778}
 --- !u!4 &514719945
 Transform:
   m_ObjectHideFlags: 0

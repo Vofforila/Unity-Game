@@ -11,10 +11,11 @@ namespace Host
     {
         public enum GameState
         {
-            StartLevel = 0,
-            PlayerTurn = 1,
-            DespawnPlayers = 2,
-            EndLevel = 3
+            Loading = 0,
+            StartLevel = 1,
+            PlayerTurn = 2,
+            DespawnPlayers = 3,
+            EndLevel = 4,
         }
 
         [Header("Internal")]
@@ -47,6 +48,8 @@ namespace Host
         public void Start()
         {
             spawnManager.SpawnLocal(false);
+            localData.currentLvl = 1;
+            UpdateGameState(GameState.Loading);
         }
 
         public void PlayeLevel1Event()
@@ -54,7 +57,6 @@ namespace Host
             Debug.Log("Callback");
             if (Object.HasStateAuthority)
             {
-                localData.currentLvl = 1;
                 UpdateGameState(GameState.StartLevel);
             }
         }
@@ -64,6 +66,8 @@ namespace Host
             State = newState;
             switch (newState)
             {
+                case GameState.Loading:
+                    break;
                 case GameState.StartLevel:
                     StartLevel();
                     break;
@@ -76,18 +80,21 @@ namespace Host
                 case GameState.EndLevel:
                     EndLevel();
                     break;
+                default:
+                    break;
             }
         }
 
         public void StartLevel()
         {
+            Debug.Log("Host Spawn");
             networkPlayerDictionary = spawnManager.SpawnNetworkPlayers(_level: 1, _isKinematic: true);
             UpdateGameState(GameState.PlayerTurn);
         }
 
         public IEnumerator IPlayerTurn()
         {
-            yield return new WaitForSecondsRealtime(2f);
+            yield return new WaitForSecondsRealtime(8f);
             foreach (PlayerRef player in Runner.ActivePlayers)
             {
                 Player = player;
