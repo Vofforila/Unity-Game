@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 3910748650469720097}
   - component: {fileID: 3752336199647138714}
   - component: {fileID: 700943212359470653}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Body
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -99,12 +99,12 @@ GameObject:
   - component: {fileID: 5866569610233304301}
   - component: {fileID: 4247071038701250945}
   - component: {fileID: 3245071185819889457}
-  - component: {fileID: 4558926125654976763}
-  - component: {fileID: 3831566781766287119}
-  - component: {fileID: 797729213171205794}
-  - component: {fileID: -6105130445041599618}
-  m_Layer: 7
-  m_Name: PlayerPrefab
+  - component: {fileID: -6761843966815975400}
+  - component: {fileID: -1487682813141317252}
+  - component: {fileID: 3853646891864785075}
+  - component: {fileID: 1678778527129745235}
+  m_Layer: 6
+  m_Name: PlayerPrefabR
   m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -166,10 +166,13 @@ MonoBehaviour:
   serverData: {fileID: 11400000, guid: 6553cc3333b7bd5478ade01648cfb25a, type: 2}
   playerVisuals: {fileID: 4247071038701250945}
   gameUIListener: {fileID: 3245071185819889457}
+  size: 0.8
+  isKinematic: 1
+  constrains: 
+  mass: 0
   speed: 0.8
-  size: {x: 3, y: 3, z: 3}
-  score: 0
   jumpPosition: 0
+  score: 0
 --- !u!114 &7743451054679514735
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -214,8 +217,10 @@ MonoBehaviour:
   firestore: {fileID: 11400000, guid: 883b834f3dfdf5a45aee970fc4e238bd, type: 2}
   playerVisuals: {fileID: 4247071038701250945}
   gameUIListener: {fileID: 3245071185819889457}
-  size: {x: 3, y: 3, z: 3}
+  size: 2
   constrains: 010001000000
+  isKinematic: 1
+  mass: 0
   score: 0
 --- !u!114 &5866569610233304301
 MonoBehaviour:
@@ -232,13 +237,22 @@ MonoBehaviour:
   localData: {fileID: 11400000, guid: 9ae0573c8cfccd741b7423eb0db11b79, type: 2}
   firestore: {fileID: 11400000, guid: 883b834f3dfdf5a45aee970fc4e238bd, type: 2}
   playerVisuals: {fileID: 4247071038701250945}
-  playerCamera: {fileID: 0}
-  size: {x: 0.8, y: 0.8, z: 0.8}
+  gameUIListener: {fileID: 3245071185819889457}
+  size: 1
   constrains: 000000000100
+  isKinematic: 0
   mass: 10
-  hitZone:
+  agentoffset: 1.5
+  speed: 5
+  angularSpeed: 129
+  acceleration: 8
+  stoppingDistance: 0
+  obstacleRadius: 0.5
+  obstacleHeight: 2
+  targetLayer:
     serializedVersion: 2
     m_Bits: 0
+  score: 0
 --- !u!114 &4247071038701250945
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -251,7 +265,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6b5b61fd763a3654c8e1a0043f4531b2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerRigidbody: {fileID: 3831566781766287119}
+  playerRigidbody: {fileID: -1487682813141317252}
 --- !u!114 &3245071185819889457
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -272,7 +286,8 @@ MonoBehaviour:
     _data:
       Data: 00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
   _Score: 0
---- !u!114 &4558926125654976763
+  _Hp: 0
+--- !u!114 &-6761843966815975400
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -284,7 +299,7 @@ MonoBehaviour:
   m_Script: {fileID: -1552182283, guid: e725a070cec140c4caffb81624c8c787, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  SortKey: 2044006139
+  SortKey: 736929891
   ObjectInterest: 1
   Flags: 262145
   NestedObjects: []
@@ -294,8 +309,8 @@ MonoBehaviour:
   - {fileID: 5866569610233304301}
   - {fileID: 4247071038701250945}
   - {fileID: 3245071185819889457}
-  - {fileID: 797729213171205794}
---- !u!54 &3831566781766287119
+  - {fileID: 3853646891864785075}
+--- !u!54 &-1487682813141317252
 Rigidbody:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -322,7 +337,7 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!114 &797729213171205794
+--- !u!114 &3853646891864785075
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -335,7 +350,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   SyncScale: 1
-  SyncParent: 0
+  SyncParent: 1
   _interpolationTarget: {fileID: 0}
   UsePreciseRotation: 0
   UseRenderSleepThresholds: 1
@@ -344,23 +359,25 @@ MonoBehaviour:
     Position: 0.01
     Rotation: 0.01
     Scale: 0.01
---- !u!114 &-6105130445041599618
-MonoBehaviour:
+--- !u!195 &1678778527129745235
+NavMeshAgent:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 9108376757321683601}
   m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 1014831617, guid: e725a070cec140c4caffb81624c8c787, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Type: 0
-  SphereRadius: 0
-  CapsuleRadius: 0
-  BoxExtents: {x: 0, y: 0, z: 0}
-  CapsuleExtents: 0
-  Offset: {x: 0, y: 0, z: 0}
-  Root: {fileID: 0}
-  GizmosColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  m_AgentTypeID: 0
+  m_Radius: 0.5
+  m_Speed: 3.5
+  m_Acceleration: 8
+  avoidancePriority: 50
+  m_AngularSpeed: 120
+  m_StoppingDistance: 0
+  m_AutoTraverseOffMeshLink: 1
+  m_AutoBraking: 1
+  m_AutoRepath: 1
+  m_Height: 2
+  m_BaseOffset: 0
+  m_WalkableMask: 4294967295
+  m_ObstacleAvoidanceType: 4

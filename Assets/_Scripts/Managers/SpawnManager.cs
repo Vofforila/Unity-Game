@@ -12,23 +12,20 @@ namespace Host
     public class SpawnManager : NetworkBehaviour
     {
         [Header("Player")]
-        [SerializeField] private NetworkPrefabRef playerPrefab;
-
-        [SerializeField] private List<Transform> playerSpawnPoints;
+        private NetworkPrefabRef playerPrefab;
+        [SerializeField] private NetworkPrefabRef playerPrefabR;
+        [SerializeField] private NetworkPrefabRef playerPrefabT;
 
         [Header("Catapult")]
-        [SerializeField] private List<Transform> catapultSpawnPoints;
-
         [SerializeField] private NetworkPrefabRef catapultPrefab;
 
         [Header("Camera")]
         [SerializeField] private GameObject playerCameraPrefab;
 
-        [SerializeField] private Transform cameraSpawnPoint;
-
         // Local
         public void SpawnLocal(bool _enableCamera)
         {
+            Transform cameraSpawnPoint = GameObject.Find("CameraSpawnPoint").GetComponent<Transform>();
             GameObject playerCamera = Instantiate(playerCameraPrefab, cameraSpawnPoint.position, cameraSpawnPoint.rotation);
             if (_enableCamera == false)
             {
@@ -37,17 +34,30 @@ namespace Host
         }
 
         // Host
-        public Dictionary<PlayerRef, NetworkObject> SpawnNetworkPlayers(int _level)
+        public Dictionary<PlayerRef, NetworkObject> SpawnNetworkPlayers(int _level, bool _isKinematic)
         {
             Dictionary<PlayerRef, NetworkObject> networkPlayerDictionary = new();
+
+            // Get SpawnPoints
+            Transform[] playerSpawnPoints = GameObject.Find("SpawnPoints").GetComponentsInChildren<Transform>();
+
+            // Spawn Every Player on a Spawnpoint
             int i = 0;
-            int x = playerSpawnPoints.Count;
+            int x = playerSpawnPoints.Length;
             foreach (PlayerRef player in Runner.ActivePlayers)
             {
+                i++;
                 if (i == x)
                 {
                     i = 0;
                 }
+
+                if (_isKinematic)
+                {
+                    playerPrefab = playerPrefabT;
+                }
+                else playerPrefab = playerPrefabR;
+
                 // Spawn Player
                 NetworkObject networkPlayer = Runner.Spawn(playerPrefab, playerSpawnPoints[i].position, playerSpawnPoints[i].rotation, player,
                     (Runner, o) =>
@@ -66,42 +76,46 @@ namespace Host
                                 o.GetComponent<Level3PlayerScript>().Init();
                                 break;
 
-                                /*case 4:
-                                    o.GetComponent<Level4PlayerScript>().Init();
-                                    break;*/
+                                /* case 4:
+                                     o.GetComponent<Level4PlayerScript>().Init();
+                                     break;*/
                         }
-                    }
-                    );
+                    });
+
                 // Add Player to Dictionary
                 networkPlayerDictionary.Add(player, networkPlayer);
 
                 // Teleport Player to SpawnLocation
-                /* NetworkTransform networkTransform = networkPlayer.GetComponent<NetworkTransform>();
-                 networkTransform.Teleport(playerSpawnPoints[i].position, playerSpawnPoints[i].rotation);*/
-
-                NetworkRigidbody3D playerRigidbody = networkPlayer.GetComponent<NetworkRigidbody3D>();
-                playerRigidbody.Teleport(playerSpawnPoints[i].position, playerSpawnPoints[i].rotation);
-
-                i++;
+                if (_isKinematic)
+                {
+                    NetworkTransform playerTransform = networkPlayer.GetComponent<NetworkTransform>();
+                    playerTransform.Teleport(playerSpawnPoints[i].position, playerSpawnPoints[i].rotation);
+                }
+                else
+                {
+                    NetworkRigidbody3D playerRigidbody = networkPlayer.GetComponent<NetworkRigidbody3D>();
+                    playerRigidbody.Teleport(playerSpawnPoints[i].position, playerSpawnPoints[i].rotation);
+                }
             }
             return networkPlayerDictionary;
         }
 
         public IEnumerator ISpawnCatapults()
         {
-            foreach (Transform catapultSpawnPoint in catapultSpawnPoints)
+            Transform[] catapultSpawnPoints = GameObject.Find("CatapultSpawnPoints").GetComponentsInChildren<Transform>();
+            for (int i = 1; i <= catapultSpawnPoints.Length - 1; i++)
             {
-                NetworkObject networkCatapult = Runner.Spawn(catapultPrefab, catapultSpawnPoint.position, catapultSpawnPoint.rotation, inputAuthority: null,
-                        (Runner, o) =>
-                        {
-                            o.GetComponent<CatapultPrefab>().Init();
-                        }
-                        );
+                NetworkObject networkCatapult = Runner.Spawn(catapultPrefab, catapultSpawnPoints[i].position, catapultSpawnPoints[i].rotation);
 
                 NetworkTransform networkCatapultTransform = networkCatapult.GetComponent<NetworkTransform>();
-                networkCatapultTransform.Teleport(catapultSpawnPoint.position, catapultSpawnPoint.rotation);
-                yield return new WaitForSecondsRealtime(10f);
+                networkCatapultTransform.Teleport(catapultSpawnPoints[i].position, catapultSpawnPoints[i].rotation);
+                yield return new WaitForSecondsRealtime(1f);
             }
+        }
+
+        public IEnumerator ISpawnFallingBlox()
+        {
+            yield return null;
         }
     }
 }

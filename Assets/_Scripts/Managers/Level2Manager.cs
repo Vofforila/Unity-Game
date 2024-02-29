@@ -12,34 +12,37 @@ namespace Host
     {
         public enum GameState
         {
-            StartLevel = 0,
-            Racing = 1,
-            DespawnPlayers = 2,
-            EndLevel = 3
+            Loading = 0,
+            StartLevel = 1,
+            Racing = 2,
+            DespawnPlayers = 3,
+            EndLevel = 4,
         }
 
         [Header("Internal")]
         [SerializeField] internal SpawnManager spawnManager;
 
+        [Header("Scriptable")]
         [SerializeField] private LocalData localData;
+
+        [Header("Game")]
+        public GameState State;
 
         [Header("Events")]
         [SerializeField] private UnityEvent playLevel3Event;
 
-        [Networked] public int FinishPlace { get; set; }
-        [Networked] public PlayerRef Player { get; set; }
+        [Networked, HideInInspector] public int FinishPlace { get; set; }
+        [Networked, HideInInspector] public PlayerRef Player { get; set; }
 
         private Dictionary<PlayerRef, NetworkObject> networkPlayerDictionary;
 
-        public GameState State;
-
-        public static Level2Manager Instance;
-
-        private ChangeDetector changeDetector;
+        // Singleton
+        [HideInInspector] public static Level2Manager Instance;
 
         private void Awake()
         {
             Instance = this;
+            localData.currentLvl = 2;
             networkPlayerDictionary = new();
         }
 
@@ -51,7 +54,7 @@ namespace Host
 
         public override void Spawned()
         {
-            changeDetector = GetChangeDetector(ChangeDetector.Source.SimulationState);
+            UpdateGameState(GameState.Loading);
         }
 
         public void PlayeLevel2Event()
@@ -68,6 +71,8 @@ namespace Host
             State = newState;
             switch (newState)
             {
+                case GameState.Loading:
+                    break;
                 case GameState.StartLevel:
                     StartLevel();
                     break;
@@ -88,7 +93,7 @@ namespace Host
 
         public void StartLevel()
         {
-            networkPlayerDictionary = spawnManager.SpawnNetworkPlayers(2);
+            networkPlayerDictionary = spawnManager.SpawnNetworkPlayers(_level: 2, _isKinematic: true);
             UpdateGameState(GameState.Racing);
         }
 

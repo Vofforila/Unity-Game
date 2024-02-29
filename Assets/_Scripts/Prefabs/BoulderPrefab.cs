@@ -15,8 +15,8 @@ namespace Proxy
         [SerializeField] private Firestore firestore;
 
         [Header("Curve")]
-        public QuadraticCurve curve;
-
+        [SerializeField] private QuadraticCurve curve;
+        [SerializeField] private GameObject curveObj;
         [SerializeField] private Transform A;
         [SerializeField] private Transform B;
         [SerializeField] private Transform C;
@@ -28,6 +28,7 @@ namespace Proxy
 
         public override void Spawned()
         {
+            curveObj.transform.SetParent(null);
             MoveCurve();
         }
 
@@ -36,7 +37,7 @@ namespace Proxy
             if (sampleTime <= 1f)
             {
                 // Calculate Trajectory
-                sampleTime += Time.deltaTime * speed;
+                sampleTime += Runner.DeltaTime * speed;
                 NewPosition = curve.Evaluate(sampleTime);
                 NewRotation = curve.Evaluate(sampleTime + 0.001f) - transform.position;
 
@@ -53,6 +54,8 @@ namespace Proxy
                     transform.position = NewPosition;
 
                     Runner.Despawn(Object.GetComponent<NetworkObject>());
+                    Runner.Despawn(Object);
+                    Destroy(curveObj);
                 }
             }
         }
@@ -67,8 +70,7 @@ namespace Proxy
             y = Random.Range(11, 13);
             z = Random.Range(-24, 24);
 
-            // Moving the Curve to the Target Position
-            B.position = new Vector3(x, 0, z);
+            B.position = new Vector3(10, 0, 10);
             C.localPosition = new Vector3((B.localPosition.x - 2) / 2, y, B.localPosition.z / 2);
 
             // Moving the Projectile

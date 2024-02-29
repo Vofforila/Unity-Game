@@ -34,6 +34,10 @@ namespace TryhardParty
         public UnityEvent playLevel3Event;
         public UnityEvent playLevel4Event;
 
+        // Variables
+        [HideInInspector]
+        public List<PlayerRef> playersInGame = new();
+
         private void Awake()
         {
             // Disable firestore duplication
@@ -200,7 +204,7 @@ namespace TryhardParty
                 GameMode = GameMode.Host,
                 SessionName = firestore.accountFirebase.User,
                 Scene = scene,
-                SceneManager = gameObject.AddComponent<NetworkSceneManagerDefault>()
+                SceneManager = gameObject.AddComponent<NetworkSceneManagerDefault>(),
             });
 
             if (result.Ok)

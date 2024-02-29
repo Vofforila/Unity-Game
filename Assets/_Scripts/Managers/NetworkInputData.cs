@@ -16,6 +16,8 @@ public struct NetworkInputData : INetworkInput
 {
     public NetworkButtons GameButton;
 
+    public Vector3 raycast;
+
     [Header("Level 1 Input")]
     public NetworkBool takeMoney;
     public NetworkBool jump;

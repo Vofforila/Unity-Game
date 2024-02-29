@@ -5,6 +5,7 @@ using Fusion;
 using TMPro;
 using Data;
 using TryhardParty;
+using SpecialFunction;
 
 namespace UI
 {
@@ -17,6 +18,7 @@ namespace UI
 
         [Networked, Capacity(5), HideInInspector] public NetworkString<_16> Username { get; set; }
         [Networked, HideInInspector] public int Score { get; set; }
+        [Networked, HideInInspector] public int Hp { get; set; }
 
         private GameUIManager gameUIManager;
 
@@ -36,6 +38,7 @@ namespace UI
             if (Object.HasStateAuthority)
             {
                 Score = 0;
+                Hp = 100;
             }
 
             gameUIManager.CreateUI(Object.InputAuthority);
@@ -58,6 +61,11 @@ namespace UI
                     case nameof(Username):
                         gameUIManager.UpdateUserName(Object.InputAuthority, Username.ToString());
                         break;
+                    case nameof(Hp):
+                        gameUIManager.UpdateHp(Object.InputAuthority, Hp);
+                        break;
+                    default:
+                        break;
                 }
             }
         }
@@ -67,6 +75,13 @@ namespace UI
             Score += _score;
             Debug.Log(_score);
             Debug.Log(Score);
+        }
+
+        public void RemoveHp(int _hp)
+        {
+            Hp -= _hp;
+            Debug.Log(_hp);
+            Debug.Log(Hp);
         }
 
         // RPC used to send player information to the Host

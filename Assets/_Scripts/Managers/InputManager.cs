@@ -9,6 +9,8 @@ public class InputManager : SimulationBehaviour, INetworkRunnerCallbacks
 {
     [HideInInspector] internal FusionManager fusionManager;
     private NetworkInputData inputData = new();
+    private Camera playerCamera;
+    private LayerMask targetLayer;
 
     private LayerMask targetLayer;
 
@@ -21,6 +23,7 @@ public class InputManager : SimulationBehaviour, INetworkRunnerCallbacks
     {
         fusionManager = GameObject.Find("FusionManager").GetComponent<FusionManager>();
         fusionManager.runner.AddCallbacks(this);
+        targetLayer = LayerMask.GetMask("HitZone");
     }
 
     public void OnDisable()
@@ -28,36 +31,37 @@ public class InputManager : SimulationBehaviour, INetworkRunnerCallbacks
         fusionManager.runner.RemoveCallbacks(this);
     }
 
-    // Networked Input
+    // High Ticks
     public void OnInput(NetworkRunner runner, NetworkInput input)
     {
         // Reset Input / Server Tick
-
         // Set Input
         input.Set(inputData);
         inputData = default;
     }
 
+    // Low Ticks
     private void Update()
     {
+        // Keys
         inputData.GameButton.Set(GameButton.Z, Input.GetKey(KeyCode.Z));
         inputData.GameButton.Set(GameButton.X, Input.GetKey(KeyCode.X));
         inputData.GameButton.Set(GameButton.C, Input.GetKey(KeyCode.C));
         inputData.GameButton.Set(GameButton.V, Input.GetKey(KeyCode.V));
 
+        if (Input.GetMouseButton(0))
+        {
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            if (Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, targetLayer))
+            {
+                inputData.raycast = hit.point;
+            }
+        }
+
+        // Mouse
         inputData.GameButton.Set(GameButton.LeftClick, Input.GetMouseButton(0));
         inputData.GameButton.Set(GameButton.RightClick, Input.GetMouseButton(1));
         inputData.GameButton.Set(GameButton.MiddleMouse, Input.GetMouseButton(2));
-
-        inputData.clickPosition = Input.mousePosition;
-        /* if (Input.GetMouseButton(1))
-         {
-             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-             if (Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, targetLayer))
-             {
-                 inputData.clickPosition = hit.point;
-             }
-         }*/
     }
 
     public void OnConnectedToServer(NetworkRunner runner)

@@ -32,20 +32,27 @@ namespace Player
         private ChangeDetector changeDetector;
 
         [Header("Read Only")]
-        [SerializeField] private float speed = 0.8f;
+        [Header("Object")]
+        [SerializeField] private float size = 0.8f;
+        [SerializeField] private bool isKinematic = true;
+        [SerializeField] private bool[] constrains = null;
+        [SerializeField] private float mass = 0f;
 
-        [SerializeField] private Vector3 size = new(1f, 1f, 1f);
-        [SerializeField] private int score;
-        [SerializeField] private int jumpPosition;
-        private Vector3 NewPosition;
-        private Vector3 NewRotation;
+        [Header("Game")]
         private float sampleTime;
+        [SerializeField] private float speed = 0.8f;
+        [SerializeField] private int jumpPosition;
+        [SerializeField] private int score;
+
+        private Vector3 newPosition;
+        private Vector3 newRotation;
 
         private void Awake()
         {
             if (localData.currentLvl != 1)
             {
-                this.enabled = false;
+                Debug.Log("Awake");
+                enabled = false;
             }
         }
 
@@ -54,22 +61,30 @@ namespace Player
         {
             if (localData.currentLvl == 1)
             {
-                curve = GameObject.Find("Curve").GetComponent<QuadraticCurve>();
+                Debug.Log("Init");
+
+                // Set Game Values
                 sampleTime = 2f;
                 jumpPosition = 0;
-                IsJumping = false;
                 score = 0;
+
+                // Set Network Values
+                IsJumping = false;
+
+                // Objects
+                curve = GameObject.Find("Curve").GetComponent<QuadraticCurve>();
             }
         }
 
-        // Disable player
         public override void Spawned()
         {
+            // Disable player
             if (localData.currentLvl == 1)
             {
-                EnablePlayer(false);
+                Debug.Log("Spawned");
+                playerVisuals.SetPlayer(_visuals: false, _size: size, _isKinematic: isKinematic, _constrains: constrains, _mass: mass);
+                changeDetector = GetChangeDetector(ChangeDetector.Source.SimulationState);
             }
-            changeDetector = GetChangeDetector(ChangeDetector.Source.SimulationState);
         }
 
         // Only runs Input check on Client rest is done by Host
@@ -113,13 +128,13 @@ namespace Player
                 switch (change)
                 {
                     case nameof(CurrentPlayerTurn):
-                        EnablePlayer(CurrentPlayerTurn == Object.InputAuthority);
+                        playerVisuals.SetVisuals(CurrentPlayerTurn == Object.InputAuthority);
                         break;
                 }
             }
         }
 
-        public void PlayerTurnEvent()
+        private void PlayerTurnEvent()
         {
             Debug.Log("Callback");
             QuadraticCurveManager.Instance.A.position = QuadraticCurveManager.Instance.startPosition.position;
@@ -127,35 +142,27 @@ namespace Player
             CurrentPlayerTurn = Level1Manager.Instance.Player;
         }
 
-        public void EnablePlayer(bool _var)
-        {
-            // Enable Visuals
-            playerVisuals.SetVisuals(_var);
-            playerVisuals.SetSize(size);
-        }
-
-        public void MakePlayerJump()
+        private void MakePlayerJump()
         {
             // Move the player from point A to B
-
             if (sampleTime <= 1f)
             {
                 // Calculate Trajectory
                 sampleTime += Runner.DeltaTime * speed;
-                NewPosition = curve.Evaluate(sampleTime);
-                NewRotation = curve.Evaluate(sampleTime + 0.001f) - transform.position;
+                newPosition = curve.Evaluate(sampleTime);
+                newRotation = curve.Evaluate(sampleTime + 0.001f) - transform.position;
 
                 // Update Player
-                if (NewRotation != Vector3.zero)
+                if (newRotation != Vector3.zero)
                 {
-                    transform.position = NewPosition;
-                    transform.forward = NewRotation;
+                    transform.position = newPosition;
+                    transform.forward = newRotation;
                 }
                 if (sampleTime >= 1)
                 {
                     // Reset Player rotation
                     transform.rotation = Quaternion.Euler(0f, 90f, 0f);
-                    transform.position = NewPosition;
+                    transform.position = newPosition;
                     IsJumping = false;
 
                     // Check to see if player got 1st place or died

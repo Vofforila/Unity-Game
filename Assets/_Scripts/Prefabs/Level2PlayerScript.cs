@@ -1,12 +1,7 @@
 using Data;
 using Fusion;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Events;
-using Singleton;
 using TryhardParty;
-using Fusion.Addons.Physics;
 using UI;
 using Host;
 
@@ -26,11 +21,17 @@ namespace Player
         [Networked] private float HorseSpeed { get; set; }
         [Networked] public NetworkButtons ButtonsPrevious { get; set; }
         [Networked] private PlayerRef WinningPlayer { get; set; }
+
         private ChangeDetector changeDetector;
 
         [Header("Read Only")]
-        [SerializeField] private Vector3 size = new(2f, 2f, 2f);
+        [Header("Object")]
+        [SerializeField] private float size = 2f;
         [SerializeField] private bool[] constrains = { false, false, false, true, true, true };
+        [SerializeField] private bool isKinematic = false;
+        [SerializeField] private float mass = 10f;
+
+        [Header("Game")]
         [SerializeField] private int score;
 
         private void Awake()
@@ -45,6 +46,7 @@ namespace Player
         {
             if (localData.currentLvl == 2)
             {
+                WinningPlayer = PlayerRef.None;
                 HorseSpeed = 1f;
                 KeyCooldown = TickTimer.CreateFromSeconds(Runner, 0.2f);
             }
@@ -54,9 +56,9 @@ namespace Player
         {
             if (localData.currentLvl == 2)
             {
-                EnablePlayer(true);
+                playerVisuals.SetPlayer(_visuals: true, _size: size, _isKinematic: isKinematic, _constrains: constrains, _mass: mass);
+                changeDetector = GetChangeDetector(ChangeDetector.Source.SimulationState);
             }
-            changeDetector = GetChangeDetector(ChangeDetector.Source.SimulationState);
         }
 
         // Client
@@ -90,18 +92,10 @@ namespace Player
                 {
                     case nameof(WinningPlayer):
                         Debug.Log("Run");
-                        EnablePlayer(false);
+                        playerVisuals.SetVisuals(false);
                         break;
                 }
             }
-        }
-
-        public void EnablePlayer(bool _var)
-        {
-            // Enable Visuals
-            playerVisuals.SetVisuals(_var);
-            playerVisuals.SetSize(size);
-            playerVisuals.SetRigidbody(true, constrains, 10);
         }
 
         public void MakeHorseRun()

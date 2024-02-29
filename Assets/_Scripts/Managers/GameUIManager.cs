@@ -9,14 +9,20 @@ namespace UI
 {
     public class GameUIManager : MonoBehaviour
     {
+        [Header("Scriptable")]
         [SerializeField] private LocalData localData;
 
+        [Header("HP")]
+        [SerializeField] private GameObject playerHp;
+
+        [Header("Scoreboard")]
         [SerializeField] private GameObject gameTipPanel;
         [SerializeField] private GameObject scoreboardPanel;
         [SerializeField] private GameObject playerScorePrefab;
 
         private Dictionary<PlayerRef, PlayerData> PlayerDictionary;
 
+        //Singleton
         public static GameUIManager Instance;
 
         private void Awake()
@@ -48,6 +54,7 @@ namespace UI
 
             // Add the PlayerUI to PlayerData
             playerData.PlayerScore = playerScore;
+            playerData.PlayerHp = playerHp;
 
             // Attach the PlayerData to a List
             PlayerDictionary.Add(_player, playerData);
@@ -73,6 +80,13 @@ namespace UI
             Debug.Log(_player + " - Score Update : " + PlayerDictionary[_player].Score);
         }
 
+        public void UpdateHp(PlayerRef _player, int _hp)
+        {
+            PlayerDictionary[_player].Hp = _hp;
+            UpdateUI(_player);
+            Debug.Log(_player + " -Hp Update : " + PlayerDictionary[_player].Hp);
+        }
+
         public void UpdateUI(PlayerRef _player)
         {
             // Get the PlayerData
@@ -81,19 +95,26 @@ namespace UI
             // Update Score
             string playerScore = PlayerData.UserName + " : " + PlayerData.Score;
             PlayerData.PlayerScore.GetComponent<TMP_Text>().text = playerScore;
+
+            string playerHp = PlayerData.UserName + "\n " + PlayerData.Hp + " / 100";
+            PlayerData.PlayerHp.GetComponent<TMP_Text>().text = playerHp;
         }
 
         private class PlayerData
         {
             public string UserName { get; set; }
             public int Score { get; set; }
+            public int Hp { get; set; }
             public GameObject PlayerScore { get; set; }
+            public GameObject PlayerHp { get; set; }
 
             public PlayerData()
             {
                 UserName = "";
                 Score = 0;
+                Hp = 100;
                 PlayerScore = null;
+                PlayerHp = null;
             }
         }
     }

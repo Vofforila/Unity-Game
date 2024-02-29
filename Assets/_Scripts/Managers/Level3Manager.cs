@@ -12,11 +12,12 @@ namespace Host
     {
         public enum GameState
         {
-            StartLevel = 0,
-            SpawnEnemies = 1,
-            IsPlayerAlive = 2,
-            DespawnPlayers = 3,
-            EndLevel = 4
+            Loading = 0,
+            StartLevel = 1,
+            SpawnEnemies = 2,
+            IsPlayerAlive = 3,
+            DespawnPlayers = 4,
+            EndLevel = 5,
         }
 
         [Header("Internal")]
@@ -25,18 +26,24 @@ namespace Host
         [Header("Scriptable")]
         [SerializeField] private LocalData localData;
 
+        [Header("Game")]
+        public GameState State;
+
         [Header("Events")]
         [SerializeField] private UnityEvent playLevel4Event;
 
+        [Networked] public PlayerRef Player { get; set; }
+        [Networked, HideInInspector] public int FinishPlace { get; set; }
+
         private Dictionary<PlayerRef, NetworkObject> networkPlayerDictionary;
 
-        public GameState State;
-
-        public static Level3Manager Instance;
+        // Singleton
+        [HideInInspector] public static Level3Manager Instance;
 
         private void Awake()
         {
             Instance = this;
+            localData.currentLvl = 3;
             networkPlayerDictionary = new();
         }
 
@@ -44,6 +51,11 @@ namespace Host
         {
             spawnManager.SpawnLocal(false);
             localData.currentLvl = 3;
+        }
+
+        public override void Spawned()
+        {
+            UpdateGameState(GameState.Loading);
         }
 
         public void PlayeLevel3Event()
@@ -60,6 +72,8 @@ namespace Host
             State = newState;
             switch (newState)
             {
+                case GameState.Loading:
+                    break;
                 case GameState.StartLevel:
                     StartLevel();
                     break;
@@ -84,8 +98,8 @@ namespace Host
 
         public void StartLevel()
         {
-            networkPlayerDictionary = spawnManager.SpawnNetworkPlayers(3);
-            /*UpdateGameState(GameState.SpawnEnemies);*/
+            spawnManager.SpawnNetworkPlayers(_level: 3, _isKinematic: true);
+            UpdateGameState(GameState.SpawnEnemies);
         }
 
         public void SpawnEnemies()
@@ -96,13 +110,17 @@ namespace Host
 
         public IEnumerator IIsPlayerAlive()
         {
-            yield return null;
-
+            FinishPlace = Runner.SessionInfo.PlayerCount;
+            yield return new WaitUntil(() => FinishPlace == 0);
             UpdateGameState(GameState.DespawnPlayers);
         }
 
         public void DespawnPlayers()
         {
+            foreach (PlayerRef player in Runner.ActivePlayers)
+            {
+                Runner.Despawn(networkPlayerDictionary[player]);
+            }
             UpdateGameState(GameState.EndLevel);
         }
 

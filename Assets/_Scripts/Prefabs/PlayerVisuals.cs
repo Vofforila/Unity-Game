@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Fusion;
+using UnityEngine.AI;
 
 namespace Player
 {
@@ -15,42 +16,54 @@ namespace Player
             visuals = gameObject.GetComponentInChildren<MeshRenderer>();
         }
 
+        public void SetAgent(NavMeshAgent _agent, float _agentoffset, float _speed, float _angularSpeed, float _acceleration, float _stoppingDistance, float _obstacleRadius, float _obstacleHeight)
+        {
+            _agent.baseOffset = _agentoffset;
+            _agent.speed = _speed;
+            _agent.angularSpeed = _angularSpeed;
+            _agent.acceleration = _acceleration;
+            _agent.stoppingDistance = _stoppingDistance;
+            _agent.radius = _obstacleRadius;
+            _agent.height = _obstacleHeight;
+        }
+
+        public void SetPlayer(bool _visuals, float _size, bool _isKinematic, bool[] _constrains, float _mass)
+        {
+            SetVisuals(_visuals);
+            SetSize(_size);
+            if (_isKinematic == false)
+                SetRigidbody(_constrains, _mass);
+        }
+
         public void SetVisuals(bool _var)
         {
             visuals.enabled = _var;
         }
 
-        public void SetSize(Vector3 _var)
+        public void SetSize(float _size)
         {
-            transform.localScale = _var;
+            transform.localScale = Vector3.one * _size;
         }
 
-        public void SetRigidbody(bool isKinematic, bool[] constrains, float _mass)
+        public void SetRigidbody(bool[] _constrains, float _mass)
         {
             // Set Mass
+            Debug.Log("Error");
             playerRigidbody.mass = _mass;
 
-            // Set Object Kinematic / Gravity
-            if (isKinematic == true)
-            {
-                playerRigidbody.isKinematic = true;
-                playerRigidbody.useGravity = false;
-            }
-            else
-            {
-                playerRigidbody.isKinematic = false;
-                playerRigidbody.useGravity = true;
-
-                // Set Object Constrains
-                int i = 0;
-                playerRigidbody.constraints =
-                    (constrains[i++] ? RigidbodyConstraints.FreezePositionX : RigidbodyConstraints.None)
-                 | (constrains[i++] ? RigidbodyConstraints.FreezePositionY : RigidbodyConstraints.None)
-                 | (constrains[i++] ? RigidbodyConstraints.FreezePositionZ : RigidbodyConstraints.None)
-                 | (constrains[i++] ? RigidbodyConstraints.FreezeRotationX : RigidbodyConstraints.None)
-                 | (constrains[i++] ? RigidbodyConstraints.FreezeRotationY : RigidbodyConstraints.None)
-                 | (constrains[i++] ? RigidbodyConstraints.FreezeRotationZ : RigidbodyConstraints.None);
-            }
+            /*  // Set Object Gravity
+              Debug.Log("Error");
+              playerRigidbody.useGravity = true;
+              Debug.Log("Error");
+              // Set Object Constrains
+              int i = 0;
+              playerRigidbody.constraints =
+                 (_constrains[i++] ? RigidbodyConstraints.FreezePositionX : RigidbodyConstraints.None)
+               | (_constrains[i++] ? RigidbodyConstraints.FreezePositionY : RigidbodyConstraints.None)
+               | (_constrains[i++] ? RigidbodyConstraints.FreezePositionZ : RigidbodyConstraints.None)
+               | (_constrains[i++] ? RigidbodyConstraints.FreezeRotationX : RigidbodyConstraints.None)
+               | (_constrains[i++] ? RigidbodyConstraints.FreezeRotationY : RigidbodyConstraints.None)
+               | (_constrains[i++] ? RigidbodyConstraints.FreezeRotationZ : RigidbodyConstraints.None);*/
         }
     }
 }
