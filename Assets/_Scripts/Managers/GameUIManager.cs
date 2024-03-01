@@ -4,6 +4,7 @@ using TMPro;
 using UnityEngine;
 using Fusion;
 using Data;
+using System.Linq;
 
 namespace UI
 {
@@ -20,7 +21,7 @@ namespace UI
         [SerializeField] private GameObject scoreboardPanel;
         [SerializeField] private GameObject playerScorePrefab;
 
-        private Dictionary<PlayerRef, PlayerData> PlayerDictionary;
+        public Dictionary<PlayerRef, PlayerData> PlayerDictionary;
 
         //Singleton
         public static GameUIManager Instance;
@@ -89,8 +90,12 @@ namespace UI
 
         public void UpdateUI(PlayerRef _player)
         {
-            // Get the PlayerData
-            PlayerData PlayerData = PlayerDictionary[_player];
+            /* // Get the PlayerData
+             PlayerData PlayerData = PlayerDictionary[_player];*/
+
+            Dictionary<PlayerRef, PlayerData> sortedList = PlayerDictionary.OrderBy(pair => pair.Value.Score).ToDictionary(pair => pair.Key, pair => pair.Value);
+
+            PlayerData PlayerData = sortedList[_player];
 
             // Update Score
             string playerScore = PlayerData.UserName + " : " + PlayerData.Score;
@@ -100,7 +105,7 @@ namespace UI
             PlayerData.PlayerHp.GetComponent<TMP_Text>().text = playerHp;
         }
 
-        private class PlayerData
+        public class PlayerData
         {
             public string UserName { get; set; }
             public int Score { get; set; }

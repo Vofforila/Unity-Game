@@ -10,6 +10,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.SceneManagement;
+using UI;
 
 namespace TryhardParty
 {
@@ -153,6 +154,15 @@ namespace TryhardParty
             await runner.LoadScene(SceneRef.FromIndex(4), LoadSceneMode.Single);
             Debug.Log("Play Level 4 - Event");
             playLevel4Event.Invoke();
+        }
+
+        public async void ShowStatisticEvent()
+        {
+            Debug.Log("Callback");
+            localData.currentLvl = 0;
+            await runner.LoadScene(SceneRef.FromIndex(0), LoadSceneMode.Single);
+            LobbyManagerSpawner lobbyManagerSpawner = GameObject.Find("LobbyManagerSpawner").GetComponent<LobbyManagerSpawner>();
+            lobbyManagerSpawner.ShowStatisticPanel();
         }
 
         public async void LoadMainMenu()

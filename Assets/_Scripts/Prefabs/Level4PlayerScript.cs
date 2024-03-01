@@ -1,112 +1,161 @@
 using Data;
 using Fusion;
+using Host;
 using System.Collections;
 using System.Collections.Generic;
+using TryhardParty;
+using UI;
+using Unity.AI.Navigation;
 using UnityEngine;
+using UnityEngine.AI;
 using UnityEngine.Events;
 
-namespace TryhardParty
+namespace Player
 {
     public class Level4PlayerScript : NetworkBehaviour
     {
         [Header("Scriptable")]
-        public LocalData localData;
-        public Firestore firestore;
+        [SerializeField] private LocalData localData;
+        [SerializeField] private Firestore firestore;
 
-        [Header("Event")]
-        public UnityEvent updateScoreBoardEvent;
-        public UnityEvent destroyPlayerEvent;
+        [Header("Internal")]
+        [SerializeField] internal PlayerVisuals playerVisuals;
+        [SerializeField] internal GameUIListener gameUIListener;
 
-        private Vector3 clickPosition;
+        [Header("ReadOnly")]
+        [Header("Object")]
+        [SerializeField] private float size = 0.2f;
+        [SerializeField] private bool[] constrains = null;
+        [SerializeField] private bool isKinematic = true;
+        [SerializeField] private float mass = 0f;
 
-        private UnityEngine.AI.NavMeshAgent agent;
+        [Header("Agent Settings")]
+        private NavMeshAgent agent;
+        private NavMeshSurface surface;
+        [SerializeField] private float agentoffset = 1.5f;
+        [SerializeField] private float speed = 15f;
+        [SerializeField] private float angularSpeed = 180f;
+        [SerializeField] private float acceleration = 15f;
+        [SerializeField] private float stoppingDistance = 0.1f;
+        [SerializeField] private float obstacleRadius = 0.5f;
+        [SerializeField] private float obstacleHeight = 2f;
 
-        private int finishPlace;
+        [Networked] private PlayerRef Player { get; set; }
+        [Networked] public NetworkButtons ButtonsPrevious { get; set; }
+
+        private ChangeDetector changeDetector;
+
         private int score;
 
-        /*
-        private void Start()
+        public void Awake()
+        {
+            if (localData.currentLvl != 4)
+            {
+                enabled = false;
+            }
+        }
+
+        public void Init()
         {
             if (localData.currentLvl == 4)
             {
-                agent = gameObject.AddComponent<UnityEngine.AI.NavMeshAgent>();
-                agent.speed = 8;
-                agent.angularSpeed = 180f;
-                agent.acceleration = 15f;
-                agent.stoppingDistance = 0.1f;
-                agent.radius = 0.5f;
+                Player = PlayerRef.None;
+            }
+        }
 
-                clickPosition = gameObject.transform.position;
-                finishPlace = 4;
+        public override void Spawned()
+        {
+            if (localData.currentLvl == 4)
+            {
+                agent = gameObject.AddComponent<NavMeshAgent>();
+                surface = GameObject.Find("NavMeshManager").GetComponent<NavMeshSurface>();
+                agent.agentTypeID = surface.agentTypeID;
+
+                playerVisuals.SetPlayer(true, size, isKinematic, constrains, mass);
+                playerVisuals.SetAgent(agent, agentoffset, speed, angularSpeed, acceleration, stoppingDistance, obstacleRadius, obstacleHeight);
+
+                changeDetector = GetChangeDetector(ChangeDetector.Source.SimulationState);
             }
         }
 
         public override void FixedUpdateNetwork()
         {
-            if (GetInput(out NetworkInputData data))
+            // Handle Input
+            if (GetInput<NetworkInputData>(out var inputData))
             {
-                clickPosition = data.clickPosition;
+                // compute pressed/released state
+                NetworkButtons pressed = inputData.GameButton.GetPressed(ButtonsPrevious);
+                NetworkButtons released = inputData.GameButton.GetReleased(ButtonsPrevious);
+
+                // store latest input as 'previous' state we had
+                ButtonsPrevious = inputData.GameButton;
+
+                if (inputData.raycast != Vector3.zero)
+                {
+                    MovePlayer(inputData.raycast);
+                }
             }
         }
 
         public override void Render()
         {
-            MovePlayer();
-        }
-
-        private void OnTriggerEnter(Collider other)
-        {
-            Debug.Log("Collision");
-            if (other.CompareTag("Projectile"))
+            foreach (var change in changeDetector.DetectChanges(this, out var previousBuffer, out var currentBuffer))
             {
-                for (int i = 0; i < localData.playerListData.Count; i++)
+                switch (change)
                 {
-                    PlayerData playerData = localData.playerListData[i];
-                    if (playerData.Username == firestore.accountFirebase.User)
-                    {
-                        if (finishPlace == 4)
-                            score = 150;
-                        if (finishPlace == 3)
-                            score = 250;
-                        if (finishPlace == 2)
-                            score = 350;
-                        if (finishPlace == 1)
-                            score = 500;
-                        finishPlace--;
-
-                        //firestore.UpdateLobbyData(score, false, firestore.accountFirebase.User);
-                        //  localData.playerListData[i].Score += score;
-
-                        Debug.Log("Update Scoreboard - Event");
-                        // updateScoreBoardEvent.Invoke();
-                        Debug.Log("DestoryPlayer - Event");
-                        destroyPlayerEvent.Invoke();
-                    }
-                }
-            }
-            if (other.CompareTag("Coin"))
-            {
-                for (int i = 0; i < localData.playerListData.Count; i++)
-                {
-                    PlayerData playerData = localData.playerListData[i];
-                    if (playerData.Username == firestore.accountFirebase.User)
-                    {
-                        score = 50;
-                        //firestore.UpdateLobbyData(score, false, firestore.accountFirebase.User);
-                        Debug.Log("Update Scoreboard - Event");
-                        // updateScoreBoardEvent.Invoke();
-                    }
+                    case nameof(Player):
+                        playerVisuals.SetVisuals(false);
+                        break;
                 }
             }
         }
 
-        public void MovePlayer()
+        public void OnTriggerEnter(Collider other)
         {
-            if (clickPosition != new Vector3(0, 0, 0))
+            Debug.Log("Colld");
+            // Update score
+            if (Object.HasInputAuthority && other.gameObject.CompareTag("Projectile"))
             {
-                agent.SetDestination(new Vector3(clickPosition.x, 1.1f, clickPosition.z));
+                Debug.Log("Coll");
+                // take dmg
+                RPC_PlayerDead(Object.InputAuthority);
             }
         }
-        */
+
+        public void MovePlayer(Vector3 _clickPosition)
+        {
+            if (HasStateAuthority)
+            {
+                agent.SetDestination(_clickPosition);
+            }
+        }
+
+        [Rpc(sources: RpcSources.InputAuthority, targets: RpcTargets.StateAuthority)]
+        private void RPC_PlayerDead(PlayerRef _player)
+        {
+            if (Level4Manager.Instance.FinishPlace == 4)
+            {
+                score = 250;
+                gameUIListener.AddScore(score);
+            }
+            if (Level4Manager.Instance.FinishPlace == 3)
+            {
+                score = 350;
+                gameUIListener.AddScore(score);
+            }
+            if (Level4Manager.Instance.FinishPlace == 2)
+            {
+                score = 400;
+                gameUIListener.AddScore(score);
+            }
+            if (Level4Manager.Instance.FinishPlace == 1)
+            {
+                score = 500;
+                gameUIListener.AddScore(score);
+            }
+
+            Player = _player;
+            Level4Manager.Instance.FinishPlace--;
+        }
     }
 }

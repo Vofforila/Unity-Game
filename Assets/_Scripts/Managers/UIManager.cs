@@ -5,8 +5,9 @@ using TMPro;
 using System.Threading.Tasks;
 using Firebase.Firestore;
 using Firebase.Extensions;
+using TryhardParty;
 
-namespace TryhardParty
+namespace UI
 {
     public class UIManager : MonoBehaviour
     {
@@ -60,11 +61,6 @@ namespace TryhardParty
         [SerializeField] private GameObject playerBanner3;
         [SerializeField] private GameObject playerBanner4;
         [SerializeField] private GameObject chatBoxPanel;
-
-        [Header("Mach Statistics")]
-        [SerializeField] private GameObject matchStatisticsPanel;
-        [SerializeField] private GameObject rankPointsGained;
-        [SerializeField] public Transform playersStatisticPanel;
 
         // Close Everything
         private void Awake()
@@ -151,6 +147,10 @@ namespace TryhardParty
         {
             friendRequestButtonPanel.SetActive(_val);
         }
+
+        ////////////////////////////////////
+        // Statistics Panel
+        ////////////////////////////////////
 
         ////////////////////////////////////
         // Lobby Panel

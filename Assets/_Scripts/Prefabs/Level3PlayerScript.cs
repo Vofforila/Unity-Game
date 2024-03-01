@@ -43,7 +43,6 @@ namespace Player
         private ChangeDetector changeDetector;
 
         [Header("Game")]
-        [SerializeField] private LayerMask targetLayer;
         [SerializeField] private int score;
 
         public void Awake()
@@ -66,8 +65,6 @@ namespace Player
         {
             if (localData.currentLvl == 3)
             {
-                targetLayer = LayerMask.GetMask("HitZone");
-
                 agent = gameObject.AddComponent<NavMeshAgent>();
                 surface = GameObject.Find("NavMeshManager").GetComponent<NavMeshSurface>();
                 agent.agentTypeID = surface.agentTypeID;
@@ -118,7 +115,7 @@ namespace Player
         public void OnTriggerEnter(Collider other)
         {
             // Update score
-            if (/*Object.HasInputAuthority &&*/ other.gameObject.CompareTag("Bullet"))
+            if (Object.HasInputAuthority && other.gameObject.CompareTag("Bullet"))
             {
                 // take dmg
                 Debug.Log("DMG");

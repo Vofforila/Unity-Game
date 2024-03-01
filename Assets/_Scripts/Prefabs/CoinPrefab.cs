@@ -1,15 +1,17 @@
 using Fusion;
 using UnityEngine;
 
-namespace TryhardParty
+namespace Host
 {
     public class CoinPrefab : NetworkBehaviour
     {
         private void OnTriggerEnter(Collider other)
         {
+            Debug.Log("Coin");
             if (other.CompareTag("Player"))
             {
-                Runner.Despawn(this.GetComponent<NetworkObject>());
+                Debug.Log("Coin");
+                Runner.Despawn(Object);
             }
         }
     }

@@ -5,6 +5,7 @@ using Fusion;
 using PlayerCamera;
 using Player;
 using Fusion.Addons.Physics;
+using Unity.AI.Navigation;
 
 namespace Host
 {
@@ -17,6 +18,13 @@ namespace Host
 
         [Header("Catapult")]
         [SerializeField] private NetworkPrefabRef catapultPrefab;
+
+        [Header("Falling Blocks")]
+        [SerializeField] private NetworkPrefabRef fallingBlockPrefab;
+        [SerializeField] private NetworkPrefabRef coinPrefab;
+
+        [Header("Nav Mesh Agent")]
+        [SerializeField] private NavMeshSurface navMesh;
 
         [Header("Camera")]
         [SerializeField] private GameObject playerCameraPrefab;
@@ -46,9 +54,11 @@ namespace Host
             foreach (PlayerRef player in Runner.ActivePlayers)
             {
                 i++;
+                Debug.Log(x);
+                Debug.Log(i);
                 if (i == x)
                 {
-                    i = 0;
+                    i = 1;
                 }
 
                 if (_isKinematic)
@@ -75,9 +85,9 @@ namespace Host
                                 o.GetComponent<Level3PlayerScript>().Init();
                                 break;
 
-                                /* case 4:
-                                     o.GetComponent<Level4PlayerScript>().Init();
-                                     break;*/
+                            case 4:
+                                o.GetComponent<Level4PlayerScript>().Init();
+                                break;
                         }
                     });
 
@@ -114,7 +124,69 @@ namespace Host
 
         public IEnumerator ISpawnFallingBlox()
         {
-            yield return null;
+            int mapSize = 100;
+            float[,] fallingBlockArray = new float[mapSize, 2];
+
+            int count = 0;
+            for (float z = -9f; z <= 9; z += 2)
+            {
+                for (float x = -9f; x <= 9; x += 2)
+                {
+                    fallingBlockArray[count, 0] = x;
+                    fallingBlockArray[count, 1] = z;
+                    count++;
+                }
+            }
+
+            // Shuffle the array
+            Shuffle2DArray(fallingBlockArray);
+
+            int coinPosition = 0;
+            // Spawn the stones at random positions
+            for (int i = 0; i < mapSize; i++)
+            {
+                if (i % 5 == 0)
+                {
+                    coinPosition = i + Random.Range(10, 20);
+                    if (coinPosition >= 100)
+                        coinPosition = 100;
+
+                    // Spawn Falling block
+                    NetworkObject networkCoin = Runner.Spawn(coinPrefab, new Vector3(fallingBlockArray[coinPosition, 0], 0.8f, fallingBlockArray[coinPosition, 1]), Quaternion.identity);
+                    NetworkTransform networkCoinTransform = networkCoin.GetComponent<NetworkTransform>();
+                    networkCoinTransform.Teleport(new Vector3(fallingBlockArray[coinPosition, 0], 0.8f, fallingBlockArray[coinPosition, 1]), Quaternion.identity);
+                }
+
+                // Spawn Falling block
+                NetworkObject networkFallingBlock = Runner.Spawn(fallingBlockPrefab, new Vector3(fallingBlockArray[i, 0], 1.1f, fallingBlockArray[i, 1]), Quaternion.identity);
+                NetworkTransform networkFallingBlockTransform = networkFallingBlock.GetComponent<NetworkTransform>();
+                networkFallingBlockTransform.Teleport(new Vector3(fallingBlockArray[i, 0], 1.1f, fallingBlockArray[i, 1]), Quaternion.identity);
+
+                // Wait for block to fall
+                yield return new WaitForFixedUpdate();
+                networkFallingBlock.GetComponent<BoxCollider>().isTrigger = false;
+
+                // Repeat
+                yield return new WaitForSecondsRealtime(6f);
+            }
+        }
+
+        private void Shuffle2DArray<T>(T[,] array)
+        {
+            int rowCount = array.GetLength(0);
+
+            for (int i = 0; i < rowCount; i++)
+            {
+                int randomIndex = Random.Range(i, rowCount);
+
+                // Swap rows i and randomIndex
+                for (int j = 0; j < array.GetLength(1); j++)
+                {
+                    T temp = array[i, j];
+                    array[i, j] = array[randomIndex, j];
+                    array[randomIndex, j] = temp;
+                }
+            }
         }
     }
 }

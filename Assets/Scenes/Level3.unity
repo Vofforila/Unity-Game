@@ -1762,6 +1762,11 @@ MonoBehaviour:
     RawGuidValue: d8f87041fb91d284cb45e88387c921fd
   catapultPrefab:
     RawGuidValue: 82a361271fe31194ea7d73614d326f0a
+  fallingBlockPrefab:
+    RawGuidValue: 716d337b50d4c3449a3bed297ca28ac3
+  coinPrefab:
+    RawGuidValue: 758f76948ba09e84e9118be1f34f300d
+  navMesh: {fileID: 0}
   playerCameraPrefab: {fileID: 4411292575758493992, guid: 15b2aca56d9946a42a8f7a1de23bc92a,
     type: 3}
 --- !u!1 &1034434543
@@ -2748,13 +2753,13 @@ MonoBehaviour:
   playLevel4Event:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: 
-        m_MethodName: 
+      - m_Target: {fileID: 11400000, guid: 6d49abb09eb4d574b87d1e38812dde42, type: 2}
+        m_TargetAssemblyTypeName: TryhardParty.LoadLevel4Event, Assembly-CSharp
+        m_MethodName: Raise
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 

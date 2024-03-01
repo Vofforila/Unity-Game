@@ -32,7 +32,6 @@ namespace Host
         [Header("Events")]
         [SerializeField] private UnityEvent playLevel4Event;
 
-        [Networked] public PlayerRef Player { get; set; }
         [Networked, HideInInspector] public int FinishPlace { get; set; }
 
         private Dictionary<PlayerRef, NetworkObject> networkPlayerDictionary;

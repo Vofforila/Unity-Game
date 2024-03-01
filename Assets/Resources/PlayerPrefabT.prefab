@@ -97,6 +97,7 @@ GameObject:
   - component: {fileID: 7743451054679514735}
   - component: {fileID: -3580030170417942761}
   - component: {fileID: 5866569610233304301}
+  - component: {fileID: 874038496536998298}
   - component: {fileID: 4247071038701250945}
   - component: {fileID: 3245071185819889457}
   - component: {fileID: -3201062138382299180}
@@ -247,10 +248,34 @@ MonoBehaviour:
   stoppingDistance: 0
   obstacleRadius: 0.5
   obstacleHeight: 2
-  targetLayer:
-    serializedVersion: 2
-    m_Bits: 0
   score: 0
+--- !u!114 &874038496536998298
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9108376757321683601}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ef6109bcce7a8054b9ad4088f556a201, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  localData: {fileID: 11400000, guid: 9ae0573c8cfccd741b7423eb0db11b79, type: 2}
+  firestore: {fileID: 11400000, guid: 883b834f3dfdf5a45aee970fc4e238bd, type: 2}
+  playerVisuals: {fileID: 4247071038701250945}
+  gameUIListener: {fileID: 3245071185819889457}
+  size: 0.2
+  constrains: 
+  isKinematic: 1
+  mass: 0
+  agentoffset: 1.5
+  speed: 15
+  angularSpeed: 180
+  acceleration: 15
+  stoppingDistance: 0.1
+  obstacleRadius: 0.5
+  obstacleHeight: 2
 --- !u!114 &4247071038701250945
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -305,6 +330,7 @@ MonoBehaviour:
   - {fileID: 2016571782252996026}
   - {fileID: -3580030170417942761}
   - {fileID: 5866569610233304301}
+  - {fileID: 874038496536998298}
   - {fileID: 4247071038701250945}
   - {fileID: 3245071185819889457}
   - {fileID: 1380486486503288905}
