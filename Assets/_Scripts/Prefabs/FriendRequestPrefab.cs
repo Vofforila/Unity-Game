@@ -1,10 +1,11 @@
+using Database;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace TryhardParty
+namespace UI
 {
     public class FriendRequestPrefab : MonoBehaviour
     {

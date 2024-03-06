@@ -2,28 +2,31 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class QuadraticCurve : MonoBehaviour
+namespace SpecialFunction
 {
-    public Transform A;
-    public Transform B;
-    public Transform C;
-
-    public Vector3 Evaluate(float t)
+    public class QuadraticCurve : MonoBehaviour
     {
-        Vector3 ac = Vector3.Lerp(A.position, C.position, t);
-        Vector3 cb = Vector3.Lerp(C.position, B.position, t);
+        public Transform A;
+        public Transform B;
+        public Transform C;
 
-        return Vector3.Lerp(ac, cb, t);
-    }
-
-    private void OnDrawGizmos()
-    {
-        if (A == null || B == null || C == null)
+        public Vector3 Evaluate(float t)
         {
-            return;
+            Vector3 ac = Vector3.Lerp(A.position, C.position, t);
+            Vector3 cb = Vector3.Lerp(C.position, B.position, t);
+
+            return Vector3.Lerp(ac, cb, t);
         }
 
-        for (int i = 0; i < 20; i++)
-            Gizmos.DrawWireSphere(Evaluate(i / 20f), 0.5f);
+        private void OnDrawGizmos()
+        {
+            if (A == null || B == null || C == null)
+            {
+                return;
+            }
+
+            for (int i = 0; i < 20; i++)
+                Gizmos.DrawWireSphere(Evaluate(i / 20f), 0.5f);
+        }
     }
 }

@@ -1,0 +1,4 @@
+Scale:
+Header1 = 60
+Header2 = 35
+Text = 25

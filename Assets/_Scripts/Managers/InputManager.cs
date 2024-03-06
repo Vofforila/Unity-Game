@@ -3,136 +3,132 @@ using UnityEngine;
 using Fusion;
 using Fusion.Sockets;
 using System;
-using TryhardParty;
+using Server;
 
-public class InputManager : SimulationBehaviour, INetworkRunnerCallbacks
+namespace PlayerInput
 {
-    [HideInInspector] internal FusionManager fusionManager;
-    private NetworkInputData inputData = new();
-    private Camera playerCamera;
-    private LayerMask targetLayer;
-
-    private LayerMask targetLayer;
-
-    private void Awake()
+    public class InputManager : SimulationBehaviour, INetworkRunnerCallbacks
     {
-        targetLayer = LayerMask.GetMask("HitZone");
-    }
+        [HideInInspector] internal FusionManager fusionManager;
+        private NetworkInputData inputData = new();
+        private Camera playerCamera;
+        private LayerMask targetLayer;
 
-    public void Start()
-    {
-        fusionManager = GameObject.Find("FusionManager").GetComponent<FusionManager>();
-        fusionManager.runner.AddCallbacks(this);
-        targetLayer = LayerMask.GetMask("HitZone");
-    }
-
-    public void OnDisable()
-    {
-        fusionManager.runner.RemoveCallbacks(this);
-    }
-
-    // High Ticks
-    public void OnInput(NetworkRunner runner, NetworkInput input)
-    {
-        // Reset Input / Server Tick
-        // Set Input
-        input.Set(inputData);
-        inputData = default;
-    }
-
-    // Low Ticks
-    private void Update()
-    {
-        // Keys
-        inputData.GameButton.Set(GameButton.Z, Input.GetKey(KeyCode.Z));
-        inputData.GameButton.Set(GameButton.X, Input.GetKey(KeyCode.X));
-        inputData.GameButton.Set(GameButton.C, Input.GetKey(KeyCode.C));
-        inputData.GameButton.Set(GameButton.V, Input.GetKey(KeyCode.V));
-
-        if (Input.GetMouseButton(0))
+        public void Start()
         {
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            if (Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, targetLayer))
-            {
-                inputData.raycast = hit.point;
-            }
+            fusionManager = GameObject.Find("FusionManager").GetComponent<FusionManager>();
+            fusionManager.runner.AddCallbacks(this);
+            targetLayer = LayerMask.GetMask("HitZone");
         }
 
-        // Mouse
-        inputData.GameButton.Set(GameButton.LeftClick, Input.GetMouseButton(0));
-        inputData.GameButton.Set(GameButton.RightClick, Input.GetMouseButton(1));
-        inputData.GameButton.Set(GameButton.MiddleMouse, Input.GetMouseButton(2));
-    }
+        public void OnDisable()
+        {
+            fusionManager.runner.RemoveCallbacks(this);
+        }
 
-    public void OnConnectedToServer(NetworkRunner runner)
-    {
-    }
+        // High Ticks
+        public void OnInput(NetworkRunner runner, NetworkInput input)
+        {
+            // Reset Input / Server Tick
+            // Set Input
+            input.Set(inputData);
+            inputData = default;
+        }
 
-    public void OnConnectFailed(NetworkRunner runner, NetAddress remoteAddress, NetConnectFailedReason reason)
-    {
-    }
+        // Low Ticks
+        private void Update()
+        {
+            // Keys
+            inputData.GameButton.Set(GameButton.Z, Input.GetKey(KeyCode.Z));
+            inputData.GameButton.Set(GameButton.X, Input.GetKey(KeyCode.X));
+            inputData.GameButton.Set(GameButton.C, Input.GetKey(KeyCode.C));
+            inputData.GameButton.Set(GameButton.V, Input.GetKey(KeyCode.V));
 
-    public void OnConnectRequest(NetworkRunner runner, NetworkRunnerCallbackArgs.ConnectRequest request, byte[] token)
-    {
-    }
+            if (Input.GetMouseButton(0))
+            {
+                Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+                if (Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, targetLayer))
+                {
+                    inputData.raycast = hit.point;
+                }
+            }
 
-    public void OnCustomAuthenticationResponse(NetworkRunner runner, Dictionary<string, object> data)
-    {
-    }
+            // Mouse
+            inputData.GameButton.Set(GameButton.LeftClick, Input.GetMouseButton(0));
+            inputData.GameButton.Set(GameButton.RightClick, Input.GetMouseButton(1));
+            inputData.GameButton.Set(GameButton.MiddleMouse, Input.GetMouseButton(2));
+        }
 
-    public void OnDisconnectedFromServer(NetworkRunner runner, NetDisconnectReason reason)
-    {
-    }
+        public void OnConnectedToServer(NetworkRunner runner)
+        {
+        }
 
-    public void OnHostMigration(NetworkRunner runner, HostMigrationToken hostMigrationToken)
-    {
-    }
+        public void OnConnectFailed(NetworkRunner runner, NetAddress remoteAddress, NetConnectFailedReason reason)
+        {
+        }
 
-    public void OnInputMissing(NetworkRunner runner, PlayerRef player, NetworkInput input)
-    {
-    }
+        public void OnConnectRequest(NetworkRunner runner, NetworkRunnerCallbackArgs.ConnectRequest request, byte[] token)
+        {
+        }
 
-    public void OnObjectEnterAOI(NetworkRunner runner, NetworkObject obj, PlayerRef player)
-    {
-    }
+        public void OnCustomAuthenticationResponse(NetworkRunner runner, Dictionary<string, object> data)
+        {
+        }
 
-    public void OnObjectExitAOI(NetworkRunner runner, NetworkObject obj, PlayerRef player)
-    {
-    }
+        public void OnDisconnectedFromServer(NetworkRunner runner, NetDisconnectReason reason)
+        {
+        }
 
-    public void OnPlayerJoined(NetworkRunner runner, PlayerRef player)
-    {
-    }
+        public void OnHostMigration(NetworkRunner runner, HostMigrationToken hostMigrationToken)
+        {
+        }
 
-    public void OnPlayerLeft(NetworkRunner runner, PlayerRef player)
-    {
-    }
+        public void OnInputMissing(NetworkRunner runner, PlayerRef player, NetworkInput input)
+        {
+        }
 
-    public void OnReliableDataProgress(NetworkRunner runner, PlayerRef player, ReliableKey key, float progress)
-    {
-    }
+        public void OnObjectEnterAOI(NetworkRunner runner, NetworkObject obj, PlayerRef player)
+        {
+        }
 
-    public void OnReliableDataReceived(NetworkRunner runner, PlayerRef player, ReliableKey key, ArraySegment<byte> data)
-    {
-    }
+        public void OnObjectExitAOI(NetworkRunner runner, NetworkObject obj, PlayerRef player)
+        {
+        }
 
-    public void OnSceneLoadDone(NetworkRunner runner)
-    {
-    }
+        public void OnPlayerJoined(NetworkRunner runner, PlayerRef player)
+        {
+        }
 
-    public void OnSceneLoadStart(NetworkRunner runner)
-    {
-    }
+        public void OnPlayerLeft(NetworkRunner runner, PlayerRef player)
+        {
+        }
 
-    public void OnSessionListUpdated(NetworkRunner runner, List<SessionInfo> sessionList)
-    {
-    }
+        public void OnReliableDataProgress(NetworkRunner runner, PlayerRef player, ReliableKey key, float progress)
+        {
+        }
 
-    public void OnShutdown(NetworkRunner runner, ShutdownReason shutdownReason)
-    {
-    }
+        public void OnReliableDataReceived(NetworkRunner runner, PlayerRef player, ReliableKey key, ArraySegment<byte> data)
+        {
+        }
 
-    public void OnUserSimulationMessage(NetworkRunner runner, SimulationMessagePtr message)
-    {
+        public void OnSceneLoadDone(NetworkRunner runner)
+        {
+        }
+
+        public void OnSceneLoadStart(NetworkRunner runner)
+        {
+        }
+
+        public void OnSessionListUpdated(NetworkRunner runner, List<SessionInfo> sessionList)
+        {
+        }
+
+        public void OnShutdown(NetworkRunner runner, ShutdownReason shutdownReason)
+        {
+        }
+
+        public void OnUserSimulationMessage(NetworkRunner runner, SimulationMessagePtr message)
+        {
+        }
     }
 }

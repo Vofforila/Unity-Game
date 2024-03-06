@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
 
-namespace TryhardParty
+namespace Test
 {
     public class Test : MonoBehaviour
     {

@@ -121,6 +121,12 @@ namespace Host
 
         public void EndLevel()
         {
+            RPC_GameEnded();
+        }
+
+        [Rpc(sources: RpcSources.StateAuthority, targets: RpcTargets.InputAuthority)]
+        private void RPC_GameEnded()
+        {
             playLevel2Event.Invoke();
         }
     }

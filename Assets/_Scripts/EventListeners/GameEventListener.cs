@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.Events;
 
-namespace TryhardParty
+namespace Event
 {
     public class GameEventListener : MonoBehaviour
     {

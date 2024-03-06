@@ -1,16 +1,14 @@
 using Data;
+using Database;
 using Fusion;
 using Fusion.Sockets;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using TMPro;
 using UnityEngine;
-using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 
-namespace TryhardParty
+namespace Test
 {
     public class FusionManagerTest : MonoBehaviour, INetworkRunnerCallbacks
     {

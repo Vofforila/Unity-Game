@@ -4,8 +4,10 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UI;
+using Database;
 
-namespace TryhardParty
+namespace Host
 {
     public class LobbyManager : NetworkBehaviour
     {

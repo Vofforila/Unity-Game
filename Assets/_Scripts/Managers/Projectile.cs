@@ -1,8 +1,9 @@
+using SpecialFunction;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace TryhardParty
+namespace Example
 {
     public class Projectile : MonoBehaviour
     {

@@ -5,8 +5,11 @@ using TMPro;
 using System.Threading.Tasks;
 using Firebase.Firestore;
 using Firebase.Extensions;
+using TryhardParty;
+using Database;
+using UnityEngine.UI;
 
-namespace TryhardParty
+namespace UI
 {
     public class UIManager : MonoBehaviour
     {
@@ -25,6 +28,10 @@ namespace TryhardParty
         [SerializeField] private GameObject forgotPasswordCanvas;
         [SerializeField] public GameObject mainMenuLoadingCanvas;
         [SerializeField] public GameObject mainMenuCanvas;
+
+        [Header("Loading")]
+        [SerializeField] private Slider loadingBar;
+        [SerializeField] private TMP_Text loadingPercentage;
 
         [Header("ProfilePanel")]
         [SerializeField] private TMP_Text currentUserName;
@@ -60,11 +67,6 @@ namespace TryhardParty
         [SerializeField] private GameObject playerBanner3;
         [SerializeField] private GameObject playerBanner4;
         [SerializeField] private GameObject chatBoxPanel;
-
-        [Header("Mach Statistics")]
-        [SerializeField] private GameObject matchStatisticsPanel;
-        [SerializeField] private GameObject rankPointsGained;
-        [SerializeField] public Transform playersStatisticPanel;
 
         // Close Everything
         private void Awake()
@@ -153,6 +155,10 @@ namespace TryhardParty
         }
 
         ////////////////////////////////////
+        // Statistics Panel
+        ////////////////////////////////////
+
+        ////////////////////////////////////
         // Lobby Panel
         ////////////////////////////////////
 
@@ -196,15 +202,35 @@ namespace TryhardParty
         ////////////////////////////////////
         public async void LoadingMainMenu(string _email)
         {
+            // Total Loading Steps 4 =>  100 / 4 = 25
+            int loading = 0;
+            loadingBar.value = loading;
+            loadingPercentage.text = loading + "%";
             loginCanvas.SetActive(false);
             mainMenuLoadingCanvas.SetActive(true);
+            loading += 25;
+            loadingBar.value = loading;
+            loadingPercentage.text = loading + "%";
 
             await firestore.GetUserFromEmail(_email);
+            loading += 25;
+            loadingBar.value = loading;
+            loadingPercentage.text = loading + "%";
 
             firestore.UpdateAccountFirebase();
+            loading += 25;
+            loadingBar.value = loading;
+            loadingPercentage.text = loading + "%";
 
             friendRequestPanel.SetActive(false);
             addFriendPanel.SetActive(false);
+
+            await Task.Delay(1000);
+            loading += 25;
+            loadingBar.value = loading;
+            loadingPercentage.text = loading + "%";
+            await Task.Delay(1000);
+
             mainMenuLoadingCanvas.SetActive(false);
             mainMenuCanvas.SetActive(true);
         }

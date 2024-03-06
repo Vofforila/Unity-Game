@@ -9,7 +9,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using SpecialFunction;
 
-namespace TryhardParty
+namespace Database
 {
     [CreateAssetMenu(fileName = "Firestore", menuName = "Firestore/Firestore")]
     public class Firestore : ScriptableObject

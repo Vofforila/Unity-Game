@@ -1,11 +1,13 @@
 using Data;
+using Database;
 using Fusion;
+using Server;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
-namespace TryhardParty
+namespace Host
 {
     public class ChatManagerPrefab : MonoBehaviour
     {

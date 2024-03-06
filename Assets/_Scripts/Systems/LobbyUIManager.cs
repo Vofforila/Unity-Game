@@ -4,7 +4,7 @@ using UnityEngine;
 using Fusion;
 using TMPro;
 
-namespace TryhardParty
+namespace UI
 {
     public class LobbyUIManager : MonoBehaviour
     {

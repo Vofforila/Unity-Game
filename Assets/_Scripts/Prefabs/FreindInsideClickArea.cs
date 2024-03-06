@@ -7,7 +7,7 @@ using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-namespace TryhardParty
+namespace UI
 {
     public class FreindInsideClickArea : MonoBehaviour, IPointerClickHandler
     {

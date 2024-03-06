@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Singleton
+namespace SpecialFunction
 {
     public class QuadraticCurveManager : MonoBehaviour
     {
