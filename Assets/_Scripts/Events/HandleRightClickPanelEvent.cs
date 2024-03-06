@@ -1,8 +1,7 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace TryhardParty
+namespace Event
 {
     [CreateAssetMenu(fileName = "HandleRightClickPanelEvent", menuName = "Event/HandleRightClickPanelEvent")]
     public class HandleRightClickPanelEvent : ScriptableObject

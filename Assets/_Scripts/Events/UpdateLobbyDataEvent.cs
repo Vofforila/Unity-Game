@@ -1,8 +1,7 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace TryhardParty
+namespace Event
 {
     [CreateAssetMenu(fileName = "UpdateLobbyDataEvent", menuName = "Event/UpdateLobbyDataEvent")]
     public class UpdateLobbyDataEvent : ScriptableObject

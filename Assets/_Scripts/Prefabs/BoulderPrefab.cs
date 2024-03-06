@@ -1,12 +1,10 @@
 using Data;
+using Database;
 using Fusion;
-using System.Collections;
-using System.Collections.Generic;
-using TryhardParty;
+using SpecialFunction;
 using UnityEngine;
-using UnityEngine.Events;
 
-namespace Proxy
+namespace Enemy
 {
     public class BoulderPrefab : NetworkBehaviour
     {

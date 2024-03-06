@@ -1,9 +1,7 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
-namespace TryhardParty
+namespace Event
 {
     public class LoadLevel2EventListener : MonoBehaviour
     {

@@ -1,14 +1,14 @@
 using Data;
-using Firebase;
 using Firebase.Auth;
 using Firebase.Extensions;
 using System.Collections;
 using TMPro;
 using UnityEngine;
-using UnityEngine.Events;
 using UI;
+using Firebase;
+using Database;
 
-namespace TryhardParty
+namespace Auth
 {
     public class FirebaseController : MonoBehaviour
     {
@@ -22,10 +22,10 @@ namespace TryhardParty
         internal UIManager canvasManager;
 
         [Header("Data")]
-        public LocalData localData;
+        [SerializeField] private LocalData localData;
 
         [Header("Firestore")]
-        public Firestore firestore;
+        [SerializeField] private Firestore firestore;
 
         [Header("Firebase")]
         public DependencyStatus status;

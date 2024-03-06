@@ -6,8 +6,9 @@ using TryhardParty;
 using UnityEngine;
 using UnityEngine.Events;
 using SpecialFunction;
+using Database;
 
-namespace Proxy
+namespace Enemy
 {
     public class CatapultPrefab : NetworkBehaviour
     {

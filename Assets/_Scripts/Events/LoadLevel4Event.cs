@@ -1,8 +1,7 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace TryhardParty
+namespace Event
 {
     [CreateAssetMenu(fileName = "LoadLevel4Event", menuName = "Event/LoadLevel4Event")]
     public class LoadLevel4Event : ScriptableObject

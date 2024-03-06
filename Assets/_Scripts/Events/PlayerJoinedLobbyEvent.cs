@@ -1,8 +1,7 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace TryhardParty
+namespace Event
 {
     [CreateAssetMenu(fileName = "PlayerJoinedLobbyEvent", menuName = "Event/PlayerJoinedLobbyEvent")]
     public class PlayerJoinedLobbyEvent : ScriptableObject

@@ -7,7 +7,7 @@ using UI;
 using System.Linq;
 using static UI.GameUIManager;
 
-namespace TryhardParty
+namespace Host
 {
     public class LobbyManagerSpawner : NetworkBehaviour, IPlayerJoined, IPlayerLeft
     {

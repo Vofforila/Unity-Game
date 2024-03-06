@@ -3,16 +3,16 @@ using Firebase.Firestore;
 using Fusion;
 using Fusion.Sockets;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 using UI;
+using Database;
+using Host;
 
-namespace TryhardParty
+namespace Server
 {
     public class FusionManager : MonoBehaviour, INetworkRunnerCallbacks
 

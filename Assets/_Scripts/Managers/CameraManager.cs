@@ -1,9 +1,6 @@
-using Fusion;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-namespace PlayerCamera
+namespace Player
 {
     public class CameraManager : MonoBehaviour
     {

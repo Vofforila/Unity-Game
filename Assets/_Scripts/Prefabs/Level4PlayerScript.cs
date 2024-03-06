@@ -1,14 +1,12 @@
 using Data;
+using Database;
 using Fusion;
 using Host;
-using System.Collections;
-using System.Collections.Generic;
-using TryhardParty;
+using PlayerInput;
 using UI;
 using Unity.AI.Navigation;
 using UnityEngine;
 using UnityEngine.AI;
-using UnityEngine.Events;
 
 namespace Player
 {

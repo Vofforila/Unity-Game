@@ -1,11 +1,8 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using Fusion;
-using TMPro;
 using Data;
-using TryhardParty;
 using SpecialFunction;
+using Database;
 
 namespace UI
 {

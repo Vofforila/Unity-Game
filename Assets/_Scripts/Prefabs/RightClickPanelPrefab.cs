@@ -1,11 +1,9 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using TMPro;
 using Data;
+using Database;
 
-namespace TryhardParty
+namespace UI
 {
     public class RightClickPanelPrefab : MonoBehaviour
     {

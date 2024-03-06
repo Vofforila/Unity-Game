@@ -1,13 +1,10 @@
 using Data;
 using Fusion;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Events;
-using Singleton;
 using UI;
 using Host;
-using System;
+using SpecialFunction;
+using PlayerInput;
 
 namespace Player
 {
@@ -16,7 +13,6 @@ namespace Player
         [Header("Scriptable")]
         [SerializeField] private LocalData localData;
 
-        [SerializeField] private LocalInputData localInputData;
         [SerializeField] private ServerData serverData;
 
         [Header("Internal")]
