@@ -29,7 +29,6 @@ namespace Server
         public LocalData localData;
 
         [SerializeField] private NetworkPrefabRef lobbyManagerPrefab;
-        [SerializeField] private NetworkPrefabRef lobbyManagerTestPrefab;
 
         [Header("Event")]
         public UnityEvent playLevel1Event;

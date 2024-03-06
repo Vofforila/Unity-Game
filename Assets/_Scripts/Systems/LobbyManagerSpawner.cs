@@ -11,6 +11,7 @@ namespace Host
 {
     public class LobbyManagerSpawner : NetworkBehaviour, IPlayerJoined, IPlayerLeft
     {
+        [Header("Prefab")]
         [SerializeField] private NetworkPrefabRef lobbyManagerTestPrefab;
 
         [Header("Mach Statistics")]
