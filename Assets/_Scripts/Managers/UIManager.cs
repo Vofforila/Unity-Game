@@ -7,6 +7,7 @@ using Firebase.Firestore;
 using Firebase.Extensions;
 using TryhardParty;
 using Database;
+using UnityEngine.UI;
 
 namespace UI
 {
@@ -27,6 +28,10 @@ namespace UI
         [SerializeField] private GameObject forgotPasswordCanvas;
         [SerializeField] public GameObject mainMenuLoadingCanvas;
         [SerializeField] public GameObject mainMenuCanvas;
+
+        [Header("Loading")]
+        [SerializeField] private Slider loadingBar;
+        [SerializeField] private TMP_Text loadingPercentage;
 
         [Header("ProfilePanel")]
         [SerializeField] private TMP_Text currentUserName;
@@ -197,15 +202,35 @@ namespace UI
         ////////////////////////////////////
         public async void LoadingMainMenu(string _email)
         {
+            // Total Loading Steps 4 =>  100 / 4 = 25
+            int loading = 0;
+            loadingBar.value = loading;
+            loadingPercentage.text = loading + "%";
             loginCanvas.SetActive(false);
             mainMenuLoadingCanvas.SetActive(true);
+            loading += 25;
+            loadingBar.value = loading;
+            loadingPercentage.text = loading + "%";
 
             await firestore.GetUserFromEmail(_email);
+            loading += 25;
+            loadingBar.value = loading;
+            loadingPercentage.text = loading + "%";
 
             firestore.UpdateAccountFirebase();
+            loading += 25;
+            loadingBar.value = loading;
+            loadingPercentage.text = loading + "%";
 
             friendRequestPanel.SetActive(false);
             addFriendPanel.SetActive(false);
+
+            await Task.Delay(1000);
+            loading += 25;
+            loadingBar.value = loading;
+            loadingPercentage.text = loading + "%";
+            await Task.Delay(1000);
+
             mainMenuLoadingCanvas.SetActive(false);
             mainMenuCanvas.SetActive(true);
         }
