@@ -66,7 +66,7 @@ namespace Enemy
             y = Random.Range(11, 13);
             z = Random.Range(-24, 24);
 
-            B.position = new Vector3(10, 0, 10);
+            B.position = new Vector3(x, 0, z);
             C.localPosition = new Vector3((B.localPosition.x - 2) / 2, y, B.localPosition.z / 2);
 
             sampleTime = 0f;
