@@ -53,8 +53,6 @@ namespace Host
             foreach (PlayerRef player in Runner.ActivePlayers)
             {
                 i++;
-                Debug.Log(x);
-                Debug.Log(i);
                 if (i == x)
                 {
                     i = 1;

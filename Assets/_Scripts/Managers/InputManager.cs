@@ -9,14 +9,14 @@ namespace PlayerInput
 {
     public class InputManager : SimulationBehaviour, INetworkRunnerCallbacks
     {
-        [HideInInspector] internal FusionManager fusionManager;
+        private FusionManager fusionManager;
         private NetworkInputData inputData = new();
         private Camera playerCamera;
         private LayerMask targetLayer;
 
         public void Start()
         {
-            fusionManager = GameObject.Find("FusionManager").GetComponent<FusionManager>();
+            fusionManager = FusionManager.Instance;
             fusionManager.runner.AddCallbacks(this);
             targetLayer = LayerMask.GetMask("HitZone");
         }

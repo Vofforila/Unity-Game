@@ -99,13 +99,19 @@ namespace Player
 
                     if (pressed.IsSet(GameButton.Z) && IsJumping == false)
                     {
-                        Debug.Log("Jump");
-                        Jump();
+                        if (Object.HasStateAuthority)
+                        {
+                            Debug.Log("Jump");
+                            Jump();
+                        }
                     }
                     if (pressed.IsSet(GameButton.X) && IsJumping == false && score != 0)
                     {
-                        Debug.Log("Take Money");
-                        TakeMoney();
+                        if (Object.HasStateAuthority)
+                        {
+                            Debug.Log("Take Money");
+                            TakeMoney();
+                        }
                     }
                 }
             }
@@ -176,24 +182,17 @@ namespace Player
 
         private void Jump()
         {
-            if (Object.HasStateAuthority)
-            {
-                // Generate a random number to where you jump
-                /*  jumpPosition = UnityEngine.Random.Range(jumpPosition, 7);*/
-                IsJumping = true;
-                jumpPosition += 1;
-                score = QuadraticCurveManager.Instance.MoveCurve(jumpPosition);
-                sampleTime = 0f;
-            }
+            // Generate a random number to where you jump
+            jumpPosition = Random.Range(jumpPosition, 7);
+            IsJumping = true;
+            score = QuadraticCurveManager.Instance.MoveCurve(jumpPosition);
+            sampleTime = 0f;
         }
 
         private void TakeMoney()
         {
-            if (Object.HasStateAuthority)
-            {
-                gameUIListener.AddScore(score);
-                Level1Manager.Instance.PlayerTurn = false;
-            }
+            gameUIListener.AddScore(score);
+            Level1Manager.Instance.PlayerTurn = false;
         }
     }
 }

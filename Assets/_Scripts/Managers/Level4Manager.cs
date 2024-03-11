@@ -97,8 +97,9 @@ namespace Host
             UpdateGameState(GameState.SpawnEnemies);
         }
 
-        public void SpawnEnemies()
+        public IEnumerator SpawnEnemies()
         {
+            yield return new WaitForSecondsRealtime(5f);
             StartCoroutine(spawnManager.ISpawnFallingBlox());
             UpdateGameState(GameState.IsPlayerAlive);
         }

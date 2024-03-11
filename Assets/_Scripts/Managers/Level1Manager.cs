@@ -4,6 +4,7 @@ using UnityEngine;
 using Data;
 using UnityEngine.Events;
 using System.Collections.Generic;
+using UI;
 
 namespace Host
 {
@@ -49,6 +50,7 @@ namespace Host
         {
             spawnManager.SpawnLocal(false);
             localData.currentLvl = 1;
+            GameUIManager.Instance.UpdateLevelState(localData.currentLvl);
             UpdateGameState(GameState.Loading);
         }
 
@@ -87,14 +89,13 @@ namespace Host
 
         public void StartLevel()
         {
-            Debug.Log("Host Spawn");
             networkPlayerDictionary = spawnManager.SpawnNetworkPlayers(_level: 1, _isKinematic: true);
             UpdateGameState(GameState.PlayerTurn);
         }
 
         public IEnumerator IPlayerTurn()
         {
-            yield return new WaitForSecondsRealtime(8f);
+            yield return new WaitForSecondsRealtime(5f);
             foreach (PlayerRef player in Runner.ActivePlayers)
             {
                 Player = player;
@@ -105,6 +106,9 @@ namespace Host
 
                 yield return new WaitUntil(() => PlayerTurn == false);
             }
+
+            Player = PlayerRef.None;
+            PlayerTurn = false;
             yield return new WaitForSeconds(5f);
             UpdateGameState(GameState.DespawnPlayers);
         }
@@ -119,12 +123,6 @@ namespace Host
         }
 
         public void EndLevel()
-        {
-            RPC_GameEnded();
-        }
-
-        [Rpc(sources: RpcSources.StateAuthority, targets: RpcTargets.InputAuthority)]
-        private void RPC_GameEnded()
         {
             playLevel2Event.Invoke();
         }

@@ -20,8 +20,16 @@ namespace UI
         [SerializeField] private GameObject gameTipPanel;
         [SerializeField] private GameObject scoreboardPanel;
         [SerializeField] private GameObject playerScorePrefab;
+        [SerializeField] private GameObject chatBoxPanel;
+        [SerializeField] private GameObject loadingPanel;
 
         public Dictionary<PlayerRef, PlayerData> PlayerDictionary;
+
+        // Level1
+        private const string tipsLvl1 = "Press Z to Jump \nPress X to CashOut";
+        private const string tipsLvl2 = "Press Z to go Faster";
+        private const string tipsLvl3 = "Use Your Mouse to doge the Projectiles";
+        private const string tipsLvl4 = "Don't get crushed by the falling ceiling";
 
         //Singleton
         public static GameUIManager Instance;
@@ -34,9 +42,70 @@ namespace UI
             PlayerDictionary = new();
         }
 
-        private void OnEnable()
+        public void UpdateLevelState(int _level)
         {
-            StartCoroutine(TipPanel(10f));
+            switch (_level)
+            {
+                case 0:
+                    MainMenu();
+                    break;
+                case 1:
+                    Level1();
+                    break;
+                case 2:
+                    Level2();
+                    break;
+                case 3:
+                    Level3();
+                    break;
+                case 4:
+                    Level4();
+                    break;
+            }
+        }
+
+        public void EnableChat(bool _var)
+        {
+            chatBoxPanel.SetActive(true);
+        }
+
+        private void MainMenu()
+        {
+            playerHp.SetActive(false);
+            gameTipPanel.SetActive(false);
+            scoreboardPanel.SetActive(false);
+            chatBoxPanel.SetActive(true);
+            loadingPanel.SetActive(false);
+        }
+
+        private void Level1()
+        {
+            gameTipPanel.SetActive(true);
+            scoreboardPanel.SetActive(true);
+            chatBoxPanel.SetActive(true);
+            gameTipPanel.GetComponent<TMP_Text>().text = tipsLvl1;
+
+            StartCoroutine(TipPanel(5f));
+        }
+
+        private void Level2()
+        {
+            gameTipPanel.GetComponent<TMP_Text>().text = tipsLvl2;
+            StartCoroutine(TipPanel(5f));
+        }
+
+        private void Level3()
+        {
+            playerHp.SetActive(true);
+            gameTipPanel.GetComponent<TMP_Text>().text = tipsLvl3;
+            StartCoroutine(TipPanel(5f));
+        }
+
+        private void Level4()
+        {
+            playerHp.SetActive(false);
+            gameTipPanel.GetComponent<TMP_Text>().text = tipsLvl4;
+            StartCoroutine(TipPanel(5f));
         }
 
         public IEnumerator TipPanel(float _time)
@@ -62,47 +131,45 @@ namespace UI
 
             // Update UI
             UpdateUI(_player);
-
-            Debug.Log(_player + " - Create UI : " + PlayerDictionary[_player].UserName);
         }
 
         public void UpdateUserName(PlayerRef _player, string _username)
         {
             PlayerDictionary[_player].UserName = _username;
             UpdateUI(_player);
-
-            Debug.Log(_player + " - Username Update : " + PlayerDictionary[_player].UserName);
         }
 
         public void UpdateScore(PlayerRef _player, int _score)
         {
             PlayerDictionary[_player].Score = _score;
             UpdateUI(_player);
-            Debug.Log(_player + " - Score Update : " + PlayerDictionary[_player].Score);
         }
 
         public void UpdateHp(PlayerRef _player, int _hp)
         {
             PlayerDictionary[_player].Hp = _hp;
             UpdateUI(_player);
-            Debug.Log(_player + " -Hp Update : " + PlayerDictionary[_player].Hp);
         }
 
         public void UpdateUI(PlayerRef _player)
         {
-            /* // Get the PlayerData
-             PlayerData PlayerData = PlayerDictionary[_player];*/
-
             Dictionary<PlayerRef, PlayerData> sortedList = PlayerDictionary.OrderBy(pair => pair.Value.Score).ToDictionary(pair => pair.Key, pair => pair.Value);
 
-            PlayerData PlayerData = sortedList[_player];
+            PlayerData playerData = sortedList[_player];
 
-            // Update Score
-            string playerScore = PlayerData.UserName + " : " + PlayerData.Score;
-            PlayerData.PlayerScore.GetComponent<TMP_Text>().text = playerScore;
+            foreach (var key in sortedList)
+            {
+                PlayerData playerDataScore = key.Value;
+                string playerScore = playerDataScore.UserName + " : " + playerDataScore.Score;
+                playerDataScore.PlayerScore.GetComponent<TMP_Text>().text = playerScore;
+            }
 
-            string playerHp = PlayerData.UserName + "\n " + PlayerData.Hp + " / 100";
-            PlayerData.PlayerHp.GetComponent<TMP_Text>().text = playerHp;
+            /* // Update Score
+             string playerScore = PlayerData.UserName + " : " + PlayerData.Score;
+         PlayerData.PlayerScore.GetComponent<TMP_Text>().text = playerScore;*/
+
+            string playerHp = playerData.UserName + "\n " + playerData.Hp + " / 100";
+            playerData.PlayerHp.GetComponent<TMP_Text>().text = playerHp;
         }
 
         public class PlayerData

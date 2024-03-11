@@ -1,13 +1,13 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using System.Threading.Tasks;
-using Firebase.Firestore;
-using Firebase.Extensions;
-using TryhardParty;
 using Database;
 using UnityEngine.UI;
+using Server;
+using Fusion;
+using System.Collections.Generic;
+using System.Linq;
+using static UI.GameUIManager;
 
 namespace UI
 {
@@ -62,25 +62,25 @@ namespace UI
         [SerializeField] private GameObject startButton;
         [SerializeField] private GameObject lobbyPanel;
         [SerializeField] private GameObject homePanel;
-        [SerializeField] private GameObject playerBanner1;
-        [SerializeField] private GameObject playerBanner2;
-        [SerializeField] private GameObject playerBanner3;
-        [SerializeField] private GameObject playerBanner4;
         [SerializeField] private GameObject chatBoxPanel;
+        [SerializeField] private GameObject gameUICanvasPrefab;
+
+        [Header("Statistics")]
+        [SerializeField] private GameObject matchStatisticsPanel;
+        [SerializeField] private GameObject playersStatisticPanel;
+        [SerializeField] private GameObject rankPointsGained;
+
+        public static UIManager Instance;
 
         // Close Everything
         private void Awake()
         {
+            Instance = this;
             loginCanvas.SetActive(true);
             registerCanvas.SetActive(false);
             forgotPasswordCanvas.SetActive(false);
             mainMenuLoadingCanvas.SetActive(false);
             mainMenuCanvas.SetActive(false);
-
-            playerBanner1.SetActive(false);
-            playerBanner2.SetActive(false);
-            playerBanner3.SetActive(false);
-            playerBanner4.SetActive(false);
         }
 
         ////////////////////////////////////
@@ -158,6 +158,50 @@ namespace UI
         // Statistics Panel
         ////////////////////////////////////
 
+        public void ShowStatisticPanelEvent()
+        {
+            matchStatisticsPanel.SetActive(true);
+            Debug.Log(GameUIManager.Instance.PlayerDictionary.Count);
+            for (int place = 0; place <= GameUIManager.Instance.PlayerDictionary.Count; place++)
+            {
+                Debug.Log("Exe");
+                GameObject[] playerStatistics = new GameObject[playersStatisticPanel.transform.childCount];
+
+                for (int p = 0; p < playersStatisticPanel.transform.childCount; p++)
+                {
+                    // Get the child Transform
+                    Transform childTransform = playersStatisticPanel.transform.GetChild(p);
+
+                    // Get the child GameObject
+                    playerStatistics[p] = childTransform.gameObject;
+                }
+
+                Dictionary<PlayerRef, PlayerData> playerDictionary = GameUIManager.Instance.PlayerDictionary;
+
+                Debug.Log(playerDictionary);
+
+                int i = 0;
+                foreach (var key in playerDictionary)
+                {
+                    Debug.Log(playerStatistics[place]);
+                    playerStatistics[place].SetActive(true);
+
+                    TMP_Text[] stats = playerStatistics[place].GetComponents<TMP_Text>();
+
+                    stats[i++].text = (place + 1).ToString();
+                    stats[i++].text = key.Value.UserName;
+                    stats[i++].text = key.Value.Score.ToString();
+
+                    rankPointsGained.GetComponent<TMP_Text>().text = key.Value.Score.ToString();
+                }
+            }
+        }
+
+        public void EnableStatisticsPanel(bool _var)
+        {
+            matchStatisticsPanel.SetActive(_var);
+        }
+
         ////////////////////////////////////
         // Lobby Panel
         ////////////////////////////////////
@@ -170,26 +214,6 @@ namespace UI
         public void EnableLobbyPanel(bool _var)
         {
             lobbyPanel.SetActive(_var);
-        }
-
-        public void EnablePlayerBanner1(bool _var)
-        {
-            playerBanner1.SetActive(_var);
-        }
-
-        public void EnablePlayerBanner2(bool _var)
-        {
-            playerBanner2.SetActive(_var);
-        }
-
-        public void EnablePlayerBanner3(bool _var)
-        {
-            playerBanner3.SetActive(_var);
-        }
-
-        public void EnablePlayerBanner4(bool _var)
-        {
-            playerBanner4.SetActive(_var);
         }
 
         public void EnableChatBoxPanel(bool _var)

@@ -73,25 +73,23 @@ namespace Host
                 case GameState.Loading:
                     break;
                 case GameState.StartLevel:
-                    StartLevel();
+                    StartCoroutine(IStartLevel());
                     break;
-
                 case GameState.Racing:
                     StartCoroutine(IRacing());
                     break;
-
                 case GameState.DespawnPlayers:
                     DespawnPlayers();
                     break;
-
                 case GameState.EndLevel:
                     EndLevel();
                     break;
             }
         }
 
-        public void StartLevel()
+        public IEnumerator IStartLevel()
         {
+            yield return new WaitForSecondsRealtime(5f);
             networkPlayerDictionary = spawnManager.SpawnNetworkPlayers(_level: 2, _isKinematic: true);
             UpdateGameState(GameState.Racing);
         }

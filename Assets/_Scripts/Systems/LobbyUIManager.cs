@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Fusion;
@@ -13,8 +12,11 @@ namespace UI
 
         private Dictionary<PlayerRef, PlayerDictionary> playerDictionaryList;
 
+        public static LobbyUIManager Instance;
+
         private void Awake()
         {
+            Instance = this;
             // Create a new UI List
             playerDictionaryList = new();
         }
@@ -25,7 +27,7 @@ namespace UI
             GameObject entry = Instantiate(bannerPrefab, BannerLayoutTransform);
 
             // Make a new Player UI Object
-            PlayerDictionary playerDictionary = PlayerDictionary.Default;
+            PlayerDictionary playerDictionary = new();
 
             playerDictionary.PlayerUI = entry;
 
@@ -33,7 +35,6 @@ namespace UI
             playerDictionaryList.Add(_player, playerDictionary);
 
             // Update UI
-
             UpdateUI(_player);
         }
 
@@ -42,6 +43,14 @@ namespace UI
             playerDictionaryList[_player].UserName = _username;
 
             UpdateUI(_player);
+        }
+
+        public void RemovePlayer(PlayerRef _player)
+        {
+            GameObject PlayerUI = playerDictionaryList[_player].PlayerUI;
+
+            Destroy(PlayerUI);
+            playerDictionaryList.Remove(_player);
         }
 
         public void UpdateUI(PlayerRef _player)
@@ -57,10 +66,10 @@ namespace UI
 
             public string UserName { get; set; }
 
-            public static PlayerDictionary Default = new PlayerDictionary()
+            public PlayerDictionary()
             {
-                UserName = "",
-            };
+                UserName = "";
+            }
         }
     }
 }

@@ -4,22 +4,23 @@ using Data;
 using Database;
 using UI;
 
-namespace TryhardParty
+namespace Host
 {
-    public class LobbyManagerTest : NetworkBehaviour
+    public class LobbyManager : NetworkBehaviour, IPlayerLeft
     {
         [SerializeField] private Firestore firestore;
         [SerializeField] private LocalData localData;
 
-        [HideInInspector] internal LobbyUIManager lobbyUIManager;
+        private LobbyUIManager lobbyUIManager;
 
-        [Networked, HideInInspector] public NetworkString<_16> UserName { get; private set; }
+        [Networked, HideInInspector] private NetworkString<_16> UserName { get; set; }
+        [Networked, HideInInspector] private PlayerRef PlayerDc { get; set; }
 
         private ChangeDetector changeDetector;
 
         public override void Spawned()
         {
-            lobbyUIManager = GameObject.Find("LobbyUIManager").GetComponent<LobbyUIManager>();
+            lobbyUIManager = LobbyUIManager.Instance;
 
             // Client
             if (Object.HasInputAuthority)
@@ -51,8 +52,16 @@ namespace TryhardParty
                     case nameof(UserName):
                         lobbyUIManager.UpdateUserName(Object.InputAuthority, UserName.ToString());
                         break;
+                    case nameof(PlayerDc):
+                        lobbyUIManager.RemovePlayer(PlayerDc);
+                        break;
                 }
             }
+        }
+
+        public void PlayerLeft(PlayerRef player)
+        {
+            PlayerDc = player;
         }
 
         // RPC used to send player information to the Host

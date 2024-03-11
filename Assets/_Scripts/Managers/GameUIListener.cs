@@ -71,14 +71,12 @@ namespace UI
         {
             Score += _score;
             Debug.Log(_score);
-            Debug.Log(Score);
         }
 
         public void RemoveHp(int _hp)
         {
             Hp -= _hp;
             Debug.Log(_hp);
-            Debug.Log(Hp);
         }
 
         // RPC used to send player information to the Host

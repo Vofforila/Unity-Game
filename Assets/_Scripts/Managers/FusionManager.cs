@@ -35,20 +35,30 @@ namespace Server
         public UnityEvent playLevel2Event;
         public UnityEvent playLevel3Event;
         public UnityEvent playLevel4Event;
+        public UnityEvent showStatisticEvent;
 
         // Variables
         [HideInInspector]
         public List<PlayerRef> playersInGame = new();
 
+        public static FusionManager Instance;
+
         private void Awake()
         {
             // Disable firestore duplication
             FirebaseFirestore.DefaultInstance.Settings.PersistenceEnabled = false;
+            Instance = this;
 
             DontDestroyOnLoad(gameObject);
             runner = gameObject.AddComponent<NetworkRunner>();
 
             localData.playerList = new();
+        }
+
+        private void Start()
+        {
+            localData.currentLvl = 0;
+            GameUIManager.Instance.UpdateLevelState(localData.currentLvl);
         }
 
         // Test GUI
@@ -108,7 +118,6 @@ namespace Server
                     test = false;
                     JoinLobby();
                 }
-
                 if (GUI.Button(new Rect(0, 280, 200, 40), "Leave"))
                 {
                     managerUi.EnablePlayButton(true);
@@ -118,6 +127,14 @@ namespace Server
                     test = false;
                 }
             }
+        }
+
+        public async void LoadMainMenuEvent()
+        {
+            Debug.Log("Callback");
+            localData.currentLvl = 0;
+            await runner.LoadScene(SceneRef.FromIndex(0), LoadSceneMode.Single);
+            showStatisticEvent.Invoke();
         }
 
         public async void LoadLevel1()
@@ -153,22 +170,6 @@ namespace Server
             await runner.LoadScene(SceneRef.FromIndex(4), LoadSceneMode.Single);
             Debug.Log("Play Level 4 - Event");
             playLevel4Event.Invoke();
-        }
-
-        public async void ShowStatisticEvent()
-        {
-            Debug.Log("Callback");
-            localData.currentLvl = 0;
-            await runner.LoadScene(SceneRef.FromIndex(0), LoadSceneMode.Single);
-            LobbyManagerSpawner lobbyManagerSpawner = GameObject.Find("LobbyManagerSpawner").GetComponent<LobbyManagerSpawner>();
-            lobbyManagerSpawner.ShowStatisticPanel();
-        }
-
-        public async void LoadMainMenu()
-        {
-            Debug.Log("Callback");
-            localData.showMatchStatistics = true;
-            await runner.LoadScene(SceneRef.FromIndex(0), LoadSceneMode.Single);
         }
 
         public void InviteResponseEvent()
@@ -376,14 +377,6 @@ namespace Server
         public void OnUserSimulationMessage(NetworkRunner runner, SimulationMessagePtr message)
         {
             Debug.Log("19");
-        }
-
-        public void SendChatMessage()
-        {
-            if (Input.GetKeyDown(KeyCode.Return))
-            {
-                localData.returnKeyPressed = true;
-            }
         }
     }
 }

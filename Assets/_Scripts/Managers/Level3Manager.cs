@@ -76,7 +76,7 @@ namespace Host
                     break;
 
                 case GameState.SpawnEnemies:
-                    SpawnEnemies();
+                    StartCoroutine(ISpawnEnemies());
                     break;
 
                 case GameState.IsPlayerAlive:
@@ -99,8 +99,9 @@ namespace Host
             UpdateGameState(GameState.SpawnEnemies);
         }
 
-        public void SpawnEnemies()
+        public IEnumerator ISpawnEnemies()
         {
+            yield return new WaitForSecondsRealtime(5f);
             StartCoroutine(spawnManager.ISpawnCatapults());
             UpdateGameState(GameState.IsPlayerAlive);
         }
