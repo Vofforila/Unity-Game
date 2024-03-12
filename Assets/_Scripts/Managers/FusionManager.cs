@@ -132,14 +132,11 @@ namespace Server
         public async void LoadMainMenuEvent()
         {
             Debug.Log("Callback");
-            localData.currentLvl = 0;
             await runner.LoadScene(SceneRef.FromIndex(0), LoadSceneMode.Single);
-            showStatisticEvent.Invoke();
         }
 
         public async void LoadLevel1()
         {
-            localData.currentLvl = 1;
             await runner.LoadScene(SceneRef.FromIndex(1), LoadSceneMode.Single);
             Debug.Log("Play Level 1 - Event");
             playLevel1Event.Invoke();
@@ -148,7 +145,6 @@ namespace Server
         public async void LoadLevel2Event()
         {
             Debug.Log("Callback");
-            localData.currentLvl = 2;
             await runner.LoadScene(SceneRef.FromIndex(2), LoadSceneMode.Single);
             Debug.Log("Play Level 2 - Event");
             playLevel2Event.Invoke();
@@ -157,7 +153,6 @@ namespace Server
         public async void LoadLevel3Event()
         {
             Debug.Log("Callback");
-            localData.currentLvl = 3;
             await runner.LoadScene(SceneRef.FromIndex(3), LoadSceneMode.Single);
             Debug.Log("Play Level 3 - Event");
             playLevel3Event.Invoke();
@@ -166,7 +161,6 @@ namespace Server
         public async void LoadLevel4Event()
         {
             Debug.Log("Callback");
-            localData.currentLvl = 4;
             await runner.LoadScene(SceneRef.FromIndex(4), LoadSceneMode.Single);
             Debug.Log("Play Level 4 - Event");
             playLevel4Event.Invoke();

@@ -31,6 +31,8 @@ namespace UI
         private const string tipsLvl3 = "Use Your Mouse to doge the Projectiles";
         private const string tipsLvl4 = "Don't get crushed by the falling ceiling";
 
+        public List<GameObject> scoreList;
+
         //Singleton
         public static GameUIManager Instance;
 
@@ -40,6 +42,7 @@ namespace UI
             // Set Panel for Game Tip
             DontDestroyOnLoad(this);
             PlayerDictionary = new();
+            scoreList = new();
         }
 
         public void UpdateLevelState(int _level)
@@ -123,7 +126,7 @@ namespace UI
             GameObject playerScore = Instantiate(playerScorePrefab, scoreboardPanel.transform);
 
             // Add the PlayerUI to PlayerData
-            playerData.PlayerScore = playerScore;
+            scoreList.Add(playerScore);
             playerData.PlayerHp = playerHp;
 
             // Attach the PlayerData to a List
@@ -153,20 +156,17 @@ namespace UI
 
         public void UpdateUI(PlayerRef _player)
         {
-            Dictionary<PlayerRef, PlayerData> sortedList = PlayerDictionary.OrderBy(pair => pair.Value.Score).ToDictionary(pair => pair.Key, pair => pair.Value);
+            Dictionary<PlayerRef, PlayerData> sortedList = PlayerDictionary.OrderByDescending(pair => pair.Value.Score).ToDictionary(pair => pair.Key, pair => pair.Value);
 
             PlayerData playerData = sortedList[_player];
 
+            int x = 0;
             foreach (var key in sortedList)
             {
                 PlayerData playerDataScore = key.Value;
                 string playerScore = playerDataScore.UserName + " : " + playerDataScore.Score;
-                playerDataScore.PlayerScore.GetComponent<TMP_Text>().text = playerScore;
+                scoreList[x++].GetComponent<TMP_Text>().text = playerScore;
             }
-
-            /* // Update Score
-             string playerScore = PlayerData.UserName + " : " + PlayerData.Score;
-         PlayerData.PlayerScore.GetComponent<TMP_Text>().text = playerScore;*/
 
             string playerHp = playerData.UserName + "\n " + playerData.Hp + " / 100";
             playerData.PlayerHp.GetComponent<TMP_Text>().text = playerHp;
@@ -177,7 +177,6 @@ namespace UI
             public string UserName { get; set; }
             public int Score { get; set; }
             public int Hp { get; set; }
-            public GameObject PlayerScore { get; set; }
             public GameObject PlayerHp { get; set; }
 
             public PlayerData()
@@ -185,7 +184,7 @@ namespace UI
                 UserName = "";
                 Score = 0;
                 Hp = 100;
-                PlayerScore = null;
+
                 PlayerHp = null;
             }
         }

@@ -11,14 +11,16 @@ using SpecialFunction;
 
 namespace Database
 {
-    [CreateAssetMenu(fileName = "Firestore", menuName = "Firestore/Firestore")]
+    [CreateAssetMenu(fileName = "Firestore", menuName = "Firebase/Firestore")]
     public class Firestore : ScriptableObject
     {
         [Header("Scriptable")]
         public SpecialFunctions specialFunctions;
         public LocalData localData;
+
         public AccountFirebase accountFirebase = new();
         public LobbyData lobbydata = new();
+        public int playerIcon;
 
         [Header("Events")]
         public UnityEvent updateUI;
@@ -64,6 +66,7 @@ namespace Database
                     Id = newID,
                     RankPoints = 0,
                     Winrate = 0,
+                    PlayerIcon = 1,
                     FriendList = new(),
                     FriendRequestsList = new(),
                     InviteToGameList = new(),
@@ -334,8 +337,50 @@ namespace Database
             });
         }
 
+        public void UpdateUserIcon(int _var)
+        {
+            FirebaseFirestore db = FirebaseFirestore.DefaultInstance;
+            DocumentReference accountInfo_doc = db.Collection("AccountInfo").Document(accountFirebase.Id.ToString());
+
+            accountInfo_doc.GetSnapshotAsync().ContinueWith((task) =>
+            {
+                accountFirebase.PlayerIcon = _var;
+
+                accountInfo_doc.UpdateAsync("PlayerIcon", accountFirebase.PlayerIcon);
+            });
+        }
+
+        public async Task GetPlayerIcon(string _user)
+        {
+            // Get User Data from Email for first time
+
+            FirebaseFirestore db = FirebaseFirestore.DefaultInstance;
+            CollectionReference accountsIdIndex_col = db.Collection("AccountInfo");
+
+            await accountsIdIndex_col.GetSnapshotAsync().ContinueWith((task) =>
+            {
+                QuerySnapshot snapshots = task.Result;
+
+                foreach (DocumentSnapshot document in snapshots)
+                {
+                    Dictionary<string, object> data = document.ToDictionary();
+
+                    if (data.ContainsKey("User") && (_user == (data["User"]).ToString()))
+                    {
+                        /*  AccountFirebase otheraccountFirebase = document.ConvertTo<AccountFirebase>();*/
+
+                        playerIcon = (int)(long)data["PlayerIcon"];
+
+                        Debug.Log("Got Player Icon");
+                        break;
+                    }
+                }
+            });
+        }
+
         [FirestoreData]
         public class LobbyData
+
         {
             [FirestoreProperty]
             public List<object> HostPlayerList { get; set; }
@@ -364,6 +409,9 @@ namespace Database
 
             [FirestoreProperty]
             public int Winrate { get; set; }
+
+            [FirestoreProperty]
+            public int PlayerIcon { get; set; }
 
             [FirestoreProperty]
             public List<object> FriendList { get; set; }

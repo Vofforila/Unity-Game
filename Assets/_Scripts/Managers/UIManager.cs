@@ -8,13 +8,16 @@ using Fusion;
 using System.Collections.Generic;
 using System.Linq;
 using static UI.GameUIManager;
+using Data;
+using SpecialFunction;
 
 namespace UI
 {
     public class UIManager : MonoBehaviour
     {
         [Header("LocalData")]
-        [SerializeField] public Firestore firestore;
+        [SerializeField] private Firestore firestore;
+        [SerializeField] private LocalData localdata;
 
         [Header("Prefabs")]
         [SerializeField] private GameObject friendPrefab;
@@ -37,6 +40,7 @@ namespace UI
         [SerializeField] private TMP_Text currentUserName;
         [SerializeField] private TMP_Text winrate;
         [SerializeField] private TMP_Text rankPoints;
+        [SerializeField] private Image playerIcon;
 
         [Header("Add Freind Panel")]
         [SerializeField] private GameObject addFriendPanel;
@@ -69,6 +73,11 @@ namespace UI
         [SerializeField] private GameObject matchStatisticsPanel;
         [SerializeField] private GameObject playersStatisticPanel;
         [SerializeField] private GameObject rankPointsGained;
+        [SerializeField] private GameObject playerStatsPrefab;
+
+        [Header("Choose Icon Panel")]
+        [SerializeField] private GameObject chooseIconPanel;
+        [SerializeField] private List<Sprite> playerIcons;
 
         public static UIManager Instance;
 
@@ -81,6 +90,11 @@ namespace UI
             forgotPasswordCanvas.SetActive(false);
             mainMenuLoadingCanvas.SetActive(false);
             mainMenuCanvas.SetActive(false);
+
+            if (localdata.currentLvl > 0)
+            {
+                ShowStatisticPanelEvent();
+            }
         }
 
         ////////////////////////////////////
@@ -146,6 +160,15 @@ namespace UI
         }
 
         ////////////////////////////////////
+        // Choose Icon Panel
+        ////////////////////////////////////
+
+        public void EnableChooseIcons(bool _var)
+        {
+            chooseIconPanel.SetActive(_var);
+        }
+
+        ////////////////////////////////////
         // Friend Panel
         ////////////////////////////////////
 
@@ -158,42 +181,35 @@ namespace UI
         // Statistics Panel
         ////////////////////////////////////
 
-        public void ShowStatisticPanelEvent()
+        public async void ShowStatisticPanelEvent()
         {
             matchStatisticsPanel.SetActive(true);
-            Debug.Log(GameUIManager.Instance.PlayerDictionary.Count);
-            for (int place = 0; place <= GameUIManager.Instance.PlayerDictionary.Count; place++)
+
+            Dictionary<PlayerRef, PlayerData> playerDictionary = GameUIManager.Instance.PlayerDictionary;
+
+            Dictionary<PlayerRef, PlayerData> sortedList = playerDictionary.OrderByDescending(pair => pair.Value.Score).ToDictionary(pair => pair.Key, pair => pair.Value);
+
+            int i;
+            int place = 1;
+            foreach (var key in sortedList)
             {
-                Debug.Log("Exe");
-                GameObject[] playerStatistics = new GameObject[playersStatisticPanel.transform.childCount];
+                i = 0;
 
-                for (int p = 0; p < playersStatisticPanel.transform.childCount; p++)
-                {
-                    // Get the child Transform
-                    Transform childTransform = playersStatisticPanel.transform.GetChild(p);
+                GameObject playerStatistics = Instantiate(playerStatsPrefab, playersStatisticPanel.transform);
 
-                    // Get the child GameObject
-                    playerStatistics[p] = childTransform.gameObject;
-                }
+                await firestore.GetPlayerIcon(key.Value.UserName);
 
-                Dictionary<PlayerRef, PlayerData> playerDictionary = GameUIManager.Instance.PlayerDictionary;
+                Debug.Log(firestore.playerIcon);
 
-                Debug.Log(playerDictionary);
+                playerStatistics.GetComponentInChildren<Image>().sprite = playerIcons[firestore.playerIcon];
 
-                int i = 0;
-                foreach (var key in playerDictionary)
-                {
-                    Debug.Log(playerStatistics[place]);
-                    playerStatistics[place].SetActive(true);
+                TMP_Text[] stats = playerStatistics.GetComponentsInChildren<TMP_Text>();
 
-                    TMP_Text[] stats = playerStatistics[place].GetComponents<TMP_Text>();
+                stats[i++].text = (place++).ToString();
+                stats[i++].text = key.Value.UserName;
+                stats[i++].text = key.Value.Score.ToString();
 
-                    stats[i++].text = (place + 1).ToString();
-                    stats[i++].text = key.Value.UserName;
-                    stats[i++].text = key.Value.Score.ToString();
-
-                    rankPointsGained.GetComponent<TMP_Text>().text = key.Value.Score.ToString();
-                }
+                rankPointsGained.GetComponent<TMP_Text>().text = key.Value.Score.ToString();
             }
         }
 
@@ -275,6 +291,7 @@ namespace UI
         public void UpdateProfilePanel()
         {
             currentUserName.text = firestore.accountFirebase.User;
+            playerIcon.sprite = playerIcons[firestore.accountFirebase.PlayerIcon];
             winrate.text = firestore.accountFirebase.Winrate.ToString() + " %";
             rankPoints.text = firestore.accountFirebase.RankPoints.ToString();
         }
@@ -366,6 +383,11 @@ namespace UI
         public void SendFriendRequest()
         {
             firestore.SendFriendRequest(addFriendInput.text);
+        }
+
+        public void UpdateUserIcon(int _var)
+        {
+            firestore.UpdateUserIcon(_var);
         }
 
         ////////////////////////////////////

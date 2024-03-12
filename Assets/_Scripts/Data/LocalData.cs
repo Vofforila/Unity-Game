@@ -35,6 +35,6 @@ namespace Data
         public bool playerTurn;
 
         [Header("Match Statistics")]
-        public bool showMatchStatistics;
+        public bool showMatchStatistics = false;
     }
 }
