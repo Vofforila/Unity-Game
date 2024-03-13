@@ -2,6 +2,7 @@ using Data;
 using Fusion;
 using System.Collections;
 using System.Collections.Generic;
+using UI;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -31,14 +32,13 @@ namespace Host
 
         [Header("Events")]
         [SerializeField] private UnityEvent playLevel4Event;
-        [SerializeField] private UnityEvent showStatisticEvent;
 
         [Networked, HideInInspector] public int FinishPlace { get; set; }
 
         private Dictionary<PlayerRef, NetworkObject> networkPlayerDictionary;
 
         // Singleton
-        [HideInInspector] public static Level4Manager Instance;
+        public static Level4Manager Instance;
 
         private void Awake()
         {
@@ -50,6 +50,7 @@ namespace Host
         public void Start()
         {
             spawnManager.SpawnLocal(false);
+            GameUIManager.Instance.UpdateLevelState(localData.currentLvl);
         }
 
         public override void Spawned()
@@ -123,7 +124,6 @@ namespace Host
         public void EndLevel()
         {
             playLevel4Event.Invoke();
-            showStatisticEvent.Invoke();
         }
     }
 }

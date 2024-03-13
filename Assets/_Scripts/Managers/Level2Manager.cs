@@ -2,6 +2,7 @@ using Data;
 using Fusion;
 using System.Collections;
 using System.Collections.Generic;
+using UI;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -37,7 +38,7 @@ namespace Host
         private Dictionary<PlayerRef, NetworkObject> networkPlayerDictionary;
 
         // Singleton
-        [HideInInspector] public static Level2Manager Instance;
+        public static Level2Manager Instance;
 
         private void Awake()
         {
@@ -49,6 +50,7 @@ namespace Host
         public void Start()
         {
             spawnManager.SpawnLocal(false);
+            GameUIManager.Instance.UpdateLevelState(localData.currentLvl);
         }
 
         public override void Spawned()

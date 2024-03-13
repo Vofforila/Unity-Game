@@ -90,10 +90,14 @@ namespace UI
             forgotPasswordCanvas.SetActive(false);
             mainMenuLoadingCanvas.SetActive(false);
             mainMenuCanvas.SetActive(false);
+        }
 
+        private void Start()
+        {
             if (localdata.currentLvl > 0)
             {
                 ShowStatisticPanelEvent();
+                localdata.currentLvl = 0;
             }
         }
 

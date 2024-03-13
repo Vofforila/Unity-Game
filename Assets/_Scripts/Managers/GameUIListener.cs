@@ -15,7 +15,6 @@ namespace UI
 
         [Networked, Capacity(5), HideInInspector] public NetworkString<_16> Username { get; set; }
         [Networked, HideInInspector] public int Score { get; set; }
-        [Networked, HideInInspector] public int Hp { get; set; }
 
         private GameUIManager gameUIManager;
 
@@ -26,22 +25,29 @@ namespace UI
             gameUIManager = GameUIManager.Instance;
         }
 
+        private void Start()
+        {
+            gameUIManager.CreateLocalUI();
+        }
+
         public override void Spawned()
         {
-            if (Object.HasInputAuthority)
+            if (localData.currentLvl == 4)
             {
-                RPC_SendUsername(firestore.accountFirebase.User);
-            }
-            if (Object.HasStateAuthority)
-            {
-                Score = 0;
-                Hp = 100;
-            }
+                if (Object.HasInputAuthority)
+                {
+                    RPC_SendUsername(firestore.accountFirebase.User);
+                }
+                if (Object.HasStateAuthority)
+                {
+                    Score = 0;
+                }
 
-            gameUIManager.CreateUI(Object.InputAuthority);
+                gameUIManager.CreateUI(Object.InputAuthority);
 
-            gameUIManager.UpdateUserName(Object.InputAuthority, Username.ToString());
-            gameUIManager.UpdateScore(Object.InputAuthority, 0);
+                gameUIManager.UpdateUserName(Object.InputAuthority, Username.ToString());
+                gameUIManager.UpdateScore(Object.InputAuthority, 0);
+            }
 
             changeDetector = GetChangeDetector(ChangeDetector.Source.SimulationState);
         }
@@ -58,9 +64,6 @@ namespace UI
                     case nameof(Username):
                         gameUIManager.UpdateUserName(Object.InputAuthority, Username.ToString());
                         break;
-                    case nameof(Hp):
-                        gameUIManager.UpdateHp(Object.InputAuthority, Hp);
-                        break;
                     default:
                         break;
                 }
@@ -73,9 +76,9 @@ namespace UI
             Debug.Log(_score);
         }
 
-        public void RemoveHp(int _hp)
+        public void UpdateHp(int _hp)
         {
-            Hp -= _hp;
+            gameUIManager.UpdateHp(_hp);
             Debug.Log(_hp);
         }
 

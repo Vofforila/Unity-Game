@@ -1548,18 +1548,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: InputManager
       objectReference: {fileID: 0}
-    - target: {fileID: 0}
-      propertyPath: m_Enabled
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 0}
-      propertyPath: SortKey
-      value: 4033742448
-      objectReference: {fileID: 0}
-    - target: {fileID: 0}
-      propertyPath: NetworkedBehaviours.Array.data[0]
-      value: 
-      objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 0}
     - {fileID: 0}
@@ -1901,8 +1889,8 @@ MonoBehaviour:
   playLevel2Event:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 11400000, guid: fdc4301ee57d606469cc5126c1977dc8, type: 2}
-        m_TargetAssemblyTypeName: Event.LoadMainMenuEvent, Assembly-CSharp
+      - m_Target: {fileID: 11400000, guid: 31c1c04c3c55f064a9fb1910f8892400, type: 2}
+        m_TargetAssemblyTypeName: Event.LoadLevel2Event, Assembly-CSharp
         m_MethodName: Raise
         m_Mode: 1
         m_Arguments:

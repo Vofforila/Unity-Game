@@ -58,7 +58,7 @@ namespace Player
         {
             if (localData.currentLvl == 3)
             {
-                PlayerHp = 100;
+                PlayerHp = 20;
             }
         }
 
@@ -105,7 +105,10 @@ namespace Player
                     case nameof(PlayerHp):
                         if (PlayerHp == 0)
                         {
-                            RPC_PlayerDead();
+                            if (Object.HasInputAuthority)
+                            {
+                                RPC_PlayerDead();
+                            }
                             playerVisuals.SetVisuals(false);
                         }
                         break;
@@ -116,14 +119,17 @@ namespace Player
         public void OnTriggerEnter(Collider other)
         {
             // Update score
-            if (Object.HasInputAuthority && other.gameObject.CompareTag("Bullet"))
+            if (Object.HasInputAuthority && other.gameObject.CompareTag("Bullet") && localData.currentLvl == 3)
             {
                 // take dmg
-                Debug.Log("DMG");
                 if (PlayerHp > 0)
                 {
-                    gameUIListener.RemoveHp(10);
+                    if (PlayerHp <= 0)
+                    {
+                        PlayerHp = 0;
+                    }
                     PlayerHp -= 10;
+                    gameUIListener.UpdateHp(PlayerHp);
                 }
             }
         }

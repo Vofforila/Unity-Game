@@ -5,6 +5,7 @@ using UnityEngine;
 using Fusion;
 using Data;
 using System.Linq;
+using Database;
 
 namespace UI
 {
@@ -12,15 +13,22 @@ namespace UI
     {
         [Header("Scriptable")]
         [SerializeField] private LocalData localData;
+        [SerializeField] private Firestore firebase;
 
         [Header("HP")]
         [SerializeField] private GameObject playerHp;
 
-        [Header("Scoreboard")]
+        [Header("Tip Panel")]
         [SerializeField] private GameObject gameTipPanel;
+
+        [Header("Scoreboard")]
         [SerializeField] private GameObject scoreboardPanel;
         [SerializeField] private GameObject playerScorePrefab;
+
+        [Header("Chat")]
         [SerializeField] private GameObject chatBoxPanel;
+
+        [Header("Loading Screen")]
         [SerializeField] private GameObject loadingPanel;
 
         public Dictionary<PlayerRef, PlayerData> PlayerDictionary;
@@ -31,7 +39,9 @@ namespace UI
         private const string tipsLvl3 = "Use Your Mouse to doge the Projectiles";
         private const string tipsLvl4 = "Don't get crushed by the falling ceiling";
 
-        public List<GameObject> scoreList;
+        private List<GameObject> scoreList;
+
+        private LocalPlayerData localPlayerData;
 
         //Singleton
         public static GameUIManager Instance;
@@ -127,7 +137,6 @@ namespace UI
 
             // Add the PlayerUI to PlayerData
             scoreList.Add(playerScore);
-            playerData.PlayerHp = playerHp;
 
             // Attach the PlayerData to a List
             PlayerDictionary.Add(_player, playerData);
@@ -148,12 +157,6 @@ namespace UI
             UpdateUI(_player);
         }
 
-        public void UpdateHp(PlayerRef _player, int _hp)
-        {
-            PlayerDictionary[_player].Hp = _hp;
-            UpdateUI(_player);
-        }
-
         public void UpdateUI(PlayerRef _player)
         {
             Dictionary<PlayerRef, PlayerData> sortedList = PlayerDictionary.OrderByDescending(pair => pair.Value.Score).ToDictionary(pair => pair.Key, pair => pair.Value);
@@ -167,25 +170,50 @@ namespace UI
                 string playerScore = playerDataScore.UserName + " : " + playerDataScore.Score;
                 scoreList[x++].GetComponent<TMP_Text>().text = playerScore;
             }
+        }
 
-            string playerHp = playerData.UserName + "\n " + playerData.Hp + " / 100";
-            playerData.PlayerHp.GetComponent<TMP_Text>().text = playerHp;
+        public void CreateLocalUI()
+        {
+            localPlayerData = new();
+            localPlayerData.UserName = firebase.accountFirebase.User;
+            localPlayerData.PlayerHp = playerHp;
+            UpdateLocalUI();
+        }
+
+        public void UpdateHp(int _hp)
+        {
+            localPlayerData.Hp = _hp;
+            UpdateLocalUI();
+        }
+
+        public void UpdateLocalUI()
+        {
+            string playerHp = localPlayerData.UserName + "\n " + localPlayerData.Hp + " / 100";
+            localPlayerData.PlayerHp.GetComponent<TMP_Text>().text = playerHp;
         }
 
         public class PlayerData
         {
             public string UserName { get; set; }
             public int Score { get; set; }
-            public int Hp { get; set; }
-            public GameObject PlayerHp { get; set; }
 
             public PlayerData()
             {
                 UserName = "";
                 Score = 0;
-                Hp = 100;
+            }
+        }
 
-                PlayerHp = null;
+        public class LocalPlayerData
+        {
+            public string UserName { get; set; }
+            public int Hp { get; set; }
+            public GameObject PlayerHp { get; set; }
+
+            public LocalPlayerData()
+            {
+                UserName = "";
+                Hp = 20;
             }
         }
     }

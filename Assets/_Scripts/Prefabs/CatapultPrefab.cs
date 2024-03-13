@@ -36,7 +36,7 @@ namespace Enemy
 
         public override void Render()
         {
-            if (IsFiring == false)
+            if (IsFiring == false && Object.HasStateAuthority)
             {
                 IsFiring = true;
                 StartCoroutine(SpawnProjectile());

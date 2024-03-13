@@ -2,6 +2,7 @@ using Data;
 using Fusion;
 using System.Collections;
 using System.Collections.Generic;
+using UI;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -48,6 +49,7 @@ namespace Host
         public void Start()
         {
             spawnManager.SpawnLocal(false);
+            GameUIManager.Instance.UpdateLevelState(localData.currentLvl);
         }
 
         public override void Spawned()
@@ -95,7 +97,7 @@ namespace Host
 
         public void StartLevel()
         {
-            spawnManager.SpawnNetworkPlayers(_level: 3, _isKinematic: true);
+            networkPlayerDictionary = spawnManager.SpawnNetworkPlayers(_level: 3, _isKinematic: true);
             UpdateGameState(GameState.SpawnEnemies);
         }
 

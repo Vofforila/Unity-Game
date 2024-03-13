@@ -2749,21 +2749,6 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-  showStatisticEvent:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 11400000, guid: 5df11c63d772ca1428ded7a61571dd8c, type: 2}
-        m_TargetAssemblyTypeName: Event.ShowStatisticsEvent, Assembly-CSharp
-        m_MethodName: Raise
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
   _FinishPlace: 0
 --- !u!114 &577175122
 MonoBehaviour:
@@ -7651,6 +7636,85 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 1678928761}
   m_PrefabAsset: {fileID: 0}
+--- !u!1001 &1689437082
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 1872430658}
+    m_Modifications:
+    - target: {fileID: 3534977266360193982, guid: aae053dc65cb42a468ea5ddd3e4b2e57,
+        type: 3}
+      propertyPath: m_Name
+      value: ChatManager
+      objectReference: {fileID: 0}
+    - target: {fileID: 5132872630249325598, guid: aae053dc65cb42a468ea5ddd3e4b2e57,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5132872630249325598, guid: aae053dc65cb42a468ea5ddd3e4b2e57,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5132872630249325598, guid: aae053dc65cb42a468ea5ddd3e4b2e57,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5132872630249325598, guid: aae053dc65cb42a468ea5ddd3e4b2e57,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5132872630249325598, guid: aae053dc65cb42a468ea5ddd3e4b2e57,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5132872630249325598, guid: aae053dc65cb42a468ea5ddd3e4b2e57,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5132872630249325598, guid: aae053dc65cb42a468ea5ddd3e4b2e57,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5132872630249325598, guid: aae053dc65cb42a468ea5ddd3e4b2e57,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5132872630249325598, guid: aae053dc65cb42a468ea5ddd3e4b2e57,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5132872630249325598, guid: aae053dc65cb42a468ea5ddd3e4b2e57,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8404043547928208746, guid: aae053dc65cb42a468ea5ddd3e4b2e57,
+        type: 3}
+      propertyPath: SortKey
+      value: 2033451634
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: aae053dc65cb42a468ea5ddd3e4b2e57, type: 3}
+--- !u!4 &1689437083 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 5132872630249325598, guid: aae053dc65cb42a468ea5ddd3e4b2e57,
+    type: 3}
+  m_PrefabInstance: {fileID: 1689437082}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1692878507
 GameObject:
   m_ObjectHideFlags: 0
@@ -8460,6 +8524,7 @@ Transform:
   - {fileID: 1824738058}
   - {fileID: 1487989077}
   - {fileID: 29944188}
+  - {fileID: 1689437083}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1875931566

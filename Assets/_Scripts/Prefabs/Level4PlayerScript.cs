@@ -110,9 +110,8 @@ namespace Player
 
         public void OnTriggerEnter(Collider other)
         {
-            Debug.Log("Colld");
             // Update score
-            if (Object.HasInputAuthority && other.gameObject.CompareTag("Projectile"))
+            if (Object.HasInputAuthority && other.gameObject.CompareTag("Projectile") && localData.currentLvl == 4)
             {
                 Debug.Log("Coll");
                 // take dmg
