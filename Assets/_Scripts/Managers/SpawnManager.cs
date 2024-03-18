@@ -136,7 +136,7 @@ namespace Host
             }
 
             // Shuffle the array
-            Shuffle2DArray(fallingBlockArray);
+            /* Shuffle2DArray(fallingBlockArray);*/
 
             int coinPosition = 0;
             // Spawn the stones at random positions
@@ -161,6 +161,7 @@ namespace Host
 
                 // Wait for block to fall
                 yield return new WaitForFixedUpdate();
+                yield return new WaitForEndOfFrame();
                 networkFallingBlock.GetComponent<BoxCollider>().isTrigger = false;
 
                 // Repeat

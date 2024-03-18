@@ -320,23 +320,6 @@ namespace Database
             });
         }
 
-        public void UpdateChat(string _message, string _sessionName)
-        {
-            FirebaseFirestore db = FirebaseFirestore.DefaultInstance;
-            DocumentReference lobbies_doc = db.Collection("Lobbies").Document(_sessionName);
-
-            lobbies_doc.GetSnapshotAsync().ContinueWith((task) =>
-            {
-                DocumentSnapshot snapshot = task.Result;
-
-                LobbyData targetLobbyData = snapshot.ConvertTo<LobbyData>();
-
-                targetLobbyData.RoomChat += _message;
-
-                lobbies_doc.UpdateAsync("RoomChat", targetLobbyData.RoomChat);
-            });
-        }
-
         public void UpdateUserIcon(int _var)
         {
             FirebaseFirestore db = FirebaseFirestore.DefaultInstance;

@@ -31,7 +31,7 @@ namespace Host
         public GameState State;
 
         [Header("Events")]
-        [SerializeField] private UnityEvent playLevel4Event;
+        [SerializeField] private UnityEvent loadMainMenuEvent;
 
         [Networked, HideInInspector] public int FinishPlace { get; set; }
 
@@ -58,7 +58,7 @@ namespace Host
             UpdateGameState(GameState.Loading);
         }
 
-        public void PlayeLevel4Event()
+        public void PlayLevel4Event()
         {
             Debug.Log("Callback");
             if (Object.HasStateAuthority)
@@ -78,7 +78,7 @@ namespace Host
                     StartLevel();
                     break;
                 case GameState.SpawnEnemies:
-                    SpawnEnemies();
+                    StartCoroutine(SpawnEnemies());
                     break;
                 case GameState.IsPlayerAlive:
                     StartCoroutine(IIsPlayerAlive());
@@ -123,7 +123,7 @@ namespace Host
 
         public void EndLevel()
         {
-            playLevel4Event.Invoke();
+            loadMainMenuEvent.Invoke();
         }
     }
 }

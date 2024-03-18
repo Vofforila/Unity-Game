@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2706649475781600925}
   - component: {fileID: 2455306948047950544}
+  - component: {fileID: 7726876057479321445}
   m_Layer: 0
   m_Name: Curve
   m_TagString: Untagged
@@ -50,6 +51,23 @@ MonoBehaviour:
   A: {fileID: 5686419343278639004}
   B: {fileID: 3825512891032708845}
   C: {fileID: 8768643633720406776}
+--- !u!114 &7726876057479321445
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4732878304155685306}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -1552182283, guid: e725a070cec140c4caffb81624c8c787, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  SortKey: 1157960668
+  ObjectInterest: 1
+  Flags: 262145
+  NestedObjects: []
+  NetworkedBehaviours: []
 --- !u!1 &5637783525203015722
 GameObject:
   m_ObjectHideFlags: 0
@@ -248,7 +266,7 @@ MonoBehaviour:
   localData: {fileID: 11400000, guid: 9ae0573c8cfccd741b7423eb0db11b79, type: 2}
   firestore: {fileID: 11400000, guid: 883b834f3dfdf5a45aee970fc4e238bd, type: 2}
   curve: {fileID: 2455306948047950544}
-  curveObj: {fileID: 4732878304155685306}
+  curveObj: {fileID: 7726876057479321445}
   A: {fileID: 5686419343278639004}
   B: {fileID: 3825512891032708845}
   C: {fileID: 8768643633720406776}
@@ -315,7 +333,8 @@ MonoBehaviour:
   SortKey: 3961001508
   ObjectInterest: 1
   Flags: 262145
-  NestedObjects: []
+  NestedObjects:
+  - {fileID: 7726876057479321445}
   NetworkedBehaviours:
   - {fileID: 1828196182095098150}
   - {fileID: 4338071822708763016}

@@ -14,7 +14,7 @@ namespace Enemy
 
         [Header("Curve")]
         [SerializeField] private QuadraticCurve curve;
-        [SerializeField] private GameObject curveObj;
+        [SerializeField] private NetworkObject curveObj;
         [SerializeField] private Transform A;
         [SerializeField] private Transform B;
         [SerializeField] private Transform C;
@@ -39,7 +39,6 @@ namespace Enemy
                 NewPosition = curve.Evaluate(sampleTime);
                 NewRotation = curve.Evaluate(sampleTime + 0.001f) - transform.position;
 
-                // Update Player
                 if (NewRotation != Vector3.zero)
                 {
                     transform.position = NewPosition;
@@ -51,8 +50,8 @@ namespace Enemy
                     transform.rotation = Quaternion.Euler(0f, 90f, 0f);
                     transform.position = NewPosition;
 
+                    Runner.Despawn(curveObj);
                     Runner.Despawn(Object);
-                    Destroy(curveObj);
                 }
             }
         }
@@ -66,7 +65,7 @@ namespace Enemy
             y = Random.Range(11, 13);
             z = Random.Range(-24, 24);
 
-            B.position = new Vector3(x, 0, z);
+            B.position = new Vector3(6, 0, 6);
             C.localPosition = new Vector3((B.localPosition.x - 2) / 2, y, B.localPosition.z / 2);
 
             sampleTime = 0f;

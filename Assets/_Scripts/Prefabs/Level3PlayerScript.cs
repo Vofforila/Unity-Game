@@ -45,6 +45,7 @@ namespace Player
 
         [Header("Game")]
         [SerializeField] private int score;
+        private bool isAlive;
 
         public void Awake()
         {
@@ -73,6 +74,7 @@ namespace Player
                 playerVisuals.SetAgent(agent, agentoffset, speed, angularSpeed, acceleration, stoppingDistance, obstacleRadius, obstacleHeight);
                 playerVisuals.SetPlayer(_visuals: true, _size: size, _isKinematic: isKinematic, _constrains: constrains, _mass: mass);
 
+                isAlive = true;
                 changeDetector = GetChangeDetector(ChangeDetector.Source.SimulationState);
             }
         }
@@ -103,14 +105,22 @@ namespace Player
                 switch (change)
                 {
                     case nameof(PlayerHp):
-                        if (PlayerHp == 0)
+                        if (PlayerHp <= 0)
                         {
+                            Debug.Log("Dead");
                             if (Object.HasInputAuthority)
                             {
+                                isAlive = false;
                                 RPC_PlayerDead();
                             }
                             playerVisuals.SetVisuals(false);
                         }
+
+                        if (Object.HasInputAuthority)
+                        {
+                            gameUIListener.UpdateHp(PlayerHp);
+                        }
+
                         break;
                 }
             }
@@ -118,25 +128,23 @@ namespace Player
 
         public void OnTriggerEnter(Collider other)
         {
-            // Update score
-            if (Object.HasInputAuthority && other.gameObject.CompareTag("Bullet") && localData.currentLvl == 3)
+            if (Object.HasStateAuthority && other.gameObject.CompareTag("Bullet") && localData.currentLvl == 3 && isAlive == true)
             {
                 // take dmg
                 if (PlayerHp > 0)
                 {
-                    if (PlayerHp <= 0)
+                    PlayerHp -= 10;
+                    if (PlayerHp < 0)
                     {
                         PlayerHp = 0;
                     }
-                    PlayerHp -= 10;
-                    gameUIListener.UpdateHp(PlayerHp);
                 }
             }
         }
 
         public void MovePlayer(Vector3 _clickPosition)
         {
-            if (HasStateAuthority)
+            if (Object.HasStateAuthority)
             {
                 agent.SetDestination(_clickPosition);
             }

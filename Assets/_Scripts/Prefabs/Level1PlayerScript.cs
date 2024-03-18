@@ -13,8 +13,6 @@ namespace Player
         [Header("Scriptable")]
         [SerializeField] private LocalData localData;
 
-        [SerializeField] private ServerData serverData;
-
         [Header("Internal")]
         [SerializeField] internal PlayerVisuals playerVisuals;
 

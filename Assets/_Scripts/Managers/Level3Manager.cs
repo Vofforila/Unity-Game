@@ -126,6 +126,7 @@ namespace Host
 
         public void EndLevel()
         {
+            playLevel4Event.Invoke();
         }
     }
 }

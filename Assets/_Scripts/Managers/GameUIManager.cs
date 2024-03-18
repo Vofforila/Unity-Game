@@ -97,7 +97,6 @@ namespace UI
             scoreboardPanel.SetActive(true);
             chatBoxPanel.SetActive(true);
             gameTipPanel.GetComponent<TMP_Text>().text = tipsLvl1;
-
             StartCoroutine(TipPanel(5f));
         }
 
@@ -156,6 +155,8 @@ namespace UI
             PlayerDictionary[_player].Score = _score;
             UpdateUI(_player);
         }
+
+        // fix player score
 
         public void UpdateUI(PlayerRef _player)
         {
