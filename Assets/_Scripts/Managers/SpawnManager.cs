@@ -5,6 +5,7 @@ using Fusion;
 using Player;
 using Fusion.Addons.Physics;
 using Unity.AI.Navigation;
+using System.Threading.Tasks;
 
 namespace Host
 {
@@ -27,6 +28,14 @@ namespace Host
 
         [Header("Camera")]
         [SerializeField] private GameObject playerCameraPrefab;
+
+        private List<NetworkObject> catapults;
+        private bool spawnAble;
+
+        private void Awake()
+        {
+            spawnAble = true;
+        }
 
         // Local
         public void SpawnLocal(bool _enableCamera)
@@ -108,15 +117,30 @@ namespace Host
 
         public IEnumerator ISpawnCatapults()
         {
-            Transform[] catapultSpawnPoints = GameObject.Find("CatapultSpawnPoints").GetComponentsInChildren<Transform>();
-            for (int i = 1; i <= catapultSpawnPoints.Length - 1; i++)
+            if (spawnAble == true)
             {
-                NetworkObject networkCatapult = Runner.Spawn(catapultPrefab, catapultSpawnPoints[i].position, catapultSpawnPoints[i].rotation);
+                catapults = new();
+                Transform[] catapultSpawnPoints = GameObject.Find("CatapultSpawnPoints").GetComponentsInChildren<Transform>();
+                for (int i = 1; i <= catapultSpawnPoints.Length - 1; i++)
+                {
+                    NetworkObject networkCatapult = Runner.Spawn(catapultPrefab, catapultSpawnPoints[i].position, catapultSpawnPoints[i].rotation);
 
-                NetworkTransform networkCatapultTransform = networkCatapult.GetComponent<NetworkTransform>();
-                networkCatapultTransform.Teleport(catapultSpawnPoints[i].position, catapultSpawnPoints[i].rotation);
-                yield return new WaitForSecondsRealtime(1f);
+                    NetworkTransform networkCatapultTransform = networkCatapult.GetComponent<NetworkTransform>();
+                    networkCatapultTransform.Teleport(catapultSpawnPoints[i].position, catapultSpawnPoints[i].rotation);
+                    yield return new WaitForSecondsRealtime(1f);
+                }
             }
+        }
+
+        public Task DespawnCatapults()
+        {
+            // Make a bool that disables the IspawnedCataluts
+            spawnAble = false;
+            foreach (NetworkObject catapult in catapults)
+            {
+                Runner.Despawn(catapult);
+            }
+            return Task.CompletedTask;
         }
 
         public IEnumerator ISpawnFallingBlox()

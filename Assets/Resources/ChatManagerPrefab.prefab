@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4492505023466455429}
   - component: {fileID: 1621449596420328685}
-  - component: {fileID: 767262192267325375}
+  - component: {fileID: 2591626552910066309}
   m_Layer: 0
   m_Name: ChatManagerPrefab
   m_TagString: Untagged
@@ -46,7 +46,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   firestore: {fileID: 11400000, guid: 883b834f3dfdf5a45aee970fc4e238bd, type: 2}
---- !u!114 &767262192267325375
+--- !u!114 &2591626552910066309
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -55,22 +55,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 4133445002820929238}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe4689d0a1d2ef54cb1f33032a8fd0c4, type: 3}
+  m_Script: {fileID: -1552182283, guid: e725a070cec140c4caffb81624c8c787, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Event: {fileID: 11400000, guid: 51c5e4d8ced8b7b4d8ebad769a02067b, type: 2}
-  Response:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1621449596420328685}
-        m_TargetAssemblyTypeName: ChatManagerPrefab, Assembly-CSharp
-        m_MethodName: UpdateLobbyDataEvent
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+  SortKey: 3862596935
+  ObjectInterest: 1
+  Flags: 262145
+  NestedObjects: []
+  NetworkedBehaviours:
+  - {fileID: 1621449596420328685}

@@ -11,10 +11,8 @@ namespace UI
 {
     public class ChatManagerPrefab : NetworkBehaviour
     {
-        internal FusionManager fusionManager;
-
+        [Header("Scriptable")]
         [SerializeField] private Firestore firestore;
-        [SerializeField] private LocalData localData;
 
         private TMP_InputField chatInput;
         private TMP_InputField chatPanelScrollContent;

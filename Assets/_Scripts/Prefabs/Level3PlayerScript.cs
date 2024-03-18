@@ -44,7 +44,7 @@ namespace Player
         private ChangeDetector changeDetector;
 
         [Header("Game")]
-        [SerializeField] private int score;
+        private int score;
         private bool isAlive;
 
         public void Awake()

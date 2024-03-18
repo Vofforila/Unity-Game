@@ -32,8 +32,7 @@ namespace UI
 
         public override void Spawned()
         {
-            gameUIManager.UpdateLevelState(localData.currentLvl);
-            if (localData.currentLvl == 4)
+            if (localData.currentLvl == 1)
             {
                 if (Object.HasInputAuthority)
                 {

@@ -27,10 +27,11 @@ namespace Player
 
         [Header("Read Only")]
         [Header("Object")]
-        [SerializeField] private float size = 2f;
+        private float size = 2f;
         [SerializeField] private bool[] constrains = { false, false, false, true, true, true };
         [SerializeField] private bool isKinematic = false;
         [SerializeField] private float mass = 10f;
+        private bool isFinished;
 
         [Header("Game")]
         [SerializeField] private int score;
@@ -47,6 +48,7 @@ namespace Player
         {
             if (localData.currentLvl == 2)
             {
+                Debug.Log("Init");
                 WinningPlayer = PlayerRef.None;
                 HorseSpeed = 1f;
                 KeyCooldown = TickTimer.CreateFromSeconds(Runner, 0.2f);
@@ -57,7 +59,10 @@ namespace Player
         {
             if (localData.currentLvl == 2)
             {
+                Debug.Log("Spawned");
+                Debug.Log(Object.InputAuthority + ":" + size);
                 playerVisuals.SetPlayer(_visuals: true, _size: size, _isKinematic: isKinematic, _constrains: constrains, _mass: mass);
+                isFinished = false;
                 changeDetector = GetChangeDetector(ChangeDetector.Source.SimulationState);
             }
         }
@@ -108,9 +113,10 @@ namespace Player
         public void OnTriggerEnter(Collider other)
         {
             // Update score
-            if (Object.HasInputAuthority && other.gameObject.CompareTag("Finish"))
+            if (Object.HasInputAuthority && other.gameObject.CompareTag("Finish") && localData.currentLvl == 2 && isFinished == false)
             {
                 Debug.Log("Collision");
+                isFinished = true;
                 RPC_PlayerFinished(Object.InputAuthority);
             }
         }

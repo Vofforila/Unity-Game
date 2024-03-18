@@ -17,7 +17,8 @@ namespace Host
             SpawnEnemies = 2,
             IsPlayerAlive = 3,
             DespawnPlayers = 4,
-            EndLevel = 5,
+            DespawnEnemies = 5,
+            EndLevel = 6,
         }
 
         [Header("Internal")]
@@ -89,6 +90,10 @@ namespace Host
                     DespawnPlayers();
                     break;
 
+                case GameState.DespawnEnemies:
+                    DespawnEnemies();
+                    break;
+
                 case GameState.EndLevel:
                     EndLevel();
                     break;
@@ -121,6 +126,12 @@ namespace Host
             {
                 Runner.Despawn(networkPlayerDictionary[player]);
             }
+            UpdateGameState(GameState.DespawnEnemies);
+        }
+
+        public async void DespawnEnemies()
+        {
+            await spawnManager.DespawnCatapults();
             UpdateGameState(GameState.EndLevel);
         }
 

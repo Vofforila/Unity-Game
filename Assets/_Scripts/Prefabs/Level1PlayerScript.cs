@@ -15,7 +15,6 @@ namespace Player
 
         [Header("Internal")]
         [SerializeField] internal PlayerVisuals playerVisuals;
-
         [SerializeField] internal GameUIListener gameUIListener;
         [HideInInspector] internal QuadraticCurve curve;
 
@@ -33,11 +32,11 @@ namespace Player
         [SerializeField] private float mass = 0f;
 
         [Header("Game")]
-        private float sampleTime;
-        [SerializeField] private float speed = 0.8f;
-        [SerializeField] private int jumpPosition;
-        [SerializeField] private int score;
+        private const float speed = 0.8f;
 
+        private float sampleTime;
+        private int jumpPosition;
+        private int score;
         private Vector3 newPosition;
         private Vector3 newRotation;
 
@@ -45,7 +44,6 @@ namespace Player
         {
             if (localData.currentLvl != 1)
             {
-                Debug.Log("Awake");
                 enabled = false;
             }
         }
