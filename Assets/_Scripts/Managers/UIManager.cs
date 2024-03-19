@@ -82,18 +82,9 @@ namespace UI
         [SerializeField] private List<Sprite> playerIcons;
 
         [Header("Setting Panel")]
-        [SerializeField] private GameObject settingsPanel;
+        [SerializeField] private GameObject settingCanvas;
 
         public static UIManager Instance;
-
-        // Window Minimization
-        [DllImport("user32.dll")]
-        private static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
-
-        [DllImport("user32.dll")]
-        private static extern IntPtr GetForegroundWindow();
-
-        private const int SW_MINIMIZE = 6;
 
         // Close Everything
         private void Awake()
@@ -104,16 +95,7 @@ namespace UI
             forgotPasswordCanvas.SetActive(false);
             mainMenuLoadingCanvas.SetActive(false);
             mainMenuCanvas.SetActive(false);
-
-            int screenWidth = 1280;
-            int screenHeight = 720;
-            bool fullScreen = false;
-            Screen.SetResolution(screenWidth, screenHeight, fullScreen);
-        }
-
-        private void OnDisable()
-        {
-            // make resolution
+            settingCanvas.SetActive(false);
         }
 
         private void Start()
@@ -309,7 +291,7 @@ namespace UI
 
         public void EnableSettingsPanel(bool _var)
         {
-            settingsPanel.SetActive(_var);
+            settingCanvas.SetActive(_var);
         }
 
         ////////////////////////////////////
@@ -422,21 +404,9 @@ namespace UI
             firestore.SendFriendRequest(addFriendInput.text);
         }
 
-        public void SettingsButton()
-        {
-            // Add help text
-        }
-
         public void ExitGameButton()
         {
             Application.Quit();
-        }
-
-        public void MinimizeWindowButton()
-        {
-            IntPtr handle = IntPtr.Zero;
-            handle = GetForegroundWindow();
-            ShowWindow(handle, SW_MINIMIZE);
         }
 
         public void UpdateUserIcon(int _var)

@@ -10,7 +10,7 @@ using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 using UI;
 using Database;
-using Host;
+using Settings;
 
 namespace Server
 {
@@ -21,13 +21,16 @@ namespace Server
         public bool test = false;
 
         [Header("Fusion")]
-        [HideInInspector]
         public NetworkRunner runner;
 
         [Header("Scriptable")]
         public Firestore firestore;
         public LocalData localData;
 
+        [Header("Settings")]
+        [SerializeField] internal WindowScript windowScript;
+
+        [Header("Lobby Manager")]
         [SerializeField] private NetworkPrefabRef lobbyManagerPrefab;
 
         [Header("Event")]
@@ -137,10 +140,7 @@ namespace Server
 
         public async void LoadLevel1()
         {
-            int screenWidth = 1980;
-            int screenHeight = 1080;
-            bool fullScreen = true;
-            Screen.SetResolution(screenWidth, screenHeight, fullScreen);
+            StartCoroutine(windowScript.ChangeGameResolution());
             await runner.LoadScene(SceneRef.FromIndex(1), LoadSceneMode.Single);
             Debug.Log("Play Level 1 - Event");
             playLevel1Event.Invoke();
@@ -175,7 +175,7 @@ namespace Server
             Debug.Log("Callback");
             if (localData.inviteResponse == true)
             {
-                //firestore.RemoveInvite();
+                firestore.RemoveInvite();
                 JoinLobby();
             }
             else

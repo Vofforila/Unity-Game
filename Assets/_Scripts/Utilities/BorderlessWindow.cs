@@ -1,6 +1,8 @@
 ﻿using System;
 using UnityEngine;
 using System.Runtime.InteropServices;
+using System.Collections;
+using System.Collections.Generic;
 
 public class BorderlessWindow
 {
@@ -8,16 +10,21 @@ public class BorderlessWindow
 
     [DllImport("user32.dll")]
     private static extern IntPtr GetActiveWindow();
+
     [DllImport("user32.dll")]
     private static extern int SetWindowLong(IntPtr hWnd, int nIndex, uint dwNewLong);
+
     [DllImport("user32.dll")]
     private static extern bool ShowWindow(IntPtr hwnd, int nCmdShow);
+
     [DllImport("user32.dll")]
     private static extern bool MoveWindow(IntPtr hWnd, int x, int y, int nWidth, int nHeight, bool bRepaint);
+
     [DllImport("user32.dll")]
     private static extern bool GetWindowRect(IntPtr hwnd, out WinRect lpRect);
 
-    private struct WinRect { public int left, top, right, bottom; }
+    private struct WinRect
+    { public int left, top, right, bottom; }
 
     private const int GWL_STYLE = -16;
 
@@ -25,7 +32,7 @@ public class BorderlessWindow
     private const int SW_MAXIMIZE = 3;
     private const int SW_RESTORE = 9;
 
-    private const uint WS_VISIBLE = 0x10000000;    
+    private const uint WS_VISIBLE = 0x10000000;
     private const uint WS_POPUP = 0x80000000;
     private const uint WS_BORDER = 0x00800000;
     private const uint WS_OVERLAPPED = 0x00000000;
@@ -36,13 +43,12 @@ public class BorderlessWindow
     private const uint WS_MAXIMIZEBOX = 0x00010000;
     private const uint WS_OVERLAPPEDWINDOW = WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME | WS_MINIMIZEBOX | WS_MAXIMIZEBOX;
 
-
-    // This attribute will make the method execute on game launch, after the Unity Logo Splash Screen.
-    //[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
-    public static void InitializeOnLoad()
+    // This attribute will make the method execute on game launch, before the Unity Logo Splash Screen.
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSplashScreen)]
+    public static void InitializeBeforeLoad()
     {
 #if !UNITY_EDITOR && UNITY_STANDALONE_WIN   // Dont do this while on Unity Editor!
-        SetFramelessWindow();
+SetFramelessWindow();
 #endif
     }
 
@@ -50,7 +56,6 @@ public class BorderlessWindow
     {
         var hwnd = GetActiveWindow();
         SetWindowLong(hwnd, GWL_STYLE, WS_POPUP | WS_VISIBLE);
-        framed = false;
     }
 
     public static void SetFramedWindow()
@@ -89,4 +94,3 @@ public class BorderlessWindow
         MoveWindow(hwnd, x, y, newWidth, newHeight, false);
     }
 }
-

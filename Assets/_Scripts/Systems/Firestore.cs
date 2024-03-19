@@ -110,9 +110,7 @@ namespace Database
 
         public void SendFriendRequest(string _newFriend)
         {
-            //  Get a reference to the firestore service, using the default Firebase App
             FirebaseFirestore db = FirebaseFirestore.DefaultInstance;
-            // Create FriendList Collection refrence
             CollectionReference accountInfo_col = db.Collection("AccountInfo");
 
             accountInfo_col.GetSnapshotAsync().ContinueWith((task) =>
@@ -214,9 +212,52 @@ namespace Database
             });
         }
 
-        // Add Functionality
         public void DeclineFriendRequest(string newFriend)
         {
+            FirebaseFirestore db = FirebaseFirestore.DefaultInstance;
+            CollectionReference accountInfo_Col = db.Collection("AccountInfo");
+
+            // Add Current User to Friend
+            accountInfo_Col.GetSnapshotAsync().ContinueWith(task =>
+            {
+                QuerySnapshot snapshots = task.Result;
+                foreach (DocumentSnapshot document in snapshots.Documents)
+                {
+                    Dictionary<string, object> data = document.ToDictionary();
+                    if (newFriend == (data["User"]).ToString())
+                    {
+                        List<object> FriendList;
+                        FriendList = (List<object>)data["FriendList"];
+                        FriendList.Add(accountFirebase.User);
+
+                        DocumentReference friendRequests_Doc = db.Collection("AccountInfo").Document(data["Id"].ToString());
+
+                        friendRequests_Doc.UpdateAsync("FriendList", FriendList).ContinueWith(task =>
+                        {
+                            if (Debug.isDebugBuild)
+                                Debug.Log("FriendList Update");
+                        });
+                        break;
+                    }
+                }
+            });
+
+            DocumentReference accountInfo_Doc = db.Collection("AccountInfo").Document(accountFirebase.Id.ToString());
+
+            // Remove FriendRequest from Current User
+            accountFirebase.FriendRequestsList.Remove(newFriend);
+            accountInfo_Doc.UpdateAsync("FriendRequestsList", accountFirebase.FriendRequestsList).ContinueWith(task =>
+            {
+                if (Debug.isDebugBuild)
+                    Debug.Log("FriendRequestList Update");
+            });
+
+            // Remove SentFriendRequest from Current User
+            accountInfo_Doc.UpdateAsync("SentFriendRequests", accountFirebase.SentFriendRequests).ContinueWith(task =>
+            {
+                if (Debug.isDebugBuild)
+                    Debug.Log("SentFriendRequest Update");
+            });
         }
 
         public void InviteToLobby(string invitedFriend)

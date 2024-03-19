@@ -14,12 +14,6 @@ namespace UI
         public Button declineFriendRequest;
         public Firestore firestore;
 
-        private void Awake()
-        {
-            acceptFriendRequest.onClick.AddListener(AcceptFriendRequest);
-            declineFriendRequest.onClick.AddListener(DeclineFriendRequest);
-        }
-
         public void AcceptFriendRequest()
         {
             firestore.AcceptFriendRequest(newFriend.text);
@@ -27,7 +21,7 @@ namespace UI
 
         public void DeclineFriendRequest()
         {
-            firestore.AcceptFriendRequest(newFriend.text);
+            firestore.DeclineFriendRequest(newFriend.text);
         }
     }
 }
