@@ -18,7 +18,7 @@ namespace UI
         private TMP_InputField chatPanelScrollContent;
         private string finalmessage;
 
-        private void Awake()
+        private void Start()
         {
             chatInput = GameObject.Find("ChatInput").GetComponent<TMP_InputField>();
             chatPanelScrollContent = GameObject.Find("ChatPanelScrollContent").GetComponent<TMP_InputField>();

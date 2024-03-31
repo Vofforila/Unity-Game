@@ -6,6 +6,7 @@ using System;
 using TMPro;
 using Server;
 using UI;
+using System.Collections;
 
 namespace Settings
 {
@@ -122,10 +123,7 @@ namespace Settings
 
         private void UpdateSettings()
         {
-            // Set Client Resolution
-            windowScript.clientHeight = clientHeight;
-            windowScript.clientWidth = clientWidth;
-            StartCoroutine(windowScript.ChangeClientResolution());
+            StartCoroutine(IChangeResolution());
 
             // Set Game Resolution
             windowScript.gameHeight = gameHeight;
@@ -189,6 +187,16 @@ namespace Settings
                 SaveSettings();
                 return null;
             }
+        }
+
+        private IEnumerator IChangeResolution()
+        {
+            Screen.SetResolution(clientWidth, clientHeight, FullScreenMode.Windowed);
+            yield return new WaitForEndOfFrame();
+            yield return new WaitForEndOfFrame();
+            windowScript.clientWidth = clientWidth;
+            windowScript.clientHeight = clientHeight;
+            windowScript.ShowWindowBorders(false);
         }
     }
 }

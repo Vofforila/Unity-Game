@@ -43,14 +43,14 @@ public class BorderlessWindow
     private const uint WS_MAXIMIZEBOX = 0x00010000;
     private const uint WS_OVERLAPPEDWINDOW = WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME | WS_MINIMIZEBOX | WS_MAXIMIZEBOX;
 
-    // This attribute will make the method execute on game launch, before the Unity Logo Splash Screen.
-    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSplashScreen)]
-    public static void InitializeBeforeLoad()
-    {
-#if !UNITY_EDITOR && UNITY_STANDALONE_WIN   // Dont do this while on Unity Editor!
-SetFramelessWindow();
-#endif
-    }
+    /*    // This attribute will make the method execute on game launch, before the Unity Logo Splash Screen.
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSplashScreen)]
+        public static void InitializeBeforeLoad()
+        {
+    #if !UNITY_EDITOR && UNITY_STANDALONE_WIN   // Dont do this while on Unity Editor!
+    SetFramelessWindow();
+    #endif
+        }*/
 
     public static void SetFramelessWindow()
     {
