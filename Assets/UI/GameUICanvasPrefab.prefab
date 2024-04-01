@@ -942,6 +942,7 @@ GameObject:
   - component: {fileID: 7516120435475878646}
   - component: {fileID: 5605066017931204363}
   - component: {fileID: 3551262296183551299}
+  - component: {fileID: 5784993718381662219}
   m_Layer: 0
   m_Name: ChatBoxPanel
   m_TagString: Untagged
@@ -1051,6 +1052,21 @@ MonoBehaviour:
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
+--- !u!114 &5784993718381662219
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3958241934399241544}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cdaf3adcfafbefb4193eff51e8bbeb84, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  firestore: {fileID: 11400000, guid: 883b834f3dfdf5a45aee970fc4e238bd, type: 2}
+  chatInput: {fileID: 3150898497447203409}
+  chatPanelScrollContent: {fileID: 6784102286641975482}
 --- !u!1 &4110386166703151715
 GameObject:
   m_ObjectHideFlags: 0

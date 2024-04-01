@@ -54,14 +54,6 @@ namespace Server
 
             DontDestroyOnLoad(gameObject);
             runner = gameObject.AddComponent<NetworkRunner>();
-
-            localData.playerList = new();
-        }
-
-        private void Start()
-        {
-            localData.currentLvl = 0;
-            GameUIManager.Instance.UpdateLevelState(localData.currentLvl);
         }
 
         // Test GUI
@@ -71,7 +63,7 @@ namespace Server
             {
                 UIManager managerUi = GameObject.Find("UIManager").GetComponent<UIManager>();
                 managerUi.mainMenuCanvas.SetActive(true);
-                managerUi.loginCanvas.SetActive(false);
+                managerUi.authCanvas.SetActive(false);
                 if (GUI.Button(new Rect(0, 0, 200, 40), "Play"))
                 {
                     firestore.accountFirebase.User = "Test1";
@@ -136,11 +128,13 @@ namespace Server
         {
             Debug.Log("Callback");
             await runner.LoadScene(SceneRef.FromIndex(0), LoadSceneMode.Single);
+            localData.currentLvl = 0;
+            GameUIManager.Instance.UpdateLevelState(localData.currentLvl);
         }
 
         public async void LoadLevel1()
         {
-            StartCoroutine(windowScript.ChangeGameResolution());
+            StartCoroutine(SettingManager.Instance.IChangeResolution());
             await runner.LoadScene(SceneRef.FromIndex(1), LoadSceneMode.Single);
             Debug.Log("Play Level 1 - Event");
             playLevel1Event.Invoke();
@@ -192,7 +186,8 @@ namespace Server
             }
 
             localData.playerList = new();
-
+            localData.currentLvl = 0;
+            GameUIManager.Instance.UpdateLevelState(localData.currentLvl);
             await CreateLobbyTask(runner);
         }
 

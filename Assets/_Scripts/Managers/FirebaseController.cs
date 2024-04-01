@@ -189,7 +189,7 @@ namespace Auth
                             passwordRegisterInput.text = "";
                             confirmPasswordRegisterInput.text = "";
 
-                            canvasManager.OpenLoginCanvas();
+                            UIManager.Instance.OpenLoginPanel();
                         }
                     }
                 }

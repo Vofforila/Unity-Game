@@ -12,6 +12,7 @@ using Data;
 using SpecialFunction;
 using System.Runtime.InteropServices;
 using System;
+using UnityEngine.EventSystems;
 
 namespace UI
 {
@@ -28,11 +29,15 @@ namespace UI
 
         // Remove public on release
         [Header("Canvases")]
-        [SerializeField] public GameObject loginCanvas;
-        [SerializeField] private GameObject registerCanvas;
-        [SerializeField] private GameObject forgotPasswordCanvas;
+        [SerializeField] public GameObject authCanvas;
         [SerializeField] public GameObject mainMenuLoadingCanvas;
         [SerializeField] public GameObject mainMenuCanvas;
+        [SerializeField] private GameObject popupCanvas;
+
+        [Header("AuthPanels")]
+        [SerializeField] private GameObject registerPanel;
+        [SerializeField] private GameObject loginPanel;
+        [SerializeField] private GameObject forgotPasswordPanel;
 
         [Header("Loading")]
         [SerializeField] private Slider loadingBar;
@@ -58,6 +63,7 @@ namespace UI
 
         [Header("Friend List")]
         [SerializeField] private GameObject friendScrollViewContent;
+        [SerializeField] private TMP_Text friendCount;
 
         [Header("InviteToLobbyPanel")]
         [SerializeField] private GameObject inviteToLobbyPanel;
@@ -90,12 +96,11 @@ namespace UI
         private void Awake()
         {
             Instance = this;
-            loginCanvas.SetActive(true);
-            registerCanvas.SetActive(false);
-            forgotPasswordCanvas.SetActive(false);
+            authCanvas.SetActive(true);
             mainMenuLoadingCanvas.SetActive(false);
             mainMenuCanvas.SetActive(false);
-            settingCanvas.SetActive(false);
+            popupCanvas.SetActive(true);
+            OpenLoginPanel();
         }
 
         private void Start()
@@ -110,47 +115,47 @@ namespace UI
         ////////////////////////////////////
         // Open/Close Canvases
         ////////////////////////////////////
-        public void OpenLoginCanvas()
+        public void OpenLoginPanel()
         {
-            loginCanvas.SetActive(true);
-            registerCanvas.SetActive(false);
-            forgotPasswordCanvas.SetActive(false);
+            loginPanel.SetActive(true);
+            registerPanel.SetActive(false);
+            forgotPasswordPanel.SetActive(false);
             mainMenuLoadingCanvas.SetActive(false);
             mainMenuCanvas.SetActive(false);
         }
 
-        public void OpenRegisterCanvas()
+        public void OpenRegisterPanel()
         {
-            loginCanvas.SetActive(false);
-            registerCanvas.SetActive(true);
-            forgotPasswordCanvas.SetActive(false);
+            loginPanel.SetActive(false);
+            registerPanel.SetActive(true);
+            forgotPasswordPanel.SetActive(false);
             mainMenuLoadingCanvas.SetActive(false);
             mainMenuCanvas.SetActive(false);
         }
 
-        public void OpenForgotPasswordCanvas()
+        public void OpenForgotPasswordPanel()
         {
-            loginCanvas.SetActive(false);
-            registerCanvas.SetActive(false);
-            forgotPasswordCanvas.SetActive(true);
+            loginPanel.SetActive(false);
+            registerPanel.SetActive(false);
+            forgotPasswordPanel.SetActive(true);
             mainMenuLoadingCanvas.SetActive(false);
             mainMenuCanvas.SetActive(false);
         }
 
         public void OpenMainMenuLoadingCanvas()
         {
-            loginCanvas.SetActive(false);
-            registerCanvas.SetActive(false);
-            forgotPasswordCanvas.SetActive(false);
+            loginPanel.SetActive(false);
+            registerPanel.SetActive(false);
+            forgotPasswordPanel.SetActive(false);
             mainMenuLoadingCanvas.SetActive(true);
             mainMenuCanvas.SetActive(false);
         }
 
         public void OpenMainMenuCanvas()
         {
-            loginCanvas.SetActive(false);
-            registerCanvas.SetActive(false);
-            forgotPasswordCanvas.SetActive(false);
+            loginPanel.SetActive(false);
+            registerPanel.SetActive(false);
+            forgotPasswordPanel.SetActive(false);
             mainMenuLoadingCanvas.SetActive(false);
             mainMenuCanvas.SetActive(true);
         }
@@ -256,7 +261,7 @@ namespace UI
             int loading = 0;
             loadingBar.value = loading;
             loadingPercentage.text = loading + "%";
-            loginCanvas.SetActive(false);
+            loginPanel.SetActive(false);
             mainMenuLoadingCanvas.SetActive(true);
             loading += 25;
             loadingBar.value = loading;
@@ -318,7 +323,11 @@ namespace UI
         public void UpdateFriendList()
         {
             DestroyChildrenOf(friendScrollViewContent);
-            if (firestore.accountFirebase.FriendList.Count != 0)
+            if (firestore.accountFirebase.FriendList == null)
+            {
+                // Make Pannel for 0 friends
+            }
+            else if (firestore.accountFirebase.FriendList.Count != 0)
             {
                 foreach (object friend in firestore.accountFirebase.FriendList)
                 {
@@ -327,16 +336,16 @@ namespace UI
                     textComponent.text = friend.ToString();
                 }
             }
-            else
-            {
-                // Make Pannel for 0 friends
-            }
         }
 
         public void UpdateAddFriendPanel()
         {
             DestroyChildrenOf(sentFriendRequestScrollViewContent);
-            if (firestore.accountFirebase.SentFriendRequests.Count != 0)
+            if (firestore.accountFirebase.SentFriendRequests == null)
+            {
+                // Make Pannel for 0 friends
+            }
+            else if (firestore.accountFirebase.SentFriendRequests.Count != 0)
             {
                 foreach (object friend in firestore.accountFirebase.SentFriendRequests)
                 {
@@ -345,40 +354,41 @@ namespace UI
                     textComponent.text = friend.ToString();
                 }
             }
-            else
-            {
-                // Make Pannel for 0 friendrequests
-            }
         }
 
         public void UpdateFriendRequestPanel()
         {
-            if (firestore.accountFirebase.FriendRequestsList.Count != 0)
-            {
-                DestroyChildrenOf(friendRequestScrollContent);
-                EnableFriendRequestButton(true);
-                foreach (object friendRequest in firestore.accountFirebase.FriendRequestsList)
-                {
-                    // Create the new Friend Request Objects
-                    GameObject instantiatedPrefab = Instantiate(friendRequestPrefab, friendRequestScrollContent.transform);
-                    TMP_Text textComponent = instantiatedPrefab.GetComponentInChildren<TMP_Text>();
-                    textComponent.text = friendRequest.ToString();
-                }
-
-                friendRequestsNumber1.text = firestore.accountFirebase.FriendRequestsList.Count.ToString();
-                friendRequestsNumber2.text = "(" + firestore.accountFirebase.FriendRequestsList.Count.ToString() + ")";
-            }
-            else
+            if (firestore.accountFirebase.FriendRequestsList == null)
             {
                 DestroyChildrenOf(friendRequestScrollContent);
                 EnableFriendRequestButton(false);
                 EnableFriendRequestPanel(false);
             }
+            else if (firestore.accountFirebase.FriendRequestsList.Count != 0)
+            {
+                DestroyChildrenOf(friendRequestScrollContent);
+                EnableFriendRequestButton(true);
+                foreach (KeyValuePair<int, string> friendRequest in firestore.accountFirebase.FriendRequestsList)
+                {
+                    // Create the new Friend Request Objects
+                    GameObject instantiatedPrefab = Instantiate(friendRequestPrefab, friendRequestScrollContent.transform);
+                    TMP_Text textComponent = instantiatedPrefab.GetComponentInChildren<TMP_Text>();
+                    textComponent.text = friendRequest.Value;
+                }
+
+                friendRequestsNumber1.text = firestore.accountFirebase.FriendRequestsList.Count.ToString();
+                friendRequestsNumber2.text = "(" + firestore.accountFirebase.FriendRequestsList.Count.ToString() + ")";
+            }
         }
 
         public void UpdateInviteToLobbyPanel()
         {
-            if (firestore.accountFirebase.InviteToGameList.Count != 0)
+            if (firestore.accountFirebase.InviteToGameList == null)
+            {
+                DestroyChildrenOf(inviteToLobbyPanel);
+                inviteToLobbyPanel.SetActive(false);
+            }
+            else if (firestore.accountFirebase.InviteToGameList.Count != 0)
             {
                 inviteToLobbyPanel.SetActive(true);
                 foreach (object inviteToGame in firestore.accountFirebase.InviteToGameList)
@@ -388,11 +398,6 @@ namespace UI
                     TMP_Text textComponent = instantiatedPrefab.GetComponentInChildren<TMP_Text>();
                     textComponent.text = inviteToGame.ToString();
                 }
-            }
-            else
-            {
-                DestroyChildrenOf(inviteToLobbyPanel);
-                inviteToLobbyPanel.SetActive(false);
             }
         }
 
@@ -404,8 +409,15 @@ namespace UI
             firestore.SendFriendRequest(addFriendInput.text);
         }
 
-        public void ExitGameButton()
+        public void MinimizeClientButton()
         {
+            EventSystem.current.SetSelectedGameObject(null);
+            BorderlessWindow.MinimizeWindow();
+        }
+
+        public void ExitClientButton()
+        {
+            EventSystem.current.SetSelectedGameObject(null);
             Application.Quit();
         }
 

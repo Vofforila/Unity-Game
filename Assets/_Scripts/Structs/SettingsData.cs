@@ -5,8 +5,8 @@ namespace Settings
     {
         public int gameWidth;
         public int gameHeight;
-        public int clientWidth;
-        public int clientHeight;
+        public short clientWidth;
+        public short clientHeight;
         public float music;
         public float sound;
         public int gameResolutionDropDownValue;

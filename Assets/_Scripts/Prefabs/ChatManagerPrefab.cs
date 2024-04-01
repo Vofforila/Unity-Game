@@ -14,15 +14,9 @@ namespace UI
         [Header("Scriptable")]
         [SerializeField] private Firestore firestore;
 
-        private TMP_InputField chatInput;
-        private TMP_InputField chatPanelScrollContent;
+        [SerializeField] private TMP_InputField chatInput;
+        [SerializeField] private TMP_InputField chatPanelScrollContent;
         private string finalmessage;
-
-        private void Start()
-        {
-            chatInput = GameObject.Find("ChatInput").GetComponent<TMP_InputField>();
-            chatPanelScrollContent = GameObject.Find("ChatPanelScrollContent").GetComponent<TMP_InputField>();
-        }
 
         public void SendMessageToServer()
         {

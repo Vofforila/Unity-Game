@@ -43,14 +43,14 @@ public class BorderlessWindow
     private const uint WS_MAXIMIZEBOX = 0x00010000;
     private const uint WS_OVERLAPPEDWINDOW = WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME | WS_MINIMIZEBOX | WS_MAXIMIZEBOX;
 
-    /*    // This attribute will make the method execute on game launch, before the Unity Logo Splash Screen.
-        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSplashScreen)]
-        public static void InitializeBeforeLoad()
-        {
-    #if !UNITY_EDITOR && UNITY_STANDALONE_WIN   // Dont do this while on Unity Editor!
+    // This attribute will make the method execute on game launch, before the Unity Logo Splash Screen.
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSplashScreen)]
+    public static void InitializeBeforeLoad()
+    {
+#if !UNITY_EDITOR && UNITY_STANDALONE_WIN   // Dont do this while on Unity Editor!
     SetFramelessWindow();
-    #endif
-        }*/
+#endif
+    }
 
     public static void SetFramelessWindow()
     {
@@ -58,23 +58,10 @@ public class BorderlessWindow
         SetWindowLong(hwnd, GWL_STYLE, WS_POPUP | WS_VISIBLE);
     }
 
-    public static void SetFramedWindow()
-    {
-        var hwnd = GetActiveWindow();
-        SetWindowLong(hwnd, GWL_STYLE, WS_OVERLAPPEDWINDOW | WS_VISIBLE);
-        framed = true;
-    }
-
     public static void MinimizeWindow()
     {
         var hwnd = GetActiveWindow();
         ShowWindow(hwnd, SW_MINIMIZE);
-    }
-
-    public static void MaximizeWindow()
-    {
-        var hwnd = GetActiveWindow();
-        ShowWindow(hwnd, SW_MAXIMIZE);
     }
 
     public static void RestoreWindow()
