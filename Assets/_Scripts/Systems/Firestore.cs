@@ -204,20 +204,20 @@ namespace Database
                         // Send FriendRequest to Other
                         List<object> newFriendRequestList = (List<object>)data["FriendRequestsList"];
 
-                        Friend newFriend = new()
+                        Friend otherUser = new()
                         {
-                            User = accountFirebase.User,
-                            Id = accountFirebase.Id,
+                            User = (string)data["User"],
+                            Id = (int)(long)data["Id"],
                         };
 
-                        newFriendRequestList.Add(newFriend);
+                        newFriendRequestList.Add(currentUser);
                         DocumentReference accountInfo_doc = db.Collection("AccountInfo").Document(data["Id"].ToString());
                         accountInfo_doc.UpdateAsync("FriendRequestsList", newFriendRequestList);
 
                         // Add PendingReqest to Current User
                         accountInfo_doc = db.Collection("AccountInfo").Document(accountFirebase.Id.ToString());
-                        accountFirebase.FriendRequestsList.Add(currentUser);
-                        accountInfo_doc.UpdateAsync("SentFriendRequests", accountFirebase.FriendRequestsList);
+                        accountFirebase.SentFriendRequests.Add(otherUser);
+                        accountInfo_doc.UpdateAsync("SentFriendRequests", accountFirebase.SentFriendRequests);
 
                         Debug.Log("Sent Friend Request");
                     }

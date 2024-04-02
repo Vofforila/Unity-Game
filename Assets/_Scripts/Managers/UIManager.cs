@@ -62,9 +62,9 @@ namespace UI
 
         [Header("Friend List")]
         [SerializeField] private GameObject friendScrollViewContent;
-        [SerializeField] private TMP_Text friendCount;
         [SerializeField] private GameObject noFriendPrefab;
         [SerializeField] private GameObject friendScrollView;
+        [SerializeField] private GameObject friendHeaderPrefab;
 
         [Header("InviteToLobbyPanel")]
         [SerializeField] private GameObject inviteToLobbyPanel;
@@ -296,7 +296,7 @@ namespace UI
             Debug.Log("Callback");
             UpdateProfilePanel();
             UpdateFriendList();
-            UpdateAddFriendPanel();
+            UpdateSentFriendRequestsPanel();
             UpdateFriendRequestPanel();
             UpdateInviteToLobbyPanel();
         }
@@ -315,20 +315,23 @@ namespace UI
 
             if (firestore.accountFirebase.FriendList.Count != 0)
             {
+                Instantiate(friendHeaderPrefab, friendScrollViewContent.transform);
                 foreach (Friend friend in firestore.accountFirebase.FriendList)
                 {
                     GameObject instantiatedPrefab = Instantiate(friendPrefab, friendScrollViewContent.transform);
                     TMP_Text textComponent = instantiatedPrefab.GetComponentInChildren<TMP_Text>();
                     textComponent.text = friend.User;
+                    Image imgComponent = instantiatedPrefab.GetComponentInChildren<Image>();
+                    imgComponent.sprite = playerIcons[friend.Id];
                 }
             }
             else
             {
-                Instantiate(noFriendPrefab, friendScrollView);
+                Instantiate(noFriendPrefab, friendScrollView.transform);
             }
         }
 
-        public void UpdateAddFriendPanel()
+        public void UpdateSentFriendRequestsPanel()
         {
             specialFunctions.DestroyChildrenOf(sentFriendRequestScrollViewContent);
 
