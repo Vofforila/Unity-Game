@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.46353126, g: 0.51524174, b: 0.59659106, a: 1}
+  m_IndirectSpecularColor: {r: 0.46353096, g: 0.51524127, b: 0.5965901, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -7481,7 +7481,7 @@ MonoBehaviour:
   friendRequestsNumber1: {fileID: 407158619}
   friendRequestsNumber2: {fileID: 1599354757}
   friendScrollViewContent: {fileID: 1584966555}
-  friendCount: {fileID: 764828939}
+  friendCount: {fileID: 1269836272}
   inviteToLobbyPanel: {fileID: 745692429}
   inviteToLobbyScrollViewContent: {fileID: 1356493495}
   playButton: {fileID: 352171517}
@@ -10774,12 +10774,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!1 &764828939 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1751673902308064178, guid: ba2170f846fcc2a4eaa2a08bd32c0e02,
-    type: 3}
-  m_PrefabInstance: {fileID: 1269836268}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &767073079
 GameObject:
   m_ObjectHideFlags: 0
@@ -17449,6 +17443,18 @@ RectTransform:
     type: 3}
   m_PrefabInstance: {fileID: 1269836268}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1269836272 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4426695944451298171, guid: ba2170f846fcc2a4eaa2a08bd32c0e02,
+    type: 3}
+  m_PrefabInstance: {fileID: 1269836268}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1269877323 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 2240371285316022023, guid: d4fd2518581edce4487f1170ad65a6a9,
@@ -18492,7 +18498,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0a8f20932b633d94c8894c9b896f0424, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  test: 1
+  test: 0
   test2: 0
   test3: 0
   canvasManager: {fileID: 514719944}

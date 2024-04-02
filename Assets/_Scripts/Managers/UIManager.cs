@@ -3,15 +3,11 @@ using TMPro;
 using System.Threading.Tasks;
 using Database;
 using UnityEngine.UI;
-using Server;
 using Fusion;
 using System.Collections.Generic;
 using System.Linq;
 using static UI.GameUIManager;
 using Data;
-using SpecialFunction;
-using System.Runtime.InteropServices;
-using System;
 using UnityEngine.EventSystems;
 
 namespace UI
@@ -110,6 +106,7 @@ namespace UI
                 ShowStatisticPanelEvent();
                 localdata.currentLvl = 0;
             }
+            firestore.TestFunction();
         }
 
         ////////////////////////////////////
@@ -323,11 +320,11 @@ namespace UI
         public void UpdateFriendList()
         {
             DestroyChildrenOf(friendScrollViewContent);
-            if (firestore.accountFirebase.FriendList == null)
+            if (firestore.accountFirebase.FriendList[0].ToString() == "Default")
             {
-                // Make Pannel for 0 friends
+                // Make panel for 0
             }
-            else if (firestore.accountFirebase.FriendList.Count != 0)
+            else
             {
                 foreach (object friend in firestore.accountFirebase.FriendList)
                 {
@@ -345,7 +342,7 @@ namespace UI
             {
                 // Make Pannel for 0 friends
             }
-            else if (firestore.accountFirebase.SentFriendRequests.Count != 0)
+            if (firestore.accountFirebase.SentFriendRequests.Count != 1)
             {
                 foreach (object friend in firestore.accountFirebase.SentFriendRequests)
                 {
@@ -368,12 +365,12 @@ namespace UI
             {
                 DestroyChildrenOf(friendRequestScrollContent);
                 EnableFriendRequestButton(true);
-                foreach (KeyValuePair<int, string> friendRequest in firestore.accountFirebase.FriendRequestsList)
+                foreach (KeyValuePair<int, object> friendRequest in firestore.accountFirebase.FriendRequestsList)
                 {
                     // Create the new Friend Request Objects
                     GameObject instantiatedPrefab = Instantiate(friendRequestPrefab, friendRequestScrollContent.transform);
                     TMP_Text textComponent = instantiatedPrefab.GetComponentInChildren<TMP_Text>();
-                    textComponent.text = friendRequest.Value;
+                    textComponent.text = friendRequest.Value.ToString();
                 }
 
                 friendRequestsNumber1.text = firestore.accountFirebase.FriendRequestsList.Count.ToString();

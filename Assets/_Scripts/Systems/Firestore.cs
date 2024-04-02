@@ -8,6 +8,8 @@ using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Events;
 using SpecialFunction;
+using System;
+using System.Reflection;
 
 namespace Database
 {
@@ -25,6 +27,91 @@ namespace Database
         [Header("Events")]
         public UnityEvent updateUI;
         public UnityEvent updateLobbyDataEvent;
+
+        public void TestFunction()
+        {
+            FirebaseFirestore db = FirebaseFirestore.DefaultInstance;
+            DocumentReference accountsIdIndex_doc = db.Collection("AccountsIdIndex").Document("2");
+
+            accountsIdIndex_doc.GetSnapshotAsync().ContinueWith((task) =>
+            {
+                DocumentSnapshot snapshot = task.Result;
+                Dictionary<string, object> data = snapshot.ToDictionary();
+                List<object> Harta = (List<object>)data["FriendList"];
+
+                foreach (Dictionary<string, object> friend in Harta)
+                {
+                    Friend newFriend = CreateObjectFromDictionary<Friend>(friend);
+
+                    Debug.Log(newFriend.User);
+                }
+                /*
+                                Test newTest = new()
+                                {
+                                    FriendList = new(),
+                                };
+
+                                Friend newFriend = new()
+                                {
+                                    User = "Paul",
+                                    Id = 4,
+                                    Coins = 40,
+                                };
+
+                                newTest.FriendList.Add(newFriend);
+                                newTest.FriendList.Add(newFriend);
+
+                                accountsIdIndex_doc.SetAsync(newTest).ContinueWith(task =>
+                                {
+                                    Debug.Log("Up");
+                                });*/
+            });
+        }
+
+        private static T CreateObjectFromDictionary<T>(Dictionary<string, object> dictionary) where T : new()
+        {
+            T obj = new T();
+            Type type = typeof(T);
+            PropertyInfo[] properties = type.GetProperties();
+
+            foreach (PropertyInfo property in properties)
+            {
+                if (dictionary.ContainsKey(property.Name))
+                {
+                    object value = dictionary[property.Name];
+
+                    // Convert value if necessary
+                    if (property.PropertyType != value.GetType())
+                    {
+                        value = Convert.ChangeType(value, property.PropertyType);
+                    }
+
+                    property.SetValue(obj, value);
+                }
+            }
+
+            return obj;
+        }
+
+        [FirestoreData]
+        public class Test
+        {
+            [FirestoreProperty]
+            public List<Friend> FriendList { get; set; }
+        }
+
+        [FirestoreData]
+        public class Friend
+        {
+            [FirestoreProperty]
+            public string User { get; set; }
+
+            [FirestoreProperty]
+            public int Id { get; set; }
+
+            [FirestoreProperty]
+            public int Coins { get; set; }
+        }
 
         public void RegisterUser(string _username, string _email)
         {
@@ -50,9 +137,9 @@ namespace Database
 
                 // Update the LastId available to FireBase
                 accountsIdIndex_doc.UpdateAsync("LastId", newID).ContinueWith(task =>
-                    {
-                        Debug.Log("Added Account ID");
-                    });
+                {
+                    Debug.Log("Added Account ID");
+                });
 
                 // Create a Account Document refrence
                 DocumentReference accountInfo_Doc = db.Collection("AccountInfo").Document(newID.ToString());
@@ -67,17 +154,30 @@ namespace Database
                     RankPoints = 0,
                     Winrate = 0,
                     PlayerIcon = 1,
-                    FriendList = null,
-                    FriendRequestsList = null,
-                    InviteToGameList = null,
-                    SentFriendRequests = null,
+                    FriendList = new(),
+                    FriendRequestsList = new(),
+                    InviteToGameList = new(),
+                    SentFriendRequests = new(),
                 };
+
+                const string defaultName = "Default";
+                const int defaultVar = 0;
+
+                newAccountFirebase.FriendList.Add(defaultVar, defaultName);
+                newAccountFirebase.FriendRequestsList.Add(defaultVar, defaultName);
+                newAccountFirebase.InviteToGameList.Add(defaultName);
+                newAccountFirebase.SentFriendRequests.Add(defaultVar, defaultName);
+
+                Debug.Log(newAccountFirebase.FriendList[0]);
+                Debug.Log(newAccountFirebase.FriendRequestsList[0]);
+                Debug.Log(newAccountFirebase.InviteToGameList[0]);
+                Debug.Log(newAccountFirebase.SentFriendRequests[0]);
 
                 // Add the new Account to Firebase
                 accountInfo_Doc.SetAsync(newAccountFirebase).ContinueWith(task =>
-                    {
-                        Debug.Log("Added Account Info");
-                    });
+                {
+                    Debug.Log("Added Account Info");
+                });
             });
         }
 
@@ -119,17 +219,27 @@ namespace Database
                 foreach (DocumentSnapshot document in snapshots.Documents)
                 {
                     Dictionary<string, object> data = document.ToDictionary();
-                    if (_newFriend == (data["User"]).ToString())
+                    Debug.Log(_newFriend);
+                    if (_newFriend == data["User"].ToString())
                     {
                         // Send FriendRequest to Other
+
                         Dictionary<int, string> newFriendRequestList = (Dictionary<int, string>)data["FriendRequestsList"];
+                        if (newFriendRequestList[0] == "Default")
+                        {
+                            newFriendRequestList.Remove(0);
+                        }
+
                         newFriendRequestList.Add(accountFirebase.Id, accountFirebase.User);
                         DocumentReference accountInfo_doc = db.Collection("AccountInfo").Document(data["Id"].ToString());
+                        Debug.Log(newFriendRequestList);
                         accountInfo_doc.UpdateAsync("FriendRequestsList", newFriendRequestList);
+                        Debug.Log(newFriendRequestList);
 
                         // Add PendingReqest to Current User
                         accountInfo_doc = db.Collection("AccountInfo").Document(accountFirebase.Id.ToString());
                         accountFirebase.FriendRequestsList.Add((int)data["Id"], data["User"].ToString());
+                        Debug.Log(accountFirebase.FriendRequestsList);
                         accountInfo_doc.UpdateAsync("SentFriendRequests", accountFirebase.FriendRequestsList);
 
                         Debug.Log("Sent Friend Request");
@@ -185,9 +295,9 @@ namespace Database
         {
             // Look for the Id of the Friend
             int friendId = 0;
-            foreach (KeyValuePair<int, string> friendRequest in accountFirebase.FriendRequestsList)
+            foreach (KeyValuePair<int, object> friendRequest in accountFirebase.FriendRequestsList)
             {
-                if (friendRequest.Value == newFriend)
+                if (friendRequest.Value.ToString() == newFriend)
                 {
                     friendId = friendRequest.Key;
                     break;
@@ -239,9 +349,9 @@ namespace Database
         {
             // Look for the Id of the Friend
             int friendId = 0;
-            foreach (KeyValuePair<int, string> friendRequest in accountFirebase.FriendRequestsList)
+            foreach (KeyValuePair<int, object> friendRequest in accountFirebase.FriendRequestsList)
             {
-                if (friendRequest.Value == newFriend)
+                if (friendRequest.Value.ToString() == newFriend)
                 {
                     friendId = friendRequest.Key;
                     break;
@@ -455,16 +565,16 @@ namespace Database
             public int PlayerIcon { get; set; }
 
             [FirestoreProperty]
-            public Dictionary<int, string> FriendList { get; set; }
+            public Dictionary<int, object> FriendList { get; set; }
 
             [FirestoreProperty]
-            public Dictionary<int, string> FriendRequestsList { get; set; }
+            public Dictionary<int, object> FriendRequestsList { get; set; }
 
             [FirestoreProperty]
             public List<object> InviteToGameList { get; set; }
 
             [FirestoreProperty]
-            public List<object> SentFriendRequests { get; set; }
+            public Dictionary<int, object> SentFriendRequests { get; set; }
 
             [FirestoreProperty]
             public bool Status { get; set; }

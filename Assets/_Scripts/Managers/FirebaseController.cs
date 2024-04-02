@@ -13,6 +13,7 @@ namespace Auth
     public class FirebaseController : MonoBehaviour
     {
         [Header("Test")]
+        public bool createTest = false;
         public bool test = false;
         public bool test2 = false;
         public bool test3 = false;
@@ -56,7 +57,7 @@ namespace Auth
 
         private void Test()
         {
-            canvasManager.LoadingMainMenu("test@gmail.com");
+            canvasManager.LoadingMainMenu("test1@gmail.com");
         }
 
         private void Test2()
@@ -78,16 +79,21 @@ namespace Auth
                 {
                     auth = FirebaseAuth.DefaultInstance;
                     if (test == true)
-                        StartCoroutine(LoginTest("test@gmail.com", "test123"));
+                        StartCoroutine(LoginTest("test1@gmail.com", "test123"));
                     if (test2 == true)
                         StartCoroutine(LoginTest("test2@gmail.com", "test123"));
                     if (test3 == true)
                         StartCoroutine(LoginTest("test3@gmail.com", "test123"));
+                    if (createTest == true)
+                    {
+                        StartCoroutine(Register("test1@gmail.com", "test123", "Test1"));
+                        /*     StartCoroutine(Register("test2@gmail.com", "test123", "Test2"));
+                             StartCoroutine(Register("test3@gmail.com", "test123", "Test3"));*/
+                    }
                 }
                 else
                 {
-                    if (Debug.isDebugBuild)
-                        Debug.LogError("Could not resolve all Firebase dependecies " + status);
+                    Debug.LogError("Could not resolve all Firebase dependecies " + status);
                 }
             });
         }

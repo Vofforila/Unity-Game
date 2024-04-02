@@ -45,7 +45,7 @@ namespace Test
             if (GUI.Button(new Rect(0, 40, 200, 40), "Join"))
             {
                 firestore.accountFirebase.User = "Test2";
-                localData.inviteName = "Test1";
+                /*localData.inviteName = "Test1";*/
                 JoinLobby();
             }
         }

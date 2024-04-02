@@ -24,8 +24,8 @@ namespace Server
         public NetworkRunner runner;
 
         [Header("Scriptable")]
-        public Firestore firestore;
-        public LocalData localData;
+        [SerializeField] private Firestore firestore;
+        [SerializeField] private LocalData localData;
 
         [Header("Settings")]
         [SerializeField] internal WindowScript windowScript;
@@ -76,7 +76,7 @@ namespace Server
                 if (GUI.Button(new Rect(0, 40, 200, 40), "Join"))
                 {
                     firestore.accountFirebase.User = "Test2";
-                    localData.inviteName = "Test1";
+                    /*localData.inviteName = "Test1";*/
                     managerUi.EnablePlayButton(false);
                     managerUi.EnableStartButton(true);
                     managerUi.EnableHomePanel(false);
@@ -106,7 +106,7 @@ namespace Server
                 if (GUI.Button(new Rect(0, 240, 200, 40), "3rd Player"))
                 {
                     firestore.accountFirebase.User = "Test3";
-                    localData.inviteName = "Test1";
+                    /*  localData.inviteName = "Test1";*/
                     managerUi.EnablePlayButton(false);
                     managerUi.EnableStartButton(true);
                     managerUi.EnableHomePanel(false);
