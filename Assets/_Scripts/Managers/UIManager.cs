@@ -9,6 +9,8 @@ using System.Linq;
 using static UI.GameUIManager;
 using Data;
 using UnityEngine.EventSystems;
+using static Database.Firestore;
+using SpecialFunction;
 
 namespace UI
 {
@@ -17,6 +19,7 @@ namespace UI
         [Header("LocalData")]
         [SerializeField] private Firestore firestore;
         [SerializeField] private LocalData localdata;
+        [SerializeField] private SpecialFunctions specialFunctions;
 
         [Header("Prefabs")]
         [SerializeField] private GameObject friendPrefab;
@@ -60,6 +63,8 @@ namespace UI
         [Header("Friend List")]
         [SerializeField] private GameObject friendScrollViewContent;
         [SerializeField] private TMP_Text friendCount;
+        [SerializeField] private GameObject noFriendPrefab;
+        [SerializeField] private GameObject friendScrollView;
 
         [Header("InviteToLobbyPanel")]
         [SerializeField] private GameObject inviteToLobbyPanel;
@@ -88,6 +93,8 @@ namespace UI
 
         public static UIManager Instance;
 
+        #region Awake & Start
+
         // Close Everything
         private void Awake()
         {
@@ -109,9 +116,10 @@ namespace UI
             firestore.TestFunction();
         }
 
-        ////////////////////////////////////
-        // Open/Close Canvases
-        ////////////////////////////////////
+        #endregion Awake & Start
+
+        #region Open/Close Canvases
+
         public void OpenLoginPanel()
         {
             loginPanel.SetActive(true);
@@ -157,9 +165,9 @@ namespace UI
             mainMenuCanvas.SetActive(true);
         }
 
-        ////////////////////////////////////
-        // Pop-ups
-        ////////////////////////////////////
+        #endregion Open/Close Canvases
+
+        #region Pop-ups
 
         public void EnableFriendRequestPanel(bool _val)
         {
@@ -171,27 +179,14 @@ namespace UI
             addFriendPanel.SetActive(_var);
         }
 
-        ////////////////////////////////////
-        // Choose Icon Panel
-        ////////////////////////////////////
-
         public void EnableChooseIcons(bool _var)
         {
             chooseIconPanel.SetActive(_var);
         }
 
-        ////////////////////////////////////
-        // Friend Panel
-        ////////////////////////////////////
+        #endregion Pop-ups
 
-        public void EnableFriendRequestButton(bool _val)
-        {
-            friendRequestButtonPanel.SetActive(_val);
-        }
-
-        ////////////////////////////////////
-        // Statistics Panel
-        ////////////////////////////////////
+        #region Statistic Panel
 
         public async void ShowStatisticPanelEvent()
         {
@@ -230,9 +225,9 @@ namespace UI
             matchStatisticsPanel.SetActive(_var);
         }
 
-        ////////////////////////////////////
-        // Lobby Panel
-        ////////////////////////////////////
+        #endregion Statistic Panel
+
+        #region Lobby Panel
 
         public void EnableHomePanel(bool _var)
         {
@@ -244,14 +239,19 @@ namespace UI
             lobbyPanel.SetActive(_var);
         }
 
+        #endregion Lobby Panel
+
+        #region GameUI
+
         public void EnableChatBoxPanel(bool _var)
         {
             chatBoxPanel.SetActive(_var);
         }
 
-        ////////////////////////////////////
-        // LoadingMenu
-        ////////////////////////////////////
+        #endregion GameUI
+
+        #region Loading
+
         public async void LoadingMainMenu(string _email)
         {
             // Total Loading Steps 4 =>  100 / 4 = 25
@@ -287,18 +287,10 @@ namespace UI
             mainMenuCanvas.SetActive(true);
         }
 
-        ////////////////////////////////////
-        // Settings Panel
-        ////////////////////////////////////
+        #endregion Loading
 
-        public void EnableSettingsPanel(bool _var)
-        {
-            settingCanvas.SetActive(_var);
-        }
+        #region Update UI
 
-        ////////////////////////////////////
-        // Update UI
-        ////////////////////////////////////
         public void UpdateUI()
         {
             Debug.Log("Callback");
@@ -319,62 +311,64 @@ namespace UI
 
         public void UpdateFriendList()
         {
-            DestroyChildrenOf(friendScrollViewContent);
-            if (firestore.accountFirebase.FriendList[0].ToString() == "Default")
+            specialFunctions.DestroyChildrenOf(friendScrollViewContent);
+
+            if (firestore.accountFirebase.FriendList.Count != 0)
             {
-                // Make panel for 0
-            }
-            else
-            {
-                foreach (object friend in firestore.accountFirebase.FriendList)
+                foreach (Friend friend in firestore.accountFirebase.FriendList)
                 {
                     GameObject instantiatedPrefab = Instantiate(friendPrefab, friendScrollViewContent.transform);
                     TMP_Text textComponent = instantiatedPrefab.GetComponentInChildren<TMP_Text>();
-                    textComponent.text = friend.ToString();
+                    textComponent.text = friend.User;
                 }
+            }
+            else
+            {
+                Instantiate(noFriendPrefab, friendScrollView);
             }
         }
 
         public void UpdateAddFriendPanel()
         {
-            DestroyChildrenOf(sentFriendRequestScrollViewContent);
-            if (firestore.accountFirebase.SentFriendRequests == null)
+            specialFunctions.DestroyChildrenOf(sentFriendRequestScrollViewContent);
+
+            if (firestore.accountFirebase.SentFriendRequests.Count != 0)
             {
-                // Make Pannel for 0 friends
-            }
-            if (firestore.accountFirebase.SentFriendRequests.Count != 1)
-            {
-                foreach (object friend in firestore.accountFirebase.SentFriendRequests)
+                foreach (Friend friend in firestore.accountFirebase.SentFriendRequests)
                 {
                     GameObject instantiatedPrefab = Instantiate(friendPrefab, sentFriendRequestScrollViewContent.transform);
                     TMP_Text textComponent = instantiatedPrefab.GetComponentInChildren<TMP_Text>();
-                    textComponent.text = friend.ToString();
+                    textComponent.text = friend.User;
                 }
+            }
+            else
+            {
+                // Default
             }
         }
 
         public void UpdateFriendRequestPanel()
         {
-            if (firestore.accountFirebase.FriendRequestsList == null)
+            if (firestore.accountFirebase.FriendRequestsList.Count != 0)
             {
-                DestroyChildrenOf(friendRequestScrollContent);
-                EnableFriendRequestButton(false);
-                EnableFriendRequestPanel(false);
-            }
-            else if (firestore.accountFirebase.FriendRequestsList.Count != 0)
-            {
-                DestroyChildrenOf(friendRequestScrollContent);
+                specialFunctions.DestroyChildrenOf(friendRequestScrollContent);
                 EnableFriendRequestButton(true);
-                foreach (KeyValuePair<int, object> friendRequest in firestore.accountFirebase.FriendRequestsList)
+                foreach (Friend friend in firestore.accountFirebase.FriendRequestsList)
                 {
                     // Create the new Friend Request Objects
                     GameObject instantiatedPrefab = Instantiate(friendRequestPrefab, friendRequestScrollContent.transform);
                     TMP_Text textComponent = instantiatedPrefab.GetComponentInChildren<TMP_Text>();
-                    textComponent.text = friendRequest.Value.ToString();
+                    textComponent.text = friend.User;
                 }
 
                 friendRequestsNumber1.text = firestore.accountFirebase.FriendRequestsList.Count.ToString();
                 friendRequestsNumber2.text = "(" + firestore.accountFirebase.FriendRequestsList.Count.ToString() + ")";
+            }
+            else
+            {
+                specialFunctions.DestroyChildrenOf(friendRequestScrollContent);
+                EnableFriendRequestButton(false);
+                EnableFriendRequestPanel(false);
             }
         }
 
@@ -382,7 +376,7 @@ namespace UI
         {
             if (firestore.accountFirebase.InviteToGameList == null)
             {
-                DestroyChildrenOf(inviteToLobbyPanel);
+                specialFunctions.DestroyChildrenOf(inviteToLobbyPanel);
                 inviteToLobbyPanel.SetActive(false);
             }
             else if (firestore.accountFirebase.InviteToGameList.Count != 0)
@@ -398,9 +392,24 @@ namespace UI
             }
         }
 
-        ////////////////////////////////////
-        // Button Functions
-        ////////////////////////////////////
+        #endregion Update UI
+
+        #region Setting Panel
+
+        public void EnableSettingsPanel(bool _var)
+        {
+            settingCanvas.SetActive(_var);
+        }
+
+        #endregion Setting Panel
+
+        #region Buttons
+
+        public void EnableFriendRequestButton(bool _val)
+        {
+            friendRequestButtonPanel.SetActive(_val);
+        }
+
         public void SendFriendRequest()
         {
             firestore.SendFriendRequest(addFriendInput.text);
@@ -423,10 +432,6 @@ namespace UI
             firestore.UpdateUserIcon(_var);
         }
 
-        ////////////////////////////////////
-        // NavBar
-        ////////////////////////////////////
-
         public void EnablePlayButton(bool _var)
         {
             playButton.SetActive(_var);
@@ -437,13 +442,6 @@ namespace UI
             startButton.SetActive(_var);
         }
 
-        // Function to destroy objects
-        public void DestroyChildrenOf(GameObject targetObject)
-        {
-            foreach (Transform child in targetObject.transform)
-            {
-                Destroy(child.gameObject);
-            }
-        }
+        #endregion Buttons
     }
 }

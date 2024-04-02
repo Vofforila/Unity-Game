@@ -87,8 +87,8 @@ namespace Auth
                     if (createTest == true)
                     {
                         StartCoroutine(Register("test1@gmail.com", "test123", "Test1"));
-                        /*     StartCoroutine(Register("test2@gmail.com", "test123", "Test2"));
-                             StartCoroutine(Register("test3@gmail.com", "test123", "Test3"));*/
+                        StartCoroutine(Register("test2@gmail.com", "test123", "Test2"));
+                        StartCoroutine(Register("test3@gmail.com", "test123", "Test3"));
                     }
                 }
                 else
