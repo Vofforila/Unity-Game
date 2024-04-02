@@ -39,6 +39,8 @@ namespace Database
                 Dictionary<string, object> data = snapshot.ToDictionary();
                 List<object> Harta = (List<object>)data["FriendList"];
 
+                // All data needs to be List<obj> when reading we need to use CreateObjectFromDictionary
+
                 foreach (Dictionary<string, object> friend in Harta)
                 {
                     Friend newFriend = CreateObjectFromDictionary<Friend>(friend);
