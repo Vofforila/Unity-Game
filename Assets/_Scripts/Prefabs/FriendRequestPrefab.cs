@@ -9,19 +9,24 @@ namespace UI
 {
     public class FriendRequestPrefab : MonoBehaviour
     {
-        public TMP_Text newFriend;
+        public string newFriendId;
         public Button acceptFriendRequest;
         public Button declineFriendRequest;
         public Firestore firestore;
 
+        private void Awake()
+        {
+            newFriendId = gameObject.name;
+        }
+
         public void AcceptFriendRequest()
         {
-            firestore.AcceptFriendRequest(newFriend.text);
+            firestore.AcceptFriendRequest(newFriendId);
         }
 
         public void DeclineFriendRequest()
         {
-            firestore.DeclineFriendRequest(newFriend.text);
+            firestore.DeclineFriendRequest(newFriendId);
         }
     }
 }

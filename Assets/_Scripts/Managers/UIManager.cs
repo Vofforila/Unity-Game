@@ -11,6 +11,7 @@ using Data;
 using UnityEngine.EventSystems;
 using static Database.Firestore;
 using SpecialFunction;
+using System;
 
 namespace UI
 {
@@ -52,6 +53,9 @@ namespace UI
         [SerializeField] private GameObject addFriendPanel;
         [SerializeField] private TMP_InputField addFriendInput;
         [SerializeField] private GameObject sentFriendRequestScrollViewContent;
+        [SerializeField] private GameObject sentFriendRequestScrollView;
+        [SerializeField] private GameObject noSentFriendRequest;
+        [SerializeField] private GameObject sentFriendPrefab;
 
         [Header("Friend Request Panel")]
         [SerializeField] private GameObject friendRequestButtonPanel;
@@ -62,7 +66,7 @@ namespace UI
 
         [Header("Friend List")]
         [SerializeField] private GameObject friendScrollViewContent;
-        [SerializeField] private GameObject noFriendPrefab;
+        [SerializeField] private GameObject noFriend;
         [SerializeField] private GameObject friendScrollView;
         [SerializeField] private GameObject friendHeaderPrefab;
 
@@ -93,16 +97,25 @@ namespace UI
 
         public static UIManager Instance;
 
+        private bool loadingUITask = false;
+
         #region Awake & Start
 
         // Close Everything
         private void Awake()
         {
             Instance = this;
-            authCanvas.SetActive(true);
-            mainMenuLoadingCanvas.SetActive(false);
+            authCanvas.SetActive(true); // Enable Main Canvas
+            popupCanvas.SetActive(true); // Enable Pop-up Canvas
+
+            // Disable All Canvases
             mainMenuCanvas.SetActive(false);
-            popupCanvas.SetActive(true);
+            mainMenuLoadingCanvas.SetActive(false);
+
+            // Disable All Pop-ups
+            friendRequestPanel.SetActive(false);
+            addFriendPanel.SetActive(false);
+
             OpenLoginPanel();
         }
 
@@ -113,7 +126,6 @@ namespace UI
                 ShowStatisticPanelEvent();
                 localdata.currentLvl = 0;
             }
-            firestore.TestFunction();
         }
 
         #endregion Awake & Start
@@ -258,6 +270,7 @@ namespace UI
             int loading = 0;
             loadingBar.value = loading;
             loadingPercentage.text = loading + "%";
+
             loginPanel.SetActive(false);
             mainMenuLoadingCanvas.SetActive(true);
             loading += 25;
@@ -269,99 +282,118 @@ namespace UI
             loadingBar.value = loading;
             loadingPercentage.text = loading + "%";
 
-            firestore.UpdateAccountFirebase();
+            loadingUITask = false;
+            firestore.UpdateLocalAccountListener();
+            await WaitUntilCondition(() => loadingUITask == true);
             loading += 25;
             loadingBar.value = loading;
             loadingPercentage.text = loading + "%";
-
-            friendRequestPanel.SetActive(false);
-            addFriendPanel.SetActive(false);
 
             await Task.Delay(1000);
             loading += 25;
             loadingBar.value = loading;
             loadingPercentage.text = loading + "%";
-            await Task.Delay(1000);
 
+            await Task.Delay(1000);
             mainMenuLoadingCanvas.SetActive(false);
             mainMenuCanvas.SetActive(true);
+        }
+
+        private async Task WaitUntilCondition(Func<bool> condition)
+        {
+            while (!condition())
+            {
+                // Delay for a short period before checking the condition again
+                await Task.Delay(100);
+            }
         }
 
         #endregion Loading
 
         #region Update UI
 
-        public void UpdateUI()
+        public async void UpdateUI()
         {
             Debug.Log("Callback");
-            UpdateProfilePanel();
-            UpdateFriendList();
-            UpdateSentFriendRequestsPanel();
-            UpdateFriendRequestPanel();
+            await UpdateProfilePanel();
+            await UpdateFriendList();
+            await UpdateSentFriendRequestsPanel();
+            await UpdateFriendRequestPanel();
             UpdateInviteToLobbyPanel();
+            loadingUITask = true;
         }
 
-        public void UpdateProfilePanel()
+        private Task UpdateProfilePanel()
         {
             currentUserName.text = firestore.accountFirebase.User;
             playerIcon.sprite = playerIcons[firestore.accountFirebase.PlayerIcon];
             winrate.text = firestore.accountFirebase.Winrate.ToString() + " %";
             rankPoints.text = firestore.accountFirebase.RankPoints.ToString();
+            return Task.CompletedTask;
         }
 
-        public void UpdateFriendList()
+        private async Task UpdateFriendList()
         {
             specialFunctions.DestroyChildrenOf(friendScrollViewContent);
 
             if (firestore.accountFirebase.FriendList.Count != 0)
             {
+                noFriend.SetActive(false);
                 Instantiate(friendHeaderPrefab, friendScrollViewContent.transform);
-                foreach (Friend friend in firestore.accountFirebase.FriendList)
+                foreach (string friendId in firestore.accountFirebase.FriendList)
                 {
+                    AccountFirebase account = await firestore.GetAccountFromId(friendId);
                     GameObject instantiatedPrefab = Instantiate(friendPrefab, friendScrollViewContent.transform);
                     TMP_Text textComponent = instantiatedPrefab.GetComponentInChildren<TMP_Text>();
-                    textComponent.text = friend.User;
+                    textComponent.text = account.User;
                     Image imgComponent = instantiatedPrefab.GetComponentInChildren<Image>();
-                    imgComponent.sprite = playerIcons[friend.Id];
+                    imgComponent.sprite = playerIcons[account.PlayerIcon];
                 }
             }
             else
             {
-                Instantiate(noFriendPrefab, friendScrollView.transform);
+                noFriend.SetActive(true);
             }
         }
 
-        public void UpdateSentFriendRequestsPanel()
+        private async Task UpdateSentFriendRequestsPanel()
         {
             specialFunctions.DestroyChildrenOf(sentFriendRequestScrollViewContent);
 
             if (firestore.accountFirebase.SentFriendRequests.Count != 0)
             {
-                foreach (Friend friend in firestore.accountFirebase.SentFriendRequests)
+                noSentFriendRequest.SetActive(false);
+                foreach (string friendId in firestore.accountFirebase.SentFriendRequests)
                 {
-                    GameObject instantiatedPrefab = Instantiate(friendPrefab, sentFriendRequestScrollViewContent.transform);
+                    AccountFirebase account = await firestore.GetAccountFromId(friendId);
+                    GameObject instantiatedPrefab = Instantiate(sentFriendPrefab, sentFriendRequestScrollViewContent.transform);
                     TMP_Text textComponent = instantiatedPrefab.GetComponentInChildren<TMP_Text>();
-                    textComponent.text = friend.User;
+                    textComponent.text = account.User;
+                    Image imageComponent = instantiatedPrefab.GetComponentInChildren<Image>();
+                    imageComponent.sprite = playerIcons[account.PlayerIcon];
                 }
             }
             else
             {
-                // Default
+                noSentFriendRequest.SetActive(true);
             }
         }
 
-        public void UpdateFriendRequestPanel()
+        private async Task UpdateFriendRequestPanel()
         {
             if (firestore.accountFirebase.FriendRequestsList.Count != 0)
             {
                 specialFunctions.DestroyChildrenOf(friendRequestScrollContent);
                 EnableFriendRequestButton(true);
-                foreach (Friend friend in firestore.accountFirebase.FriendRequestsList)
+                foreach (string friendId in firestore.accountFirebase.FriendRequestsList)
                 {
-                    // Create the new Friend Request Objects
+                    AccountFirebase account = await firestore.GetAccountFromId(friendId);
                     GameObject instantiatedPrefab = Instantiate(friendRequestPrefab, friendRequestScrollContent.transform);
+                    instantiatedPrefab.name = account.Id;
                     TMP_Text textComponent = instantiatedPrefab.GetComponentInChildren<TMP_Text>();
-                    textComponent.text = friend.User;
+                    textComponent.text = account.User;
+                    Image imageComponent = instantiatedPrefab.GetComponentInChildren<Image>();
+                    imageComponent.sprite = playerIcons[account.PlayerIcon];
                 }
 
                 friendRequestsNumber1.text = firestore.accountFirebase.FriendRequestsList.Count.ToString();
@@ -415,7 +447,7 @@ namespace UI
 
         public void SendFriendRequest()
         {
-            firestore.SendFriendRequest(addFriendInput.text);
+            firestore.SendFriendRequest(specialFunctions.UpperCase(addFriendInput.text));
         }
 
         public void MinimizeClientButton()

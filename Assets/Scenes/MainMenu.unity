@@ -5719,7 +5719,7 @@ PrefabInstance:
     - target: {fileID: 2596255942873911396, guid: ba2170f846fcc2a4eaa2a08bd32c0e02,
         type: 3}
       propertyPath: m_SizeDelta.y
-      value: 45
+      value: 44.88
       objectReference: {fileID: 0}
     - target: {fileID: 2596255942873911396, guid: ba2170f846fcc2a4eaa2a08bd32c0e02,
         type: 3}
@@ -7476,6 +7476,8 @@ MonoBehaviour:
   addFriendPanel: {fileID: 748513782}
   addFriendInput: {fileID: 1313364304}
   sentFriendRequestScrollViewContent: {fileID: 229233654}
+  sentFriendRequestScrollView: {fileID: 0}
+  noSentFriendRequestPrefab: {fileID: 0}
   friendRequestButtonPanel: {fileID: 1133578842}
   friendRequestPanel: {fileID: 239609459}
   friendRequestScrollContent: {fileID: 745600148}
@@ -7555,7 +7557,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 514719944}
-        m_TargetAssemblyTypeName: CanvasManager, Assembly-CSharp
+        m_TargetAssemblyTypeName: UI.UIManager, Assembly-CSharp
         m_MethodName: UpdateUI
         m_Mode: 1
         m_Arguments:
@@ -9164,7 +9166,7 @@ PrefabInstance:
     - target: {fileID: 2596255942873911396, guid: ba2170f846fcc2a4eaa2a08bd32c0e02,
         type: 3}
       propertyPath: m_SizeDelta.y
-      value: 35
+      value: 44.88
       objectReference: {fileID: 0}
     - target: {fileID: 2596255942873911396, guid: ba2170f846fcc2a4eaa2a08bd32c0e02,
         type: 3}
@@ -13716,7 +13718,7 @@ PrefabInstance:
     - target: {fileID: 2596255942873911396, guid: ba2170f846fcc2a4eaa2a08bd32c0e02,
         type: 3}
       propertyPath: m_SizeDelta.y
-      value: 45
+      value: 44.88
       objectReference: {fileID: 0}
     - target: {fileID: 2596255942873911396, guid: ba2170f846fcc2a4eaa2a08bd32c0e02,
         type: 3}

@@ -290,10 +290,7 @@ namespace Auth
             else
             {
                 user = LoginTask.Result.User;
-
-                if (Debug.isDebugBuild)
-                    Debug.Log("Login");
-
+                Debug.Log("Login");
                 canvasManager.LoadingMainMenu(_email);
             }
         }
