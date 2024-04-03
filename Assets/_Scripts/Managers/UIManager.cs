@@ -99,7 +99,7 @@ namespace UI
 
         private bool loadingUITask = false;
 
-        #region Awake & Start
+        #region Awake & Start & OnQuit
 
         // Close Everything
         private void Awake()
@@ -128,7 +128,12 @@ namespace UI
             }
         }
 
-        #endregion Awake & Start
+        private void OnApplicationQuitting()
+        {
+            firestore.StateChange(false);
+        }
+
+        #endregion Awake & Start & OnQuit
 
         #region Open/Close Canvases
 
@@ -285,6 +290,7 @@ namespace UI
             loadingUITask = false;
             firestore.UpdateLocalAccountListener();
             await WaitUntilCondition(() => loadingUITask == true);
+            firestore.StateChange(true);
             loading += 25;
             loadingBar.value = loading;
             loadingPercentage.text = loading + "%";
@@ -339,16 +345,44 @@ namespace UI
             if (firestore.accountFirebase.FriendList.Count != 0)
             {
                 noFriend.SetActive(false);
-                Instantiate(friendHeaderPrefab, friendScrollViewContent.transform);
+                GameObject instanciatedPrefab = Instantiate(friendHeaderPrefab, friendScrollViewContent.transform);
+
+                int onlinePlayers = 0;
                 foreach (string friendId in firestore.accountFirebase.FriendList)
                 {
                     AccountFirebase account = await firestore.GetAccountFromId(friendId);
                     GameObject instantiatedPrefab = Instantiate(friendPrefab, friendScrollViewContent.transform);
-                    TMP_Text textComponent = instantiatedPrefab.GetComponentInChildren<TMP_Text>();
-                    textComponent.text = account.User;
+                    TMP_Text[] textComponent = instantiatedPrefab.GetComponentsInChildren<TMP_Text>();
+                    textComponent[0].text = account.User;
                     Image imgComponent = instantiatedPrefab.GetComponentInChildren<Image>();
                     imgComponent.sprite = playerIcons[account.PlayerIcon];
+
+                    bool onlineFound = false;
+
+                    foreach (string friendStatusId in firestore.accountFirebase.OnlineFriends)
+                    {
+                        if (friendId == friendStatusId)
+                        {
+                            textComponent[1].text = "Online";
+                            onlinePlayers++;
+                            onlineFound = true;
+                            break;
+                        }
+                    }
+                    if (onlineFound == false)
+                    {
+                        foreach (string friendStatusId in firestore.accountFirebase.OfflineFriends)
+                        {
+                            if (friendId == friendStatusId)
+                            {
+                                textComponent[1].text = "Offline";
+                                break;
+                            }
+                        }
+                    }
                 }
+                TMP_Text totalFriend = instanciatedPrefab.GetComponentInChildren<TMP_Text>();
+                totalFriend.text = "( " + onlinePlayers + " / " + firestore.accountFirebase.FriendList.Count.ToString() + " )";
             }
             else
             {
