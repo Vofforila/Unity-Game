@@ -13,7 +13,6 @@ namespace Data
         [Header("InvitetoLobby")]
         public PointerEventData pointerData;
         public string FriendClicked;
-        public bool inviteResponse;
         public string inviteName;
 
         public Dictionary<PlayerRef, string> playerList;

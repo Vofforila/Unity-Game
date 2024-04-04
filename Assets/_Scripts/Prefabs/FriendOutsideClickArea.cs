@@ -8,25 +8,27 @@ namespace UI
 {
     public class FriendOutsideClickArea : MonoBehaviour, IPointerClickHandler
     {
-        public GameObject rightClickPanelPrefab;
-        public Transform MainMenuCanvasTransform;
+        [Header("Scriptable")]
+        [SerializeField] private LocalData localData;
 
-        public LocalData localData;
+        [Header("Objects")]
+        [SerializeField] private GameObject rightClickPanelPrefab;
 
-        [SerializeField]
-        public GameObject instanciatedRightClickPanelPrefab;
+        private GameObject instanciatedRightClickPanelPrefab;
 
         public void Awake()
         {
-            instanciatedRightClickPanelPrefab = Instantiate(rightClickPanelPrefab, MainMenuCanvasTransform);
-            instanciatedRightClickPanelPrefab.transform.position = new Vector3(3000, 3000, 0);
+            instanciatedRightClickPanelPrefab = Instantiate(rightClickPanelPrefab, gameObject.transform);
+            instanciatedRightClickPanelPrefab.SetActive(false);
         }
 
         // Listens the Pointer
         public void OnPointerClick(PointerEventData eventData)
         {
             if (instanciatedRightClickPanelPrefab.activeSelf == true)
+            {
                 instanciatedRightClickPanelPrefab.SetActive(false);
+            }
         }
 
         public void HandleRightClickPanel()
@@ -38,7 +40,7 @@ namespace UI
                 instanciatedRightClickPanelPrefab.transform.position = localData.pointerData.position;
                 instanciatedRightClickPanelPrefab.SetActive(true);
             }
-            else if (localData.pointerData.button == PointerEventData.InputButton.Left)
+            if (localData.pointerData.button == PointerEventData.InputButton.Left)
             {
                 instanciatedRightClickPanelPrefab.SetActive(false);
             }

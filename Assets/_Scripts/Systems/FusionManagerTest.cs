@@ -57,19 +57,21 @@ namespace Test
             NickName = nickName;
         }
 
-        public void InviteResponseEvent()
-        {
-            Debug.Log("Callback");
-            if (localData.inviteResponse == true)
-            {
-                //firestore.RemoveInvite();
-                JoinLobby();
-            }
-            else
-            {
-                firestore.RemoveInvite();
-            }
-        }
+        // If Enabled remake invite
+        /*   public void InviteResponseEvent()
+           {
+               Debug.Log("Callback");
+               if (localData.inviteResponse == true)
+               {
+                   //firestore.RemoveInvite();
+                   JoinLobby();
+               }
+               else
+               {
+                   firestore.RemoveInvite();
+               }
+           }
+   */
 
         public async void CreateLobby()
         {

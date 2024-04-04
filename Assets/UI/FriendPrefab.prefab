@@ -65,7 +65,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
+  m_Sprite: {fileID: 21300000, guid: b9dca0bd75e7a6e4699fd8dcba01149f, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -167,6 +167,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   friendUsername: {fileID: 611549947613537546}
+  localData: {fileID: 11400000, guid: 9ae0573c8cfccd741b7423eb0db11b79, type: 2}
   HandleRightClickPanelEvent:
     m_PersistentCalls:
       m_Calls:
@@ -182,7 +183,6 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-  localData: {fileID: 11400000, guid: 9ae0573c8cfccd741b7423eb0db11b79, type: 2}
 --- !u!1001 &3824226708090222193
 PrefabInstance:
   m_ObjectHideFlags: 0

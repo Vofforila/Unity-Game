@@ -8,12 +8,12 @@ namespace UI
     public class RightClickPanelPrefab : MonoBehaviour
     {
         [Header("Buttons")]
-        public Button InviteToLobbyButton;
-        public Button ViewProfileButton;
+        [SerializeField] private Button InviteToLobbyButton;
+        [SerializeField] private Button ViewProfileButton;
 
         [Header("Scriptables")]
-        public Firestore firestore;
-        public LocalData localData;
+        [SerializeField] private Firestore firestore;
+        [SerializeField] private LocalData localData;
 
         private void Awake()
         {

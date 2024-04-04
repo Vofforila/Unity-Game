@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 4106722674814580921}
   - component: {fileID: 966248629967458507}
   - component: {fileID: 4602725518375770170}
+  - component: {fileID: 4458226274370178450}
   m_Layer: 0
   m_Name: RightClickPanelPrefab
   m_TagString: Untagged
@@ -121,6 +122,26 @@ MonoBehaviour:
   ViewProfileButton: {fileID: 4996335387389409869}
   firestore: {fileID: 11400000, guid: 883b834f3dfdf5a45aee970fc4e238bd, type: 2}
   localData: {fileID: 11400000, guid: 9ae0573c8cfccd741b7423eb0db11b79, type: 2}
+--- !u!114 &4458226274370178450
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1232057688122849348}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 306cc8c2b49d7114eaa3623786fc2126, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_IgnoreLayout: 1
+  m_MinWidth: -1
+  m_MinHeight: -1
+  m_PreferredWidth: -1
+  m_PreferredHeight: -1
+  m_FlexibleWidth: -1
+  m_FlexibleHeight: -1
+  m_LayoutPriority: 1
 --- !u!1001 &895961060360223888
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -274,6 +295,42 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: InviteToLobbyButton
+      objectReference: {fileID: 0}
+    - target: {fileID: 5276419165393340125, guid: 2ae027e4ca10e7b40ab0c43596e36f3c,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5276419165393340125, guid: 2ae027e4ca10e7b40ab0c43596e36f3c,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 5276419165393340125, guid: 2ae027e4ca10e7b40ab0c43596e36f3c,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 11400000, guid: 883b834f3dfdf5a45aee970fc4e238bd,
+        type: 2}
+    - target: {fileID: 5276419165393340125, guid: 2ae027e4ca10e7b40ab0c43596e36f3c,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5276419165393340125, guid: 2ae027e4ca10e7b40ab0c43596e36f3c,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: InviteToLobby
+      objectReference: {fileID: 0}
+    - target: {fileID: 5276419165393340125, guid: 2ae027e4ca10e7b40ab0c43596e36f3c,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: Database.Firestore, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 5276419165393340125, guid: 2ae027e4ca10e7b40ab0c43596e36f3c,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
     - target: {fileID: 5981978187145538006, guid: 2ae027e4ca10e7b40ab0c43596e36f3c,
         type: 3}

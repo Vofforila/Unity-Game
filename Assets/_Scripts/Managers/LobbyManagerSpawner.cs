@@ -16,11 +16,6 @@ namespace Host
             StartCoroutine(WaitForUpdate(player));
         }
 
-        public void Dissconnect()
-        {
-            Runner.Disconnect(Object.InputAuthority);
-        }
-
         // Wait to Process User
         public IEnumerator WaitForUpdate(PlayerRef _player)
         {

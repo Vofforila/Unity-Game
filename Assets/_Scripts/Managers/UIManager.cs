@@ -17,6 +17,9 @@ namespace UI
 {
     public class UIManager : MonoBehaviour
     {
+        [Header("Test")]
+        public bool test = false;
+
         [Header("LocalData")]
         [SerializeField] private Firestore firestore;
         [SerializeField] private LocalData localdata;
@@ -105,6 +108,8 @@ namespace UI
         private void Awake()
         {
             Instance = this;
+
+            if (test == true) return;
             authCanvas.SetActive(true); // Enable Main Canvas
             popupCanvas.SetActive(true); // Enable Pop-up Canvas
 
@@ -276,7 +281,7 @@ namespace UI
             loadingBar.value = loading;
             loadingPercentage.text = loading + "%";
 
-            loginPanel.SetActive(false);
+            authCanvas.SetActive(false);
             mainMenuLoadingCanvas.SetActive(true);
             loading += 25;
             loadingBar.value = loading;
@@ -325,7 +330,7 @@ namespace UI
             await UpdateFriendList();
             await UpdateSentFriendRequestsPanel();
             await UpdateFriendRequestPanel();
-            UpdateInviteToLobbyPanel();
+            await UpdateInviteToLobbyPanel();
             loadingUITask = true;
         }
 
@@ -345,16 +350,17 @@ namespace UI
             if (firestore.accountFirebase.FriendList.Count != 0)
             {
                 noFriend.SetActive(false);
-                GameObject instanciatedPrefab = Instantiate(friendHeaderPrefab, friendScrollViewContent.transform);
+                GameObject friendHeader = Instantiate(friendHeaderPrefab, friendScrollViewContent.transform);
 
                 int onlinePlayers = 0;
                 foreach (string friendId in firestore.accountFirebase.FriendList)
                 {
                     AccountFirebase account = await firestore.GetAccountFromId(friendId);
-                    GameObject instantiatedPrefab = Instantiate(friendPrefab, friendScrollViewContent.transform);
-                    TMP_Text[] textComponent = instantiatedPrefab.GetComponentsInChildren<TMP_Text>();
+                    GameObject friend = Instantiate(friendPrefab, friendScrollViewContent.transform);
+                    friend.name = account.Id;
+                    TMP_Text[] textComponent = friend.GetComponentsInChildren<TMP_Text>();
                     textComponent[0].text = account.User;
-                    Image imgComponent = instantiatedPrefab.GetComponentInChildren<Image>();
+                    Image imgComponent = friend.GetComponentInChildren<Image>();
                     imgComponent.sprite = playerIcons[account.PlayerIcon];
 
                     bool onlineFound = false;
@@ -381,7 +387,7 @@ namespace UI
                         }
                     }
                 }
-                TMP_Text totalFriend = instanciatedPrefab.GetComponentInChildren<TMP_Text>();
+                TMP_Text totalFriend = friendHeader.GetComponentInChildren<TMP_Text>();
                 totalFriend.text = "( " + onlinePlayers + " / " + firestore.accountFirebase.FriendList.Count.ToString() + " )";
             }
             else
@@ -441,7 +447,7 @@ namespace UI
             }
         }
 
-        public void UpdateInviteToLobbyPanel()
+        public async Task UpdateInviteToLobbyPanel()
         {
             if (firestore.accountFirebase.InviteToGameList == null)
             {
@@ -451,12 +457,15 @@ namespace UI
             else if (firestore.accountFirebase.InviteToGameList.Count != 0)
             {
                 inviteToLobbyPanel.SetActive(true);
-                foreach (object inviteToGame in firestore.accountFirebase.InviteToGameList)
+                foreach (string inviteId in firestore.accountFirebase.InviteToGameList)
                 {
-                    // Create the new Friend Request Objects
-                    GameObject instantiatedPrefab = Instantiate(lobbyInvitePrefab, inviteToLobbyScrollViewContent.transform);
-                    TMP_Text textComponent = instantiatedPrefab.GetComponentInChildren<TMP_Text>();
-                    textComponent.text = inviteToGame.ToString();
+                    AccountFirebase account = await firestore.GetAccountFromId(inviteId);
+                    GameObject lobbyInvite = Instantiate(lobbyInvitePrefab, inviteToLobbyScrollViewContent.transform);
+                    lobbyInvite.name = account.Id;
+                    TMP_Text textComponent = lobbyInvite.GetComponentInChildren<TMP_Text>();
+                    textComponent.text = account.User;
+                    Image imageComponent = lobbyInvite.GetComponentInChildren<Image>();
+                    imageComponent.sprite = playerIcons[account.PlayerIcon];
                 }
             }
         }

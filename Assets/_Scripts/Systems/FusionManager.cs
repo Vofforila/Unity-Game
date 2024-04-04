@@ -41,10 +41,11 @@ namespace Server
         public UnityEvent showStatisticEvent;
 
         // Variables
-        [HideInInspector]
-        public List<PlayerRef> playersInGame = new();
+        [HideInInspector] public List<PlayerRef> playersInGame = new();
 
         public static FusionManager Instance;
+
+        #region Awake
 
         private void Awake()
         {
@@ -55,6 +56,10 @@ namespace Server
             DontDestroyOnLoad(gameObject);
             runner = gameObject.AddComponent<NetworkRunner>();
         }
+
+        #endregion Awake
+
+        #region TestGUI
 
         // Test GUI
         private void OnGUI()
@@ -70,59 +75,65 @@ namespace Server
                     managerUi.EnablePlayButton(false);
                     managerUi.EnableStartButton(true);
                     managerUi.EnableHomePanel(false);
+                    managerUi.EnableLobbyPanel(true);
                     CreateLobby();
                 }
-
                 if (GUI.Button(new Rect(0, 40, 200, 40), "Join"))
                 {
                     firestore.accountFirebase.User = "Test2";
-                    /*localData.inviteName = "Test1";*/
+                    localData.inviteName = "Test1";
                     managerUi.EnablePlayButton(false);
                     managerUi.EnableStartButton(true);
                     managerUi.EnableHomePanel(false);
+                    managerUi.EnableLobbyPanel(true);
+                    InviteResponseEvent();
                     test = false;
-                    JoinLobby();
                 }
-                if (GUI.Button(new Rect(0, 80, 200, 40), "Start Level 1"))
+                if (GUI.Button(new Rect(0, 80, 200, 40), "Level 1"))
                 {
-                    test = false;
                     LoadLevel1();
-                }
-                if (GUI.Button(new Rect(0, 120, 200, 40), "Start Level 2"))
-                {
                     test = false;
+                }
+                if (GUI.Button(new Rect(0, 120, 200, 40), "Level 2"))
+                {
                     LoadLevel2Event();
-                }
-                if (GUI.Button(new Rect(0, 160, 200, 40), "Start Level 3"))
-                {
                     test = false;
+                }
+                if (GUI.Button(new Rect(0, 160, 200, 40), "Level 3"))
+                {
                     LoadLevel3Event();
-                }
-                if (GUI.Button(new Rect(0, 200, 200, 40), "Start Level 4"))
-                {
                     test = false;
-                    LoadLevel4Event();
                 }
-                if (GUI.Button(new Rect(0, 240, 200, 40), "3rd Player"))
+                if (GUI.Button(new Rect(0, 200, 200, 40), "Level 4"))
+                {
+                    LoadLevel4Event();
+                    test = false;
+                }
+                if (GUI.Button(new Rect(0, 240, 200, 40), "Join 3"))
                 {
                     firestore.accountFirebase.User = "Test3";
-                    /*  localData.inviteName = "Test1";*/
+                    localData.inviteName = "Test1";
                     managerUi.EnablePlayButton(false);
                     managerUi.EnableStartButton(true);
                     managerUi.EnableHomePanel(false);
+                    managerUi.EnableLobbyPanel(true);
+                    InviteResponseEvent();
                     test = false;
-                    JoinLobby();
                 }
-                if (GUI.Button(new Rect(0, 280, 200, 40), "Leave"))
-                {
+                if (GUI.Button(new Rect(0, 280, 200, 40), "Close Server"))
+                {/*
                     managerUi.EnablePlayButton(true);
                     managerUi.EnableStartButton(false);
                     managerUi.EnableLobbyPanel(false);
-                    managerUi.EnableHomePanel(true);
-                    test = false;
+                    managerUi.EnableHomePanel(true);*/
+                    LeaveLobby();
                 }
             }
         }
+
+        #endregion TestGUI
+
+        #region LevelLoading
 
         public async void LoadMainMenuEvent()
         {
@@ -164,40 +175,26 @@ namespace Server
             playLevel4Event.Invoke();
         }
 
-        public void InviteResponseEvent()
-        {
-            Debug.Log("Callback");
-            if (localData.inviteResponse == true)
-            {
-                firestore.RemoveInvite();
-                JoinLobby();
-            }
-            else
-            {
-                firestore.RemoveInvite();
-            }
-        }
+        #endregion LevelLoading
+
+        #region Create/Join Lobby
 
         public async void CreateLobby()
         {
-            if (runner == null)
-            {
-                runner = gameObject.AddComponent<NetworkRunner>();
-            }
-
-            localData.playerList = new();
+            localData.playerList = new(); // ???
             localData.currentLvl = 0;
             GameUIManager.Instance.UpdateLevelState(localData.currentLvl);
-            await CreateLobbyTask(runner);
+            await CreateLobbyTask();
         }
 
-        public async Task CreateLobbyTask(NetworkRunner runner)
+        public async Task CreateLobbyTask()
         {
             // Create the Fusion runner and let it know that we will be providing user input
             if (runner == null)
             {
                 runner = gameObject.AddComponent<NetworkRunner>();
             }
+
             runner.ProvideInput = true;
 
             // Create the NetworkSceneInfo from the current scene
@@ -208,6 +205,7 @@ namespace Server
                 sceneInfo.AddSceneRef(scene, LoadSceneMode.Additive);
             }
 
+            // Create Session
             var result = await runner.StartGame(new StartGameArgs()
             {
                 GameMode = GameMode.Host,
@@ -218,28 +216,21 @@ namespace Server
 
             if (result.Ok)
             {
-                if (Debug.isDebugBuild)
-                    Debug.Log("Hosted");
+                Debug.Log("Hosted");
             }
             else
             {
-                if (Debug.isDebugBuild)
-                    Debug.LogError($"Failed to Start: {result.ShutdownReason}");
+                Debug.LogError($"Failed to Start: {result.ShutdownReason}");
             }
         }
 
-        public async void JoinLobby()
+        public async void InviteResponseEvent()
         {
-            // firestoreManager.JoinLobby(invitedFriend);
-            if (runner == null)
-            {
-                runner = gameObject.AddComponent<NetworkRunner>();
-            }
-
-            await JoinSessionTask(runner);
+            Debug.Log("Callback");
+            await JoinSessionTask();
         }
 
-        public async Task JoinSessionTask(NetworkRunner runner)
+        public async Task JoinSessionTask()
         {
             // Create the Fusion runner and let it know that we will be providing user input
             if (runner == null)
@@ -255,6 +246,8 @@ namespace Server
             {
                 sceneInfo.AddSceneRef(scene, LoadSceneMode.Additive);
             }
+
+            // Join Session
             var result = await runner.StartGame(new StartGameArgs()
             {
                 GameMode = GameMode.Client,
@@ -264,19 +257,39 @@ namespace Server
                 SceneManager = gameObject.AddComponent<NetworkSceneManagerDefault>()
             });
 
-            // canvasManager.OpenLobbyPanel();
-
             if (result.Ok)
             {
-                if (Debug.isDebugBuild)
-                    Debug.Log("Joined");
+                Debug.Log("Joined");
             }
             else
             {
-                if (Debug.isDebugBuild)
-                    Debug.LogError($"Failed to Start: {result.ShutdownReason}");
+                Debug.LogError($"Failed to Start: {result.ShutdownReason}");
             }
         }
+
+        #endregion Create/Join Lobby
+
+        #region Leave Lobby
+
+        public void LeaveLobby()
+        {
+            if (runner.SessionInfo.Name != firestore.accountFirebase.User)
+            {
+                runner = null;
+            }
+            else
+            {
+                foreach (PlayerRef player in runner.ActivePlayers)
+                {
+                    runner.Disconnect(player);
+                }
+                Destroy(runner);
+            }
+        }
+
+        #endregion Leave Lobby
+
+        #region Fusion API
 
         public void OnConnectedToServer(NetworkRunner runner)
         {
@@ -371,5 +384,7 @@ namespace Server
         {
             Debug.Log("19");
         }
+
+        #endregion Fusion API
     }
 }
