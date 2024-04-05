@@ -1,74 +1,34 @@
+using System.Collections;
 using UnityEngine;
 using Fusion;
-using Data;
-using Database;
-using UI;
 
 namespace Host
 {
-    public class LobbyManager : NetworkBehaviour, IPlayerLeft
+    public class LobbyManager : NetworkBehaviour, IPlayerJoined
     {
-        [SerializeField] private Firestore firestore;
-        [SerializeField] private LocalData localData;
+        [Header("Prefab")]
+        [SerializeField] private NetworkPrefabRef lobbyPlayerManagerPrefab;
 
-        private LobbyUIListener LobbyUIListener;
+        // For test
+        private int playerCount;
 
-        [Networked, HideInInspector] private NetworkString<_16> UserName { get; set; }
-        [Networked, HideInInspector] private PlayerRef PlayerDc { get; set; }
-
-        private ChangeDetector changeDetector;
-
-        public override void Spawned()
+        private void Awake()
         {
-            LobbyUIListener = LobbyUIListener.Instance;
-
-            // Client
-            if (Object.HasInputAuthority)
-            {
-                RPC_SendUsername(firestore.accountFirebase.User);
-            }
-            // Host
-            if (Object.HasStateAuthority)
-            {
-            }
-
-            // Create UI
-            LobbyUIListener.CreateUI(Object.InputAuthority);
-
-            // Update UI
-            LobbyUIListener.UpdateUserName(Object.InputAuthority, UserName.ToString());
-
-            // Activate Listener
-            changeDetector = GetChangeDetector(ChangeDetector.Source.SimulationState);
+            playerCount = 0;
         }
 
-        // Update UI for Other Users
-        public override void Render()
+        public void PlayerJoined(PlayerRef _player)
         {
-            foreach (var change in changeDetector.DetectChanges(this, out var previousBuffer, out var currentBuffer))
-            {
-                switch (change)
-                {
-                    case nameof(UserName):
-                        LobbyUIListener.UpdateUserName(Object.InputAuthority, UserName.ToString());
-                        break;
-                    case nameof(PlayerDc):
-                        LobbyUIListener.RemovePlayer(PlayerDc);
-                        break;
-                }
-            }
+            StartCoroutine(WaitForUpdate(_player));
         }
 
-        public void PlayerLeft(PlayerRef player)
+        // Wait to Process User
+        public IEnumerator WaitForUpdate(PlayerRef _player)
         {
-            PlayerDc = player;
-        }
-
-        // RPC used to send player information to the Host
-        [Rpc(sources: RpcSources.InputAuthority, targets: RpcTargets.StateAuthority)]
-        private void RPC_SendUsername(string _username)
-        {
-            UserName = _username;
+            yield return new WaitForFixedUpdate();
+            playerCount++;
+            NetworkObject player = Runner.Spawn(lobbyPlayerManagerPrefab, Vector3.zero, Quaternion.identity, _player);
+            player.name = "Player " + playerCount;
         }
     }
 }

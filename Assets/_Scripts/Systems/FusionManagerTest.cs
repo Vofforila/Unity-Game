@@ -1,94 +1,197 @@
 using Data;
-using Database;
+using Firebase.Firestore;
 using Fusion;
 using Fusion.Sockets;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.SceneManagement;
+using UI;
+using Database;
+using Settings;
 
-namespace Test
+namespace Server
 {
     public class FusionManagerTest : MonoBehaviour, INetworkRunnerCallbacks
+
     {
-        [HideInInspector]
+        [Header("Test")]
+        public bool test = false;
+
+        [Header("Fusion")]
         public NetworkRunner runner;
 
         [Header("Scriptable")]
-        public Firestore firestore;
-        public LocalData localData;
+        [SerializeField] private Firestore firestore;
+        [SerializeField] private LocalData localData;
 
-        // Test
-        public Canvas canvas;
+        [Header("Settings")]
+        [SerializeField] internal WindowScript windowScript;
 
-        [SerializeField]
-        private NetworkPrefabRef textPrefab;
+        [Header("Event")]
+        public UnityEvent playLevel1Event;
+        public UnityEvent playLevel2Event;
+        public UnityEvent playLevel3Event;
+        public UnityEvent playLevel4Event;
+        public UnityEvent showStatisticEvent;
 
-        [SerializeField]
-        private NetworkPrefabRef playerPrefab;
+        // Variables
+        [HideInInspector] public List<PlayerRef> playersInGame = new();
 
-        [Networked] public NetworkString<_16> NickName { get; set; }
+        public static FusionManagerTest Instance;
+
+        #region Awake
 
         private void Awake()
         {
+            // Disable firestore duplication
+            FirebaseFirestore.DefaultInstance.Settings.PersistenceEnabled = false;
+            Instance = this;
+
+            DontDestroyOnLoad(gameObject);
             runner = gameObject.AddComponent<NetworkRunner>();
         }
 
+        #endregion Awake
+
+        #region TestGUI
+
+        // Test GUI
         private void OnGUI()
         {
-            if (GUI.Button(new Rect(0, 0, 200, 40), "Host"))
+            if (test == true)
             {
-                firestore.accountFirebase.User = "Test1";
-                CreateLobby();
-            }
-            if (GUI.Button(new Rect(0, 40, 200, 40), "Join"))
-            {
-                firestore.accountFirebase.User = "Test2";
-                /*localData.inviteName = "Test1";*/
-                JoinLobby();
+                UIManager managerUi = GameObject.Find("UIManager").GetComponent<UIManager>();
+                managerUi.mainMenuCanvas.SetActive(true);
+                managerUi.authCanvas.SetActive(false);
+                if (GUI.Button(new Rect(Screen.width - 200, 0, 200, 40), "Play"))
+                {
+                    firestore.accountFirebase.User = "Test1";
+                    managerUi.EnablePlayButton(false);
+                    managerUi.EnableStartButton(true);
+                    managerUi.EnableHomePanel(false);
+                    managerUi.EnableLobbyPanel(true);
+                    CreateLobby();
+                }
+                if (GUI.Button(new Rect(Screen.width - 200, 40, 200, 40), "Join"))
+                {
+                    firestore.accountFirebase.User = "Test2";
+                    localData.inviteName = "Test1";
+                    managerUi.EnablePlayButton(false);
+                    managerUi.EnableStartButton(true);
+                    managerUi.EnableHomePanel(false);
+                    managerUi.EnableLobbyPanel(true);
+                    InviteResponseEvent();
+                    test = false;
+                }
+                if (GUI.Button(new Rect(Screen.width - 200, 80, 200, 40), "Level 1"))
+                {
+                    LoadLevel1();
+                    test = false;
+                }
+                if (GUI.Button(new Rect(Screen.width - 200, 120, 200, 40), "Level 2"))
+                {
+                    LoadLevel2Event();
+                    test = false;
+                }
+                if (GUI.Button(new Rect(Screen.width - 200, 160, 200, 40), "Level 3"))
+                {
+                    LoadLevel3Event();
+                    test = false;
+                }
+                if (GUI.Button(new Rect(Screen.width - 200, 200, 200, 40), "Level 4"))
+                {
+                    LoadLevel4Event();
+                    test = false;
+                }
+                if (GUI.Button(new Rect(Screen.width - 200, 240, 200, 40), "Join 3"))
+                {
+                    firestore.accountFirebase.User = "Test3";
+                    localData.inviteName = "Test1";
+                    managerUi.EnablePlayButton(false);
+                    managerUi.EnableStartButton(true);
+                    managerUi.EnableHomePanel(false);
+                    managerUi.EnableLobbyPanel(true);
+                    InviteResponseEvent();
+                    test = false;
+                }
+                if (GUI.Button(new Rect(0, 280, 200, 40), "Close Server"))
+                {/*
+                    managerUi.EnablePlayButton(true);
+                    managerUi.EnableStartButton(false);
+                    managerUi.EnableLobbyPanel(false);
+                    managerUi.EnableHomePanel(true);*/
+                    LeaveLobby();
+                }
             }
         }
 
-        [Rpc(sources: RpcSources.InputAuthority, targets: RpcTargets.StateAuthority)]
-        private void RpcSetNickName(string nickName)
+        #endregion TestGUI
+
+        #region LevelLoading
+
+        public async void LoadMainMenuEvent()
         {
-            if (string.IsNullOrEmpty(nickName)) return;
-            NickName = nickName;
+            Debug.Log("Callback");
+            await runner.LoadScene(SceneRef.FromIndex(0), LoadSceneMode.Single);
+            localData.currentLvl = 0;
+            GameUIManager.Instance.UpdateLevelState(localData.currentLvl);
         }
 
-        // If Enabled remake invite
-        /*   public void InviteResponseEvent()
-           {
-               Debug.Log("Callback");
-               if (localData.inviteResponse == true)
-               {
-                   //firestore.RemoveInvite();
-                   JoinLobby();
-               }
-               else
-               {
-                   firestore.RemoveInvite();
-               }
-           }
-   */
+        public async void LoadLevel1()
+        {
+            StartCoroutine(SettingManager.Instance.IChangeResolution());
+            await runner.LoadScene(SceneRef.FromIndex(1), LoadSceneMode.Single);
+            Debug.Log("Play Level 1 - Event");
+            playLevel1Event.Invoke();
+        }
+
+        public async void LoadLevel2Event()
+        {
+            Debug.Log("Callback");
+            await runner.LoadScene(SceneRef.FromIndex(2), LoadSceneMode.Single);
+            Debug.Log("Play Level 2 - Event");
+            playLevel2Event.Invoke();
+        }
+
+        public async void LoadLevel3Event()
+        {
+            Debug.Log("Callback");
+            await runner.LoadScene(SceneRef.FromIndex(3), LoadSceneMode.Single);
+            Debug.Log("Play Level 3 - Event");
+            playLevel3Event.Invoke();
+        }
+
+        public async void LoadLevel4Event()
+        {
+            Debug.Log("Callback");
+            await runner.LoadScene(SceneRef.FromIndex(4), LoadSceneMode.Single);
+            Debug.Log("Play Level 4 - Event");
+            playLevel4Event.Invoke();
+        }
+
+        #endregion LevelLoading
+
+        #region Create/Join Lobby
 
         public async void CreateLobby()
         {
-            if (runner == null)
-            {
-                runner = gameObject.AddComponent<NetworkRunner>();
-            }
-            await CreateLobbyTask(runner);
+            localData.playerList = new(); // ???
+            localData.currentLvl = 0;
+            GameUIManager.Instance.UpdateLevelState(localData.currentLvl);
+            await CreateLobbyTask();
         }
 
-        public async Task CreateLobbyTask(NetworkRunner runner)
+        public async Task CreateLobbyTask()
         {
             // Create the Fusion runner and let it know that we will be providing user input
             if (runner == null)
             {
                 runner = gameObject.AddComponent<NetworkRunner>();
             }
+
             runner.ProvideInput = true;
 
             // Create the NetworkSceneInfo from the current scene
@@ -99,36 +202,32 @@ namespace Test
                 sceneInfo.AddSceneRef(scene, LoadSceneMode.Additive);
             }
 
+            // Create Session
             var result = await runner.StartGame(new StartGameArgs()
             {
                 GameMode = GameMode.Host,
                 SessionName = firestore.accountFirebase.User,
                 Scene = scene,
-                SceneManager = gameObject.AddComponent<NetworkSceneManagerDefault>()
+                SceneManager = gameObject.AddComponent<NetworkSceneManagerDefault>(),
             });
 
             if (result.Ok)
             {
-                if (Debug.isDebugBuild)
-                    Debug.Log("Hosted");
+                Debug.Log("Hosted");
             }
             else
             {
-                if (Debug.isDebugBuild)
-                    Debug.LogError($"Failed to Start: {result.ShutdownReason}");
+                Debug.LogError($"Failed to Start: {result.ShutdownReason}");
             }
         }
 
-        public async void JoinLobby()
+        public async void InviteResponseEvent()
         {
-            if (runner == null)
-            {
-                runner = gameObject.AddComponent<NetworkRunner>();
-            }
-            await JoinSessionTask(runner);
+            Debug.Log("Callback");
+            await JoinSessionTask();
         }
 
-        public async Task JoinSessionTask(NetworkRunner runner)
+        public async Task JoinSessionTask()
         {
             // Create the Fusion runner and let it know that we will be providing user input
             if (runner == null)
@@ -144,6 +243,8 @@ namespace Test
             {
                 sceneInfo.AddSceneRef(scene, LoadSceneMode.Additive);
             }
+
+            // Join Session
             var result = await runner.StartGame(new StartGameArgs()
             {
                 GameMode = GameMode.Client,
@@ -153,19 +254,39 @@ namespace Test
                 SceneManager = gameObject.AddComponent<NetworkSceneManagerDefault>()
             });
 
-            // canvasManager.OpenLobbyPanel();
-
             if (result.Ok)
             {
-                if (Debug.isDebugBuild)
-                    Debug.Log("Joined");
+                Debug.Log("Joined");
             }
             else
             {
-                if (Debug.isDebugBuild)
-                    Debug.LogError($"Failed to Start: {result.ShutdownReason}");
+                Debug.LogError($"Failed to Start: {result.ShutdownReason}");
             }
         }
+
+        #endregion Create/Join Lobby
+
+        #region Leave Lobby
+
+        public void LeaveLobby()
+        {
+            if (runner.SessionInfo.Name != firestore.accountFirebase.User)
+            {
+                runner = null;
+            }
+            else
+            {
+                foreach (PlayerRef player in runner.ActivePlayers)
+                {
+                    runner.Disconnect(player);
+                }
+                Destroy(runner);
+            }
+        }
+
+        #endregion Leave Lobby
+
+        #region Fusion API
 
         public void OnConnectedToServer(NetworkRunner runner)
         {
@@ -260,5 +381,7 @@ namespace Test
         {
             Debug.Log("19");
         }
+
+        #endregion Fusion API
     }
 }

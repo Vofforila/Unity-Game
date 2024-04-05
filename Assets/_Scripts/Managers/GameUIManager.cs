@@ -1,11 +1,11 @@
-using System.Collections;
 using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
 using Fusion;
+using TMPro;
 using Data;
-using System.Linq;
 using Database;
+using System.Collections;
+using System.Linq;
 
 namespace UI
 {
@@ -20,6 +20,10 @@ namespace UI
 
         [Header("Tip Panel")]
         [SerializeField] private GameObject gameTipPanel;
+        private const string tipsLvl1 = "Press Z to Jump \nPress X to CashOut";
+        private const string tipsLvl2 = "Press Z to go Faster";
+        private const string tipsLvl3 = "Use Your Mouse to doge the Projectiles";
+        private const string tipsLvl4 = "Don't get crushed by the falling ceiling";
 
         [Header("Scoreboard")]
         [SerializeField] private GameObject scoreboardPanel;
@@ -28,30 +32,26 @@ namespace UI
         [Header("Chat")]
         [SerializeField] private GameObject chatBoxPanel;
 
+        [Header("Lobby")]
+        [SerializeField] private GameObject bannerPrefab;
+        [SerializeField] private Transform BannerLayoutTransform;
+
         [Header("Loading Screen")]
         [SerializeField] private GameObject loadingPanel;
 
-        public Dictionary<PlayerRef, PlayerData> PlayerDictionary;
-
-        // Level1
-        private const string tipsLvl1 = "Press Z to Jump \nPress X to CashOut";
-        private const string tipsLvl2 = "Press Z to go Faster";
-        private const string tipsLvl3 = "Use Your Mouse to doge the Projectiles";
-        private const string tipsLvl4 = "Don't get crushed by the falling ceiling";
+        public Dictionary<PlayerRef, PlayerData> playerDictionary;
 
         private List<GameObject> scoreList;
 
         private LocalPlayerData localPlayerData;
 
-        //Singleton
         public static GameUIManager Instance;
 
         private void Awake()
         {
             Instance = this;
-            // Set Panel for Game Tip
             DontDestroyOnLoad(this);
-            PlayerDictionary = new();
+            playerDictionary = new();
             scoreList = new();
         }
 
@@ -77,6 +77,7 @@ namespace UI
             }
         }
 
+        // ??????????? Why here
         public void EnableChat(bool _var)
         {
             chatBoxPanel.SetActive(true);
@@ -126,19 +127,20 @@ namespace UI
             gameTipPanel.SetActive(false);
         }
 
+        // Create new UI
         public void CreateUI(PlayerRef _player)
         {
-            // Make a new Player UI Object
             PlayerData playerData = new();
 
-            // Create the UI
+            GameObject banner = Instantiate(bannerPrefab, BannerLayoutTransform);
             GameObject playerScore = Instantiate(playerScorePrefab, scoreboardPanel.transform);
 
-            // Add the PlayerUI to PlayerData
+            // Add the PlayerUI to PlayerData ???????
             scoreList.Add(playerScore);
 
-            // Attach the PlayerData to a List
-            PlayerDictionary.Add(_player, playerData);
+            // Add banner
+
+            playerDictionary.Add(_player, playerData);
 
             // Update UI
             UpdateUI(_player);
@@ -146,21 +148,21 @@ namespace UI
 
         public void UpdateUserName(PlayerRef _player, string _username)
         {
-            PlayerDictionary[_player].UserName = _username;
+            playerDictionary[_player].UserName = _username;
             UpdateUI(_player);
         }
 
         public void UpdateScore(PlayerRef _player, int _score)
         {
-            PlayerDictionary[_player].Score = _score;
+            playerDictionary[_player].Score = _score;
             UpdateUI(_player);
         }
 
-        // fix player score
-
         public void UpdateUI(PlayerRef _player)
         {
-            Dictionary<PlayerRef, PlayerData> sortedList = PlayerDictionary.OrderByDescending(pair => pair.Value.Score).ToDictionary(pair => pair.Key, pair => pair.Value);
+            Dictionary<PlayerRef, PlayerData> sortedList = playerDictionary.
+                OrderByDescending(pair => pair.Value.Score).
+                ToDictionary(pair => pair.Key, pair => pair.Value);
 
             PlayerData playerData = sortedList[_player];
 

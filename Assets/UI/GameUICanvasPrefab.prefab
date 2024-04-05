@@ -270,7 +270,7 @@ GameObject:
   - component: {fileID: 7947470464617959132}
   - component: {fileID: 3220250391532357511}
   - component: {fileID: 6149274474204506197}
-  - component: {fileID: 8956111189277289181}
+  - component: {fileID: 1186783075963392010}
   m_Layer: 5
   m_Name: GameUICanvasPrefab
   m_TagString: Untagged
@@ -365,7 +365,7 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
---- !u!114 &8956111189277289181
+--- !u!114 &1186783075963392010
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -374,7 +374,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 2847161923710129270}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2c920c745e9a8d044838c35ec4e93f3b, type: 3}
+  m_Script: {fileID: 11500000, guid: 66f1030ca6fed4d4baf999da9279212b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   localData: {fileID: 11400000, guid: 9ae0573c8cfccd741b7423eb0db11b79, type: 2}
@@ -385,7 +385,10 @@ MonoBehaviour:
   playerScorePrefab: {fileID: 7663925502892897434, guid: a27c02c01aa90884695521927521ea23,
     type: 3}
   chatBoxPanel: {fileID: 3958241934399241544}
-  loadingPanel: {fileID: 5784345578083307645}
+  bannerPrefab: {fileID: 3094471855483583679, guid: bd06aad3179a5754e9881a5504d32ebb,
+    type: 3}
+  BannerLayoutTransform: {fileID: 0}
+  loadingPanel: {fileID: 0}
 --- !u!1 &2878296516587608889
 GameObject:
   m_ObjectHideFlags: 0

@@ -30,9 +30,6 @@ namespace Server
         [Header("Settings")]
         [SerializeField] internal WindowScript windowScript;
 
-        [Header("Lobby Manager")]
-        [SerializeField] private NetworkPrefabRef lobbyManagerPrefab;
-
         [Header("Event")]
         public UnityEvent playLevel1Event;
         public UnityEvent playLevel2Event;

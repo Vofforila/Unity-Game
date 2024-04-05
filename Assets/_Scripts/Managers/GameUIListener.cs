@@ -32,7 +32,7 @@ namespace UI
 
         public override void Spawned()
         {
-            if (localData.currentLvl == 1)
+            if (localData.currentLvl == 0)
             {
                 if (Object.HasInputAuthority)
                 {

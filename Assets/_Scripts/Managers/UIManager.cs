@@ -214,7 +214,7 @@ namespace UI
         {
             matchStatisticsPanel.SetActive(true);
 
-            Dictionary<PlayerRef, PlayerData> playerDictionary = GameUIManager.Instance.PlayerDictionary;
+            Dictionary<PlayerRef, PlayerData> playerDictionary = GameUIManager.Instance.playerDictionary;
 
             Dictionary<PlayerRef, PlayerData> sortedList = playerDictionary.OrderByDescending(pair => pair.Value.Score).ToDictionary(pair => pair.Key, pair => pair.Value);
 
