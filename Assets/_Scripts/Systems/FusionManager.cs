@@ -15,20 +15,16 @@ using Settings;
 namespace Server
 {
     public class FusionManager : MonoBehaviour, INetworkRunnerCallbacks
-
     {
         [Header("Test")]
         public bool test = false;
 
         [Header("Fusion")]
-        public NetworkRunner runner;
+        [HideInInspector] public NetworkRunner runner;
 
         [Header("Scriptable")]
         [SerializeField] private Firestore firestore;
         [SerializeField] private LocalData localData;
-
-        [Header("Settings")]
-        [SerializeField] internal WindowScript windowScript;
 
         [Header("Event")]
         public UnityEvent playLevel1Event;
@@ -36,9 +32,6 @@ namespace Server
         public UnityEvent playLevel3Event;
         public UnityEvent playLevel4Event;
         public UnityEvent showStatisticEvent;
-
-        // Variables
-        [HideInInspector] public List<PlayerRef> playersInGame = new();
 
         public static FusionManager Instance;
 
@@ -178,7 +171,6 @@ namespace Server
 
         public async void CreateLobby()
         {
-            localData.playerList = new(); // ???
             localData.currentLvl = 0;
             GameUIManager.Instance.UpdateLevelState(localData.currentLvl);
             await CreateLobbyTask();
@@ -324,7 +316,6 @@ namespace Server
 
         public void OnInputMissing(NetworkRunner runner, PlayerRef player, NetworkInput input)
         {
-            Debug.Log("8");
         }
 
         public void OnObjectEnterAOI(NetworkRunner runner, NetworkObject obj, PlayerRef player)

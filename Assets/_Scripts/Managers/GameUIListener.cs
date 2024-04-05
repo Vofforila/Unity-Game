@@ -20,6 +20,8 @@ namespace UI
 
         private ChangeDetector changeDetector;
 
+        #region Awake & Start
+
         private void Awake()
         {
             gameUIManager = GameUIManager.Instance;
@@ -29,6 +31,8 @@ namespace UI
         {
             gameUIManager.CreateLocalUI();
         }
+
+        #endregion Awake & Start
 
         public override void Spawned()
         {
@@ -70,6 +74,8 @@ namespace UI
             }
         }
 
+        #region OnChange
+
         public void AddScore(int _score)
         {
             Score += _score;
@@ -82,11 +88,17 @@ namespace UI
             Debug.Log(_hp);
         }
 
+        #endregion OnChange
+
+        #region RPC
+
         // RPC used to send player information to the Host
         [Rpc(sources: RpcSources.InputAuthority, targets: RpcTargets.StateAuthority)]
         private void RPC_SendUsername(string _username)
         {
             Username = _username;
         }
+
+        #endregion RPC
     }
 }

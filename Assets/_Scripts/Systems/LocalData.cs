@@ -15,8 +15,6 @@ namespace Data
         public string FriendClicked;
         public string inviteName;
 
-        public Dictionary<PlayerRef, string> playerList;
-
         public string gameChat;
 
         [Header("PlayerData")]

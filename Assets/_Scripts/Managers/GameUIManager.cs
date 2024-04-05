@@ -41,19 +41,24 @@ namespace UI
 
         public Dictionary<PlayerRef, PlayerData> playerDictionary;
 
-        private List<GameObject> scoreList;
-
         private LocalPlayerData localPlayerData;
+        private UIComponentsData componentsData;
 
         public static GameUIManager Instance;
+
+        #region Awake
 
         private void Awake()
         {
             Instance = this;
             DontDestroyOnLoad(this);
             playerDictionary = new();
-            scoreList = new();
+            componentsData = new();
         }
+
+        #endregion Awake
+
+        #region GameUI State
 
         public void UpdateLevelState(int _level)
         {
@@ -75,12 +80,6 @@ namespace UI
                     Level4();
                     break;
             }
-        }
-
-        // ??????????? Why here
-        public void EnableChat(bool _var)
-        {
-            chatBoxPanel.SetActive(true);
         }
 
         private void MainMenu()
@@ -127,6 +126,10 @@ namespace UI
             gameTipPanel.SetActive(false);
         }
 
+        #endregion GameUI State
+
+        #region GameUiListener Functions
+
         // Create new UI
         public void CreateUI(PlayerRef _player)
         {
@@ -136,7 +139,8 @@ namespace UI
             GameObject playerScore = Instantiate(playerScorePrefab, scoreboardPanel.transform);
 
             // Add the PlayerUI to PlayerData ???????
-            scoreList.Add(playerScore);
+            componentsData.ScoreList.Add(playerScore);
+            componentsData.BannerList.Add(banner);
 
             // Add banner
 
@@ -160,18 +164,23 @@ namespace UI
 
         public void UpdateUI(PlayerRef _player)
         {
+            // Sort Score Ascending
             Dictionary<PlayerRef, PlayerData> sortedList = playerDictionary.
                 OrderByDescending(pair => pair.Value.Score).
                 ToDictionary(pair => pair.Key, pair => pair.Value);
-
-            PlayerData playerData = sortedList[_player];
 
             int x = 0;
             foreach (var key in sortedList)
             {
                 PlayerData playerDataScore = key.Value;
+
+                string username = playerDataScore.UserName;
                 string playerScore = playerDataScore.UserName + " : " + playerDataScore.Score;
-                scoreList[x++].GetComponent<TMP_Text>().text = playerScore;
+                componentsData.ScoreList[x].GetComponent<TMP_Text>().text = playerScore;
+                // Update Lobby Data
+
+                componentsData.BannerList[x].GetComponentInChildren<TMP_Text>().text = playerDataScore.UserName;
+                x++;
             }
         }
 
@@ -193,6 +202,20 @@ namespace UI
         {
             string playerHp = localPlayerData.UserName + "\n " + localPlayerData.Hp + " / 100";
             localPlayerData.PlayerHp.GetComponent<TMP_Text>().text = playerHp;
+        }
+
+        #endregion GameUiListener Functions
+
+        public class UIComponentsData
+        {
+            public List<GameObject> ScoreList { get; set; }
+            public List<GameObject> BannerList { get; set; }
+
+            public UIComponentsData()
+            {
+                ScoreList = new();
+                BannerList = new();
+            }
         }
 
         public class PlayerData
