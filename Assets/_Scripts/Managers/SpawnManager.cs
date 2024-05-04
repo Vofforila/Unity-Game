@@ -38,14 +38,10 @@ namespace Host
         }
 
         // Local
-        public void SpawnLocal(bool _enableCamera)
+        public void SpawnLocal()
         {
             Transform cameraSpawnPoint = GameObject.Find("CameraSpawnPoint").GetComponent<Transform>();
             GameObject playerCamera = Instantiate(playerCameraPrefab, cameraSpawnPoint.position, cameraSpawnPoint.rotation);
-            if (_enableCamera == false)
-            {
-                playerCamera.GetComponent<CameraManager>().enabled = false;
-            }
         }
 
         // Host
@@ -160,6 +156,8 @@ namespace Host
             }
 
             // Shuffle the array
+
+            // Remove on Release
             /* Shuffle2DArray(fallingBlockArray);*/
 
             int coinPosition = 0;

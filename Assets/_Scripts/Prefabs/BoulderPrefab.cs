@@ -19,16 +19,20 @@ namespace Enemy
         [SerializeField] private Transform B;
         [SerializeField] private Transform C;
 
+        [SerializeField] private Transform RotorBone;
+
         [Header("Game")]
         private float speed = 0.8f;
+        private float rotationSpeed;
 
-        private float sampleTime;
+        private float sampleTime = 1f;
         private Vector3 NewPosition;
         private Vector3 NewRotation;
 
         public override void Spawned()
         {
             curveObj.transform.SetParent(null);
+            sampleTime = 1f;
             MoveCurve();
         }
 
@@ -45,6 +49,10 @@ namespace Enemy
                 {
                     transform.position = NewPosition;
                     transform.forward = NewRotation;
+                    // Rotate the boulder
+                    Vector3 currentRotation = RotorBone.transform.rotation.eulerAngles;
+                    currentRotation.x += rotationSpeed * Runner.DeltaTime;
+                    RotorBone.transform.rotation = Quaternion.Euler(currentRotation);
                 }
                 if (sampleTime >= 1)
                 {
@@ -67,10 +75,15 @@ namespace Enemy
             y = Random.Range(11, 13);
             z = Random.Range(-24, 24);
 
+            B.position = new Vector3(14, 0, 14);
+            C.position = new Vector3((B.localPosition.x - 2) / 2, y, B.localPosition.z / 2);
+
+            /* Restore on Release
             B.position = new Vector3(x, 0, z);
-            C.localPosition = new Vector3((B.localPosition.x - 2) / 2, y, B.localPosition.z / 2);
+            C.localPosition = new Vector3((B.localPosition.x - 2) / 2, y, B.localPosition.z / 2);*/
 
             speed = Random.Range(0.2f, 1f);
+            rotationSpeed = speed * 2;
             sampleTime = 0f;
         }
     }

@@ -49,7 +49,7 @@ namespace Host
 
         public void Start()
         {
-            spawnManager.SpawnLocal(false);
+            spawnManager.SpawnLocal();
             GameUIManager.Instance.UpdateLevelState(localData.currentLvl);
         }
 

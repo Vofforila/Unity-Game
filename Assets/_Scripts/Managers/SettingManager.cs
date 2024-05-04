@@ -187,7 +187,7 @@ namespace Settings
 
         private void UpdateSettings()
         {
-            StartCoroutine(IChangeResolution());
+            StartCoroutine(IChangeResolution(false));
 
             // Handle Sound
             SaveSettings();
@@ -261,7 +261,7 @@ namespace Settings
             }
             else
             {
-                SetWindowLong(hWnd, GWL_STYLE, WS_POPUP | WS_VISIBLE /*(uint)(style & ~(WS_CAPTION | WS_SIZEBOX))*/); //removes caption and the sizebox from current style.
+                SetWindowLong(hWnd, GWL_STYLE, WS_POPUP | WS_VISIBLE /*(uint)(style & ~(WS_CAPTION | WS_SIZEBOX))*/);
             }
             ResetWindowSize();
         }
@@ -272,12 +272,19 @@ namespace Settings
             BorderlessWindow.MoveWindowPos(Vector2Int.zero, Screen.width, Screen.height);
         }
 
-        public IEnumerator IChangeResolution()
+        public IEnumerator IChangeResolution(bool _fullScreen)
         {
-            Screen.SetResolution(clientWidth, clientHeight, FullScreenMode.Windowed);
-            yield return new WaitForEndOfFrame();
-            yield return new WaitForEndOfFrame();
-            ShowWindowBorders(false);
+            if (_fullScreen == true && Application.isEditor == false)
+            {
+                Screen.SetResolution(gameWidth, gameHeight, FullScreenMode.FullScreenWindow);
+            }
+            else
+            {
+                Screen.SetResolution(clientWidth, clientHeight, FullScreenMode.Windowed);
+                yield return new WaitForEndOfFrame();
+                yield return new WaitForEndOfFrame();
+                ShowWindowBorders(false);
+            }
         }
     }
 }

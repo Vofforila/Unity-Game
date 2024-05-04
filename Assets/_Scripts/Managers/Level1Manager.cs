@@ -48,7 +48,7 @@ namespace Host
 
         public void Start()
         {
-            spawnManager.SpawnLocal(false);
+            spawnManager.SpawnLocal();
             localData.currentLvl = 1;
             GameUIManager.Instance.UpdateLevelState(localData.currentLvl);
             UpdateGameState(GameState.Loading);

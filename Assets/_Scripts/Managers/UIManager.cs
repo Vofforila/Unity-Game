@@ -212,6 +212,7 @@ namespace UI
 
         public async void ShowStatisticPanelEvent()
         {
+            Debug.Log("Callback");
             matchStatisticsPanel.SetActive(true);
 
             Dictionary<PlayerRef, PlayerData> playerDictionary = GameUIManager.Instance.playerDictionary;

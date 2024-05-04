@@ -45,6 +45,7 @@ namespace Server
 
             DontDestroyOnLoad(gameObject);
             runner = gameObject.AddComponent<NetworkRunner>();
+            localData.currentLvl = 0;
         }
 
         #endregion Awake
@@ -131,11 +132,12 @@ namespace Server
             await runner.LoadScene(SceneRef.FromIndex(0), LoadSceneMode.Single);
             localData.currentLvl = 0;
             GameUIManager.Instance.UpdateLevelState(localData.currentLvl);
+            showStatisticEvent.Invoke();
         }
 
         public async void LoadLevel1()
         {
-            StartCoroutine(SettingManager.Instance.IChangeResolution());
+            StartCoroutine(SettingManager.Instance.IChangeResolution(true));
             await runner.LoadScene(SceneRef.FromIndex(1), LoadSceneMode.Single);
             Debug.Log("Play Level 1 - Event");
             playLevel1Event.Invoke();
@@ -174,6 +176,7 @@ namespace Server
             localData.currentLvl = 0;
             GameUIManager.Instance.UpdateLevelState(localData.currentLvl);
             await CreateLobbyTask();
+            Debug.Log("Callback Lobby");
         }
 
         public async Task CreateLobbyTask()

@@ -179,7 +179,8 @@ namespace Player
         private void Jump()
         {
             // Generate a random number to where you jump
-            jumpPosition = Random.Range(jumpPosition, 7);
+            jumpPosition = Random.Range(jumpPosition + 1, 7);
+            Debug.Log(jumpPosition);
             IsJumping = true;
             score = QuadraticCurveManager.Instance.MoveCurve(jumpPosition);
             sampleTime = 0f;

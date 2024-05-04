@@ -177,9 +177,12 @@ namespace UI
                 string username = playerDataScore.UserName;
                 string playerScore = playerDataScore.UserName + " : " + playerDataScore.Score;
                 componentsData.ScoreList[x].GetComponent<TMP_Text>().text = playerScore;
-                // Update Lobby Data
 
-                componentsData.BannerList[x].GetComponentInChildren<TMP_Text>().text = playerDataScore.UserName;
+                // Update Lobby Data
+                if (localData.currentLvl == 0)
+                {
+                    componentsData.BannerList[x].GetComponentInChildren<TMP_Text>().text = playerDataScore.UserName;
+                }
                 x++;
             }
         }
