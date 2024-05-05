@@ -1,6 +1,3 @@
-using Firebase.Firestore;
-using Fusion;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -24,7 +21,7 @@ namespace Data
         public bool returnKeyPressed = false;
 
         [Header("Current Level")]
-        public int currentLvl = 0;
+        public int currentLvl;
         public List<string> lobbyPlayerList = new();
 
         [Header("Level 1 Data")]

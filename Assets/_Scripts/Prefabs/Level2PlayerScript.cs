@@ -1,10 +1,10 @@
 using Data;
-using Fusion;
-using UnityEngine;
-using UI;
-using Host;
 using Database;
+using Fusion;
+using Host;
 using PlayerInput;
+using UI;
+using UnityEngine;
 
 namespace Player
 {
@@ -60,7 +60,6 @@ namespace Player
             if (localData.currentLvl == 2)
             {
                 Debug.Log("Spawned");
-                Debug.Log(Object.InputAuthority + ":" + size);
                 playerVisuals.SetPlayer(_visuals: true, _size: size, _isKinematic: isKinematic, _constrains: constrains, _mass: mass);
                 isFinished = false;
                 changeDetector = GetChangeDetector(ChangeDetector.Source.SimulationState);
@@ -97,7 +96,6 @@ namespace Player
                 switch (change)
                 {
                     case nameof(WinningPlayer):
-                        Debug.Log("Run");
                         playerVisuals.SetVisuals(false);
                         break;
                 }

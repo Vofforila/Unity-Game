@@ -12,3 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ffc81a8b86873fe4d9aa8453df4c848c, type: 3}
   m_Name: LocalData
   m_EditorClassIdentifier: 
+  FriendClicked: 
+  inviteName: 
+  gameChat: 
+  playersAlive: 0
+  returnKeyPressed: 0
+  currentLvl: 0
+  lobbyPlayerList: []
+  levelFinished: 0
+  playerTurn: 0
+  showMatchStatistics: 0

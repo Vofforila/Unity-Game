@@ -1,11 +1,11 @@
-using System.Collections.Generic;
-using UnityEngine;
-using Fusion;
-using TMPro;
 using Data;
 using Database;
+using Fusion;
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
+using TMPro;
+using UnityEngine;
 
 namespace UI
 {
@@ -34,7 +34,6 @@ namespace UI
 
         [Header("Lobby")]
         [SerializeField] private GameObject bannerPrefab;
-        [SerializeField] private Transform BannerLayoutTransform;
 
         [Header("Loading Screen")]
         [SerializeField] private GameObject loadingPanel;
@@ -43,6 +42,7 @@ namespace UI
 
         private LocalPlayerData localPlayerData;
         private UIComponentsData componentsData;
+        private Transform BannerLayoutTransform;
 
         public static GameUIManager Instance;
 
@@ -57,6 +57,15 @@ namespace UI
         }
 
         #endregion Awake
+
+        #region Start
+
+        private void Start()
+        {
+            BannerLayoutTransform = UIManager.Instance.bannerLayout;
+        }
+
+        #endregion Start
 
         #region GameUI State
 
@@ -79,6 +88,9 @@ namespace UI
                 case 4:
                     Level4();
                     break;
+                case -1:
+                    MainMenu();
+                    break;
             }
         }
 
@@ -96,26 +108,41 @@ namespace UI
             gameTipPanel.SetActive(true);
             scoreboardPanel.SetActive(true);
             chatBoxPanel.SetActive(true);
+            playerHp.SetActive(false);
+
             gameTipPanel.GetComponent<TMP_Text>().text = tipsLvl1;
             StartCoroutine(TipPanel(5f));
         }
 
         private void Level2()
         {
+            gameTipPanel.SetActive(true);
+            scoreboardPanel.SetActive(true);
+            chatBoxPanel.SetActive(true);
+            playerHp.SetActive(false);
+
             gameTipPanel.GetComponent<TMP_Text>().text = tipsLvl2;
             StartCoroutine(TipPanel(5f));
         }
 
         private void Level3()
         {
+            gameTipPanel.SetActive(true);
+            scoreboardPanel.SetActive(true);
+            chatBoxPanel.SetActive(true);
             playerHp.SetActive(true);
+
             gameTipPanel.GetComponent<TMP_Text>().text = tipsLvl3;
             StartCoroutine(TipPanel(5f));
         }
 
         private void Level4()
         {
+            gameTipPanel.SetActive(true);
+            scoreboardPanel.SetActive(true);
+            chatBoxPanel.SetActive(true);
             playerHp.SetActive(false);
+
             gameTipPanel.GetComponent<TMP_Text>().text = tipsLvl4;
             StartCoroutine(TipPanel(5f));
         }

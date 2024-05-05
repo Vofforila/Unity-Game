@@ -1,25 +1,22 @@
-using UnityEngine;
-using TMPro;
-using System.Threading.Tasks;
-using Database;
-using UnityEngine.UI;
-using Fusion;
-using System.Collections.Generic;
-using System.Linq;
-using static UI.GameUIManager;
 using Data;
-using UnityEngine.EventSystems;
-using static Database.Firestore;
+using Database;
+using Fusion;
 using SpecialFunction;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using TMPro;
+using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.UI;
+using static Database.Firestore;
+using static UI.GameUIManager;
 
 namespace UI
 {
     public class UIManager : MonoBehaviour
     {
-        [Header("Test")]
-        public bool test = false;
-
         [Header("LocalData")]
         [SerializeField] private Firestore firestore;
         [SerializeField] private LocalData localdata;
@@ -82,8 +79,7 @@ namespace UI
         [SerializeField] private GameObject startButton;
         [SerializeField] private GameObject lobbyPanel;
         [SerializeField] private GameObject homePanel;
-        [SerializeField] private GameObject chatBoxPanel;
-        [SerializeField] private GameObject gameUICanvasPrefab;
+        public Transform bannerLayout;
 
         [Header("Statistics")]
         [SerializeField] private GameObject matchStatisticsPanel;
@@ -109,9 +105,8 @@ namespace UI
         {
             Instance = this;
 
-            if (test == true) return;
-            authCanvas.SetActive(true); // Enable Main Canvas
-            popupCanvas.SetActive(true); // Enable Pop-up Canvas
+            authCanvas.SetActive(true);
+            popupCanvas.SetActive(true);
 
             // Disable All Canvases
             mainMenuCanvas.SetActive(false);
@@ -213,6 +208,8 @@ namespace UI
         public async void ShowStatisticPanelEvent()
         {
             Debug.Log("Callback");
+            mainMenuCanvas.SetActive(true);
+            homePanel.SetActive(false);
             matchStatisticsPanel.SetActive(true);
 
             Dictionary<PlayerRef, PlayerData> playerDictionary = GameUIManager.Instance.playerDictionary;
@@ -263,15 +260,6 @@ namespace UI
         }
 
         #endregion Lobby Panel
-
-        #region GameUI
-
-        public void EnableChatBoxPanel(bool _var)
-        {
-            chatBoxPanel.SetActive(_var);
-        }
-
-        #endregion GameUI
 
         #region Loading
 
@@ -519,6 +507,11 @@ namespace UI
         public void EnableStartButton(bool _var)
         {
             startButton.SetActive(_var);
+        }
+
+        public void AwaitStartButton(bool _var)
+        {
+            startButton.GetComponent<Button>().interactable = !_var;
         }
 
         #endregion Buttons

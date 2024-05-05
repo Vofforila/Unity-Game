@@ -1,10 +1,10 @@
 using Data;
 using Fusion;
-using UnityEngine;
-using UI;
 using Host;
-using SpecialFunction;
 using PlayerInput;
+using SpecialFunction;
+using UI;
+using UnityEngine;
 
 namespace Player
 {
@@ -53,8 +53,6 @@ namespace Player
         {
             if (localData.currentLvl == 1)
             {
-                Debug.Log("Init");
-
                 // Set Game Values
                 sampleTime = 2f;
                 jumpPosition = 0;
@@ -73,7 +71,6 @@ namespace Player
             // Disable player
             if (localData.currentLvl == 1)
             {
-                Debug.Log("Spawned");
                 playerVisuals.SetPlayer(_visuals: false, _size: size, _isKinematic: isKinematic, _constrains: constrains, _mass: mass);
                 changeDetector = GetChangeDetector(ChangeDetector.Source.SimulationState);
             }

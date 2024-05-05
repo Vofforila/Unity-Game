@@ -1,16 +1,16 @@
 using Data;
+using Database;
 using Firebase.Firestore;
 using Fusion;
 using Fusion.Sockets;
+using Settings;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using UI;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.SceneManagement;
-using UI;
-using Database;
-using Settings;
 
 namespace Server
 {
@@ -39,13 +39,13 @@ namespace Server
 
         private void Awake()
         {
+            localData.currentLvl = 0;
             // Disable firestore duplication
             FirebaseFirestore.DefaultInstance.Settings.PersistenceEnabled = false;
             Instance = this;
 
             DontDestroyOnLoad(gameObject);
             runner = gameObject.AddComponent<NetworkRunner>();
-            localData.currentLvl = 0;
         }
 
         #endregion Awake
@@ -129,8 +129,8 @@ namespace Server
         public async void LoadMainMenuEvent()
         {
             Debug.Log("Callback");
+            localData.currentLvl = -1;
             await runner.LoadScene(SceneRef.FromIndex(0), LoadSceneMode.Single);
-            localData.currentLvl = 0;
             GameUIManager.Instance.UpdateLevelState(localData.currentLvl);
             showStatisticEvent.Invoke();
         }
@@ -139,7 +139,7 @@ namespace Server
         {
             StartCoroutine(SettingManager.Instance.IChangeResolution(true));
             await runner.LoadScene(SceneRef.FromIndex(1), LoadSceneMode.Single);
-            Debug.Log("Play Level 1 - Event");
+            Debug.Log("<color=green>Play Level 1 - Event</color>");
             playLevel1Event.Invoke();
         }
 
@@ -147,7 +147,7 @@ namespace Server
         {
             Debug.Log("Callback");
             await runner.LoadScene(SceneRef.FromIndex(2), LoadSceneMode.Single);
-            Debug.Log("Play Level 2 - Event");
+            Debug.Log("<color=green>Play Level 2 - Event</color>");
             playLevel2Event.Invoke();
         }
 
@@ -155,7 +155,7 @@ namespace Server
         {
             Debug.Log("Callback");
             await runner.LoadScene(SceneRef.FromIndex(3), LoadSceneMode.Single);
-            Debug.Log("Play Level 3 - Event");
+            Debug.Log("<color=green>Play Level 3 - Event</color>");
             playLevel3Event.Invoke();
         }
 
@@ -163,7 +163,7 @@ namespace Server
         {
             Debug.Log("Callback");
             await runner.LoadScene(SceneRef.FromIndex(4), LoadSceneMode.Single);
-            Debug.Log("Play Level 4 - Event");
+            Debug.Log("<color=green>Play Level 4 - Event</color>");
             playLevel4Event.Invoke();
         }
 
@@ -173,10 +173,12 @@ namespace Server
 
         public async void CreateLobby()
         {
+            Debug.Log("Callback Lobby");
             localData.currentLvl = 0;
+            UIManager.Instance.AwaitStartButton(true);
             GameUIManager.Instance.UpdateLevelState(localData.currentLvl);
             await CreateLobbyTask();
-            Debug.Log("Callback Lobby");
+            UIManager.Instance.AwaitStartButton(false);
         }
 
         public async Task CreateLobbyTask()
@@ -208,7 +210,7 @@ namespace Server
 
             if (result.Ok)
             {
-                Debug.Log("Hosted");
+                Debug.Log("<color=blue>Hosted</color>");
             }
             else
             {
@@ -220,6 +222,7 @@ namespace Server
         {
             Debug.Log("Callback");
             await JoinSessionTask();
+            UIManager.Instance.EnableStartButton(false);
         }
 
         public async Task JoinSessionTask()
@@ -290,27 +293,27 @@ namespace Server
 
         public void OnConnectFailed(NetworkRunner runner, NetAddress remoteAddress, NetConnectFailedReason reason)
         {
-            Debug.Log("2");
+            Debug.Log("<color=blue>2</color>");
         }
 
         public void OnConnectRequest(NetworkRunner runner, NetworkRunnerCallbackArgs.ConnectRequest request, byte[] token)
         {
-            Debug.Log("3");
+            Debug.Log("<color=blue>3</color>");
         }
 
         public void OnCustomAuthenticationResponse(NetworkRunner runner, Dictionary<string, object> data)
         {
-            Debug.Log("4");
+            Debug.Log("<color=blue>4</color>");
         }
 
         public void OnDisconnectedFromServer(NetworkRunner runner, NetDisconnectReason reason)
         {
-            Debug.Log("5");
+            Debug.Log("<color=blue>5</color>");
         }
 
         public void OnHostMigration(NetworkRunner runner, HostMigrationToken hostMigrationToken)
         {
-            Debug.Log("6");
+            Debug.Log("<color=blue>6</color>");
         }
 
         public void OnInput(NetworkRunner runner, NetworkInput input)
@@ -323,57 +326,55 @@ namespace Server
 
         public void OnObjectEnterAOI(NetworkRunner runner, NetworkObject obj, PlayerRef player)
         {
-            Debug.Log("9");
+            Debug.Log("<color=blue>9</color>");
         }
 
         public void OnObjectExitAOI(NetworkRunner runner, NetworkObject obj, PlayerRef player)
         {
-            Debug.Log("10");
+            Debug.Log("<color=blue>10</color>");
         }
 
         public void OnPlayerJoined(NetworkRunner runner, PlayerRef player)
         {
-            Debug.Log("11");
+            Debug.Log("<color=blue>11</color>");
         }
 
         public void OnPlayerLeft(NetworkRunner runner, PlayerRef player)
         {
-            Debug.Log("12");
+            Debug.Log("<color=blue>12</color>");
         }
 
         public void OnReliableDataProgress(NetworkRunner runner, PlayerRef player, ReliableKey key, float progress)
         {
-            Debug.Log("13");
+            Debug.Log("<color=blue>13</color>");
         }
 
         public void OnReliableDataReceived(NetworkRunner runner, PlayerRef player, ReliableKey key, ArraySegment<byte> data)
         {
-            Debug.Log("14");
+            Debug.Log("<color=blue>14</color>");
         }
 
         public void OnSceneLoadDone(NetworkRunner runner)
         {
-            Debug.Log("15");
         }
 
         public void OnSceneLoadStart(NetworkRunner runner)
         {
-            Debug.Log("16");
         }
 
         public void OnSessionListUpdated(NetworkRunner runner, List<SessionInfo> sessionList)
         {
-            Debug.Log("17");
+            Debug.Log("<color=blue>17</color>");
         }
 
         public void OnShutdown(NetworkRunner runner, ShutdownReason shutdownReason)
         {
-            Debug.Log("18");
+            Debug.Log("<color=blue>18</color>");
         }
 
         public void OnUserSimulationMessage(NetworkRunner runner, SimulationMessagePtr message)
         {
-            Debug.Log("19");
+            Debug.Log("<color=blue>19</color>");
         }
 
         #endregion Fusion API

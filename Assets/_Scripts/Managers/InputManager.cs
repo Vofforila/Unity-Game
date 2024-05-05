@@ -1,24 +1,24 @@
-using System.Collections.Generic;
-using UnityEngine;
 using Fusion;
 using Fusion.Sockets;
-using System;
 using Server;
+using System;
+using System.Collections.Generic;
+using UnityEngine;
 
 namespace PlayerInput
 {
-    public class InputManager : SimulationBehaviour, INetworkRunnerCallbacks
+    public class InputManager : MonoBehaviour, INetworkRunnerCallbacks
     {
         private FusionManager fusionManager;
         private NetworkInputData inputData = new();
         private Camera playerCamera;
         private LayerMask targetLayer;
 
-        public void Start()
+        public void Awake()
         {
             fusionManager = FusionManager.Instance;
-            fusionManager.runner.AddCallbacks(this);
             targetLayer = LayerMask.GetMask("HitZone");
+            fusionManager.runner.AddCallbacks(this);
         }
 
         public void OnDisable()
