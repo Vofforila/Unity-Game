@@ -10,7 +10,6 @@ namespace Data
         [Header("InvitetoLobby")]
         public PointerEventData pointerData;
         public string FriendClicked;
-        public string inviteName;
 
         public string gameChat;
 

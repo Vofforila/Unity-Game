@@ -61,7 +61,7 @@ namespace Host
 
         public void PlayLevel4Event()
         {
-            Debug.Log("Callback");
+            Debug.Log("<color=yellow>Callback</color>");
             if (Object.HasStateAuthority)
             {
                 UpdateGameState(GameState.StartLevel);

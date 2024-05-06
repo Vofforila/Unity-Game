@@ -60,7 +60,7 @@ namespace Host
 
         public void PlayeLevel2Event()
         {
-            Debug.Log("Callback");
+            Debug.Log("<color=yellow>Callback</color>");
             if (Object.HasStateAuthority)
             {
                 UpdateGameState(GameState.StartLevel);

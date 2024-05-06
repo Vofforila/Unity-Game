@@ -19783,7 +19783,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   createTest: 0
-  test: 0
+  manualTest: 0
+  test1: 0
   test2: 0
   test3: 0
   canvasManager: {fileID: 514719944}

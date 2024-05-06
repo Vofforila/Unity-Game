@@ -75,12 +75,11 @@ namespace Server
                 if (GUI.Button(new Rect(0, 40, 200, 40), "Join"))
                 {
                     firestore.accountFirebase.User = "Test2";
-                    localData.inviteName = "Test1";
                     managerUi.EnablePlayButton(false);
                     managerUi.EnableStartButton(true);
                     managerUi.EnableHomePanel(false);
                     managerUi.EnableLobbyPanel(true);
-                    InviteResponseEvent();
+                    InviteResponseEvent("Test1");
                     test = false;
                 }
                 if (GUI.Button(new Rect(0, 80, 200, 40), "Level 1"))
@@ -106,20 +105,15 @@ namespace Server
                 if (GUI.Button(new Rect(0, 240, 200, 40), "Join 3"))
                 {
                     firestore.accountFirebase.User = "Test3";
-                    localData.inviteName = "Test1";
                     managerUi.EnablePlayButton(false);
                     managerUi.EnableStartButton(true);
                     managerUi.EnableHomePanel(false);
                     managerUi.EnableLobbyPanel(true);
-                    InviteResponseEvent();
+                    InviteResponseEvent("Test1");
                     test = false;
                 }
                 if (GUI.Button(new Rect(0, 280, 200, 40), "Close Server"))
-                {/*
-                    managerUi.EnablePlayButton(true);
-                    managerUi.EnableStartButton(false);
-                    managerUi.EnableLobbyPanel(false);
-                    managerUi.EnableHomePanel(true);*/
+                {
                     LeaveLobby();
                 }
             }
@@ -131,7 +125,7 @@ namespace Server
 
         public async void LoadMainMenuEvent()
         {
-            Debug.Log("Callback");
+            Debug.Log("<color=yellow>Callback</color>");
             localData.currentLvl = -1;
             await runner.LoadScene(SceneRef.FromIndex(0), LoadSceneMode.Single);
             GameUIManager.Instance.UpdateLevelState(localData.currentLvl);
@@ -139,34 +133,34 @@ namespace Server
 
         public async void LoadLevel1()
         {
-            Debug.Log("Callback");
+            Debug.Log("<color=yellow>Callback</color>");
             StartCoroutine(SettingManager.Instance.IChangeResolution(true));
             await runner.LoadScene(SceneRef.FromIndex(1), LoadSceneMode.Single);
-            Debug.Log("<color=green>Play Level 1 - Event</color>");
+            Debug.Log("<color=yellow>Play Level 1 - Event</color>");
             playLevel1Event.Invoke();
         }
 
         public async void LoadLevel2Event()
         {
-            Debug.Log("Callback");
+            Debug.Log("<color=yellow>Callback</color>");
             await runner.LoadScene(SceneRef.FromIndex(2), LoadSceneMode.Single);
-            Debug.Log("<color=green>Play Level 2 - Event</color>");
+            Debug.Log("<color=yellow>Play Level 2 - Event</color>");
             playLevel2Event.Invoke();
         }
 
         public async void LoadLevel3Event()
         {
-            Debug.Log("Callback");
+            Debug.Log("<color=yellow>Callback</color>");
             await runner.LoadScene(SceneRef.FromIndex(3), LoadSceneMode.Single);
-            Debug.Log("<color=green>Play Level 3 - Event</color>");
+            Debug.Log("<color=yellow>Play Level 3 - Event</color>");
             playLevel3Event.Invoke();
         }
 
         public async void LoadLevel4Event()
         {
-            Debug.Log("Callback");
+            Debug.Log("<color=yellow>Callback</color>");
             await runner.LoadScene(SceneRef.FromIndex(4), LoadSceneMode.Single);
-            Debug.Log("<color=green>Play Level 4 - Event</color>");
+            Debug.Log("<color=yellow>Play Level 4 - Event</color>");
             playLevel4Event.Invoke();
         }
 
@@ -181,7 +175,6 @@ namespace Server
             UIManager.Instance.AwaitStartButton(true);
             GameUIManager.Instance.UpdateLevelState(localData.currentLvl);
             await CreateLobbyTask();
-            UIManager.Instance.AwaitStartButton(false);
         }
 
         public async Task CreateLobbyTask()
@@ -214,6 +207,7 @@ namespace Server
             if (result.Ok)
             {
                 Debug.Log("<color=blue>Hosted</color>");
+                UIManager.Instance.AwaitStartButton(false);
             }
             else
             {
@@ -221,18 +215,18 @@ namespace Server
             }
         }
 
-        public async void InviteResponseEvent()
+        public async void InviteResponseEvent(string _username)
         {
-            Debug.Log("Callback");
-            await JoinSessionTask();
+            await JoinSessionTask(_username);
             UIManager.Instance.EnableStartButton(false);
         }
 
-        public async Task JoinSessionTask()
+        public async Task JoinSessionTask(string _username)
         {
             // Create the Fusion runner and let it know that we will be providing user input
             if (runner == null)
             {
+                Debug.Log("Reused");
                 runner = gameObject.AddComponent<NetworkRunner>();
             }
             runner.ProvideInput = true;
@@ -249,7 +243,7 @@ namespace Server
             var result = await runner.StartGame(new StartGameArgs()
             {
                 GameMode = GameMode.Client,
-                SessionName = localData.inviteName,
+                SessionName = _username,
                 Scene = scene,
                 PlayerCount = 4,
                 SceneManager = gameObject.AddComponent<NetworkSceneManagerDefault>()

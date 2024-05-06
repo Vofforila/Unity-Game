@@ -48,12 +48,17 @@ namespace UI
                 {
                     Score = 0;
                 }
+                Debug.Log("lol");
 
                 gameUIManager.CreateUI(Object.InputAuthority);
 
                 gameUIManager.UpdateUserName(Object.InputAuthority, Username.ToString());
                 gameUIManager.UpdateRank(Object.InputAuthority, Rank.ToString());
                 gameUIManager.UpdateScore(Object.InputAuthority, 0);
+            }
+            else if (Object.HasStateAuthority)
+            {
+                Score = gameUIManager.playerDictionary[Object.InputAuthority].Score;
             }
 
             changeDetector = GetChangeDetector(ChangeDetector.Source.SimulationState);
@@ -66,6 +71,7 @@ namespace UI
                 switch (change)
                 {
                     case nameof(Score):
+                        Debug.Log("Update Score");
                         gameUIManager.UpdateScore(Object.InputAuthority, Score);
                         break;
                     case nameof(Username):
@@ -84,14 +90,13 @@ namespace UI
 
         public void AddScore(int _score)
         {
+            Debug.Log(Score + "+=" + _score);
             Score += _score;
-            Debug.Log(_score);
         }
 
         public void UpdateHp(int _hp)
         {
             gameUIManager.UpdateHp(_hp);
-            Debug.Log(_hp);
         }
 
         #endregion OnChange

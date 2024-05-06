@@ -1,12 +1,12 @@
+using Data;
+using Database;
 using Fusion;
+using Host;
+using PlayerInput;
+using UI;
+using Unity.AI.Navigation;
 using UnityEngine;
 using UnityEngine.AI;
-using Data;
-using Unity.AI.Navigation;
-using UI;
-using Host;
-using Database;
-using PlayerInput;
 
 namespace Player
 {
@@ -115,12 +115,10 @@ namespace Player
                             }
                             playerVisuals.SetVisuals(false);
                         }
-
-                        if (Object.HasInputAuthority)
+                        else if (Object.HasInputAuthority)
                         {
                             gameUIListener.UpdateHp(PlayerHp);
                         }
-
                         break;
                 }
             }

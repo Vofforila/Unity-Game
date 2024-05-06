@@ -1,9 +1,10 @@
-using UnityEngine;
-using UnityEngine.UI;
-using UnityEngine.Events;
 using Data;
 using Database;
+using Server;
 using TMPro;
+using UnityEngine;
+using UnityEngine.Events;
+using UnityEngine.UI;
 
 namespace TryhardParty
 {
@@ -31,9 +32,8 @@ namespace TryhardParty
 
         public void AcceptInvite()
         {
-            Debug.Log("Invite Response Event");
-            localData.inviteName = username.text;
-            InviteEvent.Invoke();
+            firestore.RemoveInvite(gameObject.name);
+            FusionManager.Instance.InviteResponseEvent(username.text);
         }
 
         public void DeclineInvite()

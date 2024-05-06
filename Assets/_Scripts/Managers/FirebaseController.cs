@@ -14,7 +14,11 @@ namespace Auth
     {
         [Header("Test")]
         public bool createTest = false;
-        public bool test = false;
+        public bool manualTest = false;
+        private bool manualTest1 = false;
+        private bool manualTest2 = false;
+        private bool manualTest3 = false;
+        public bool test1 = false;
         public bool test2 = false;
         public bool test3 = false;
 
@@ -78,7 +82,7 @@ namespace Auth
                 if (status == DependencyStatus.Available)
                 {
                     auth = FirebaseAuth.DefaultInstance;
-                    if (test == true)
+                    if (test1 == true)
                     {
                         StartCoroutine(LoginTest("test1@gmail.com", "test123"));
                     }
@@ -103,6 +107,36 @@ namespace Auth
                 }
             });
         }
+
+        #region TestGUI
+
+        // Test GUI
+        private void OnGUI()
+        {
+            if (manualTest == true)
+            {
+                if (GUI.Button(new Rect(0, 0, 200, 40), "Test1"))
+                {
+                    manualTest1 = true;
+                    StartCoroutine(LoginTest("test1@gmail.com", "test123"));
+                    manualTest = false;
+                }
+                if (GUI.Button(new Rect(0, 40, 200, 40), "Test2"))
+                {
+                    manualTest2 = true;
+                    StartCoroutine(LoginTest("test2@gmail.com", "test123"));
+                    manualTest = false;
+                }
+                if (GUI.Button(new Rect(0, 80, 200, 40), "Test3"))
+                {
+                    manualTest3 = true;
+                    StartCoroutine(LoginTest("test3@gmail.com", "test123"));
+                    manualTest = false;
+                }
+            }
+        }
+
+        #endregion TestGUI
 
         public void Register()
         {
@@ -248,17 +282,17 @@ namespace Auth
             {
                 user = LoginTask.Result.User;
 
-                if (test == true)
+                if (test1 == true || manualTest1 == true)
                 {
                     Test();
-                    test = false;
+                    test1 = false;
                 }
-                if (test2 == true)
+                else if (test2 == true || manualTest2 == true)
                 {
                     Test2();
                     test2 = false;
                 }
-                if (test3 == true)
+                else if (test3 == true || manualTest3 == true)
                 {
                     Test3();
                     test3 = false;

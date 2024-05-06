@@ -1,10 +1,10 @@
+using Data;
 using Fusion;
 using System.Collections;
-using UnityEngine;
-using Data;
-using UnityEngine.Events;
 using System.Collections.Generic;
 using UI;
+using UnityEngine;
+using UnityEngine.Events;
 
 namespace Host
 {
@@ -56,7 +56,7 @@ namespace Host
 
         public void PlayeLevel1Event()
         {
-            Debug.Log("Callback");
+            Debug.Log("<color=yellow>Callback</color>");
             if (Object.HasStateAuthority)
             {
                 UpdateGameState(GameState.StartLevel);
@@ -101,7 +101,7 @@ namespace Host
                 Player = player;
                 PlayerTurn = true;
 
-                Debug.Log("Event - PlayerTurnEvent");
+                Debug.Log("<color=yellow>Event - PlayerTurnEvent</color>");
                 playerTurnEvent.Invoke();
 
                 yield return new WaitUntil(() => PlayerTurn == false);

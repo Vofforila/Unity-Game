@@ -116,6 +116,7 @@ namespace UI
 
             gameTipPanel.GetComponent<TMP_Text>().text = tipsLvl1;
             StartCoroutine(TipPanel(5f));
+            UpdateUI();
         }
 
         private void Level2()
@@ -176,28 +177,29 @@ namespace UI
             playerDictionary.Add(_player, playerData);
 
             // Update UI
-            UpdateUI(_player);
+            UpdateUI();
         }
 
         public void UpdateUserName(PlayerRef _player, string _username)
         {
             playerDictionary[_player].UserName = _username;
-            UpdateUI(_player);
+            UpdateUI();
         }
 
         public void UpdateRank(PlayerRef _player, string _rank)
         {
             playerDictionary[_player].Rank = _rank;
-            UpdateUI(_player);
+            UpdateUI();
         }
 
         public void UpdateScore(PlayerRef _player, int _score)
         {
+            Debug.Log(playerDictionary[_player].Score + _score);
             playerDictionary[_player].Score = _score;
-            UpdateUI(_player);
+            UpdateUI();
         }
 
-        public void UpdateUI(PlayerRef _player)
+        public void UpdateUI()
         {
             // Sort Score Ascending
             Dictionary<PlayerRef, PlayerData> sortedList = playerDictionary.
@@ -209,7 +211,6 @@ namespace UI
             {
                 PlayerData playerDataScore = key.Value;
 
-                string username = playerDataScore.UserName;
                 string playerScore = playerDataScore.UserName + " : " + playerDataScore.Score;
                 componentsData.ScoreList[x].GetComponent<TMP_Text>().text = playerScore;
 
@@ -291,7 +292,6 @@ namespace UI
     public class PlayerData
     {
         public string UserName { get; set; }
-
         public string Rank { get; set; }
         public int Score { get; set; }
 

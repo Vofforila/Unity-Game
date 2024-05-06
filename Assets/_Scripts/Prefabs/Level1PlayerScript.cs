@@ -94,7 +94,7 @@ namespace Player
                     {
                         if (Object.HasStateAuthority)
                         {
-                            Debug.Log("Jump");
+                            Debug.Log("<color=green>Jump</color>");
                             Jump();
                         }
                     }
@@ -102,7 +102,7 @@ namespace Player
                     {
                         if (Object.HasStateAuthority)
                         {
-                            Debug.Log("Take Money");
+                            Debug.Log("<color=green>Take Money</color>");
                             TakeMoney();
                         }
                     }
@@ -131,7 +131,7 @@ namespace Player
 
         private void PlayerTurnEvent()
         {
-            Debug.Log("Callback");
+            Debug.Log("<color=yellow>Callback</color>");
             QuadraticCurveManager.Instance.A.position = QuadraticCurveManager.Instance.startPosition.position;
             QuadraticCurveManager.Instance.B.position = QuadraticCurveManager.Instance.startPosition.position;
             CurrentPlayerTurn = Level1Manager.Instance.Player;
@@ -177,7 +177,7 @@ namespace Player
         {
             // Generate a random number to where you jump
             jumpPosition = Random.Range(jumpPosition + 1, 7);
-            Debug.Log(jumpPosition);
+            Debug.Log("<color=green>jumpPosition</color>");
             IsJumping = true;
             score = QuadraticCurveManager.Instance.MoveCurve(jumpPosition);
             sampleTime = 0f;

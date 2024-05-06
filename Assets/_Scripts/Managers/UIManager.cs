@@ -116,6 +116,7 @@ namespace UI
         public static UIManager Instance;
 
         private bool loadingUITask = false;
+        private bool heartbeat = true;
 
         #region Awake & Start & OnQuit
 
@@ -148,10 +149,27 @@ namespace UI
 
         private void OnApplicationQuit()
         {
+            heartbeat = false;
             firestore.StateChange(false);
         }
 
         #endregion Awake & Start & OnQuit
+
+        #region Server Hearth
+
+        private async void StartHearth()
+        {
+            await Task.Delay(25000);
+
+            if (heartbeat == false)
+            {
+                return;
+            }
+            firestore.StateChange(true);
+            StartHearth();
+        }
+
+        #endregion Server Hearth
 
         #region Open/Close Canvases
 
@@ -318,12 +336,12 @@ namespace UI
             loadingUITask = false;
             firestore.UpdateLocalAccountListener();
             await WaitUntilCondition(() => loadingUITask == true);
-            firestore.StateChange(true);
             loading += 25;
             loadingBar.value = loading;
             loadingPercentage.text = loading + "%";
 
             await Task.Delay(1000);
+            StartHearth();
             loading += 25;
             loadingBar.value = loading;
             loadingPercentage.text = loading + "%";
@@ -348,7 +366,7 @@ namespace UI
 
         public async void UpdateUI()
         {
-            Debug.Log("Callback");
+            Debug.Log("<color=cyan>Callback</color>");
             await UpdateProfilePanel();
             await UpdateFriendList();
             await UpdateSentFriendRequestsPanel();

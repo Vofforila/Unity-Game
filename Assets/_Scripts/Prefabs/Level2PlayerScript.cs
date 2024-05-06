@@ -48,7 +48,6 @@ namespace Player
         {
             if (localData.currentLvl == 2)
             {
-                Debug.Log("Init");
                 WinningPlayer = PlayerRef.None;
                 HorseSpeed = 1f;
                 KeyCooldown = TickTimer.CreateFromSeconds(Runner, 0.2f);
@@ -59,7 +58,6 @@ namespace Player
         {
             if (localData.currentLvl == 2)
             {
-                Debug.Log("Spawned");
                 playerVisuals.SetPlayer(_visuals: true, _size: size, _isKinematic: isKinematic, _constrains: constrains, _mass: mass);
                 isFinished = false;
                 changeDetector = GetChangeDetector(ChangeDetector.Source.SimulationState);
@@ -113,7 +111,7 @@ namespace Player
             // Update score
             if (Object.HasInputAuthority && other.gameObject.CompareTag("Finish") && localData.currentLvl == 2 && isFinished == false)
             {
-                Debug.Log("Collision");
+                Debug.Log("<color=green>Collision</color>");
                 isFinished = true;
                 RPC_PlayerFinished(Object.InputAuthority);
             }

@@ -21,7 +21,7 @@ namespace UI
             ViewProfileButton.onClick.AddListener(ViewProfile);
         }
 
-        private void Start()
+        private void OnEnable()
         {
             GameObject lobbyPanel = GameObject.Find("LobbyPanel");
             if (lobbyPanel != null)
