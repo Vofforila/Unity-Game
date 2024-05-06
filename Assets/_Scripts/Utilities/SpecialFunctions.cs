@@ -1,10 +1,10 @@
-using System.Collections;
+using Fusion;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
-using UnityEngine;
-using Fusion;
 using System.Reflection;
-using System;
+using System.Threading.Tasks;
+using UnityEngine;
 
 namespace SpecialFunction
 {
@@ -31,12 +31,13 @@ namespace SpecialFunction
         /// Destorys all Childrens of a Object
         /// </summary>
         /// <param name="_gameobject"></param>
-        public void DestroyChildrenOf(GameObject _gameobject)
+        public Task DestroyChildrenOf(GameObject _gameobject)
         {
             foreach (Transform child in _gameobject.transform)
             {
                 Destroy(child.gameObject);
             }
+            return Task.CompletedTask;
         }
 
         /// <summary>

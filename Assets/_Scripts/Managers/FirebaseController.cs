@@ -1,12 +1,12 @@
 using Data;
+using Database;
+using Firebase;
 using Firebase.Auth;
 using Firebase.Extensions;
 using System.Collections;
 using TMPro;
-using UnityEngine;
 using UI;
-using Firebase;
-using Database;
+using UnityEngine;
 
 namespace Auth
 {
@@ -79,11 +79,17 @@ namespace Auth
                 {
                     auth = FirebaseAuth.DefaultInstance;
                     if (test == true)
+                    {
                         StartCoroutine(LoginTest("test1@gmail.com", "test123"));
+                    }
                     if (test2 == true)
+                    {
                         StartCoroutine(LoginTest("test2@gmail.com", "test123"));
+                    }
                     if (test3 == true)
+                    {
                         StartCoroutine(LoginTest("test3@gmail.com", "test123"));
+                    }
                     if (createTest == true)
                     {
                         StartCoroutine(Register("test1@gmail.com", "test123", "Test1"));
@@ -243,11 +249,20 @@ namespace Auth
                 user = LoginTask.Result.User;
 
                 if (test == true)
+                {
                     Test();
+                    test = false;
+                }
                 if (test2 == true)
+                {
                     Test2();
+                    test2 = false;
+                }
                 if (test3 == true)
+                {
                     Test3();
+                    test3 = false;
+                }
             }
         }
 

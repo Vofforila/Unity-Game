@@ -1,7 +1,7 @@
-using UnityEngine;
-using UnityEngine.UI;
 using Data;
 using Database;
+using UnityEngine;
+using UnityEngine.UI;
 
 namespace UI
 {
@@ -18,7 +18,20 @@ namespace UI
         private void Awake()
         {
             InviteToLobbyButton.onClick.AddListener(InviteToLobby);
-            InviteToLobbyButton.onClick.AddListener(ViewProfile);
+            ViewProfileButton.onClick.AddListener(ViewProfile);
+        }
+
+        private void Start()
+        {
+            GameObject lobbyPanel = GameObject.Find("LobbyPanel");
+            if (lobbyPanel != null)
+            {
+                InviteToLobbyButton.interactable = true;
+            }
+            else
+            {
+                InviteToLobbyButton.interactable = false;
+            }
         }
 
         public void InviteToLobby()
@@ -28,6 +41,7 @@ namespace UI
 
         public void ViewProfile()
         {
+            UIManager.Instance.UpdateFriendProfile(localData.FriendClicked);
         }
     }
 }

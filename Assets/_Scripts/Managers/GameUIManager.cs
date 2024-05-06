@@ -58,10 +58,18 @@ namespace UI
             DontDestroyOnLoad(this);
             playerDictionary = new();
             componentsData = new();
-            BannerLayoutTransform = UIManager.Instance.bannerLayout;
         }
 
         #endregion Awake
+
+        #region Start
+
+        private void Start()
+        {
+            BannerLayoutTransform = UIManager.Instance.bannerLayout;
+        }
+
+        #endregion Start
 
         #region GameUI State
 
@@ -240,8 +248,8 @@ namespace UI
                             bannerImage.sprite = bannerSprites[8];
                             break;
                     }
-                    x++;
                 }
+                x++;
             }
         }
 

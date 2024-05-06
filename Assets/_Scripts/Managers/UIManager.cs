@@ -50,8 +50,18 @@ namespace UI
         [SerializeField] private Image playerIcon;
         [SerializeField] private Button playerProfileButton;
 
+        [Header("Friend Profile")]
+        [SerializeField] private GameObject friendProfile;
+        [SerializeField] private TMP_Text friendName;
+        [SerializeField] private TMP_Text friendGamesPlayed;
+        [SerializeField] private TMP_Text friendProfile_winrate;
+        [SerializeField] private TMP_Text friendDeathCoins;
+        [SerializeField] private TMP_Text friendTimePlayed;
+        [SerializeField] private TMP_Text friendRank;
+
         [Header("Player Profile")]
         [SerializeField] private GameObject playerProfile;
+        [SerializeField] private TMP_Text playerName;
         [SerializeField] private TMP_Text gamesPlayed;
         [SerializeField] private TMP_Text profile_winrate;
         [SerializeField] private TMP_Text deathCoins;
@@ -136,7 +146,7 @@ namespace UI
             }
         }
 
-        private void OnApplicationQuitting()
+        private void OnApplicationQuit()
         {
             firestore.StateChange(false);
         }
@@ -359,7 +369,7 @@ namespace UI
 
         private async Task UpdateFriendList()
         {
-            specialFunctions.DestroyChildrenOf(friendScrollViewContent);
+            await specialFunctions.DestroyChildrenOf(friendScrollViewContent);
 
             if (firestore.accountFirebase.FriendList.Count != 0)
             {
@@ -412,7 +422,7 @@ namespace UI
 
         private async Task UpdateSentFriendRequestsPanel()
         {
-            specialFunctions.DestroyChildrenOf(sentFriendRequestScrollViewContent);
+            await specialFunctions.DestroyChildrenOf(sentFriendRequestScrollViewContent);
 
             if (firestore.accountFirebase.SentFriendRequests.Count != 0)
             {
@@ -437,7 +447,7 @@ namespace UI
         {
             if (firestore.accountFirebase.FriendRequestsList.Count != 0)
             {
-                specialFunctions.DestroyChildrenOf(friendRequestScrollContent);
+                await specialFunctions.DestroyChildrenOf(friendRequestScrollContent);
                 EnableFriendRequestButton(true);
                 foreach (string friendId in firestore.accountFirebase.FriendRequestsList)
                 {
@@ -455,7 +465,7 @@ namespace UI
             }
             else
             {
-                specialFunctions.DestroyChildrenOf(friendRequestScrollContent);
+                await specialFunctions.DestroyChildrenOf(friendRequestScrollContent);
                 EnableFriendRequestButton(false);
                 EnableFriendRequestPanel(false);
             }
@@ -463,9 +473,11 @@ namespace UI
 
         public async Task UpdateInviteToLobbyPanel()
         {
+            await specialFunctions.DestroyChildrenOf(inviteToLobbyScrollViewContent);
+
             if (firestore.accountFirebase.InviteToGameList == null)
             {
-                specialFunctions.DestroyChildrenOf(inviteToLobbyPanel);
+                await specialFunctions.DestroyChildrenOf(inviteToLobbyPanel);
                 inviteToLobbyPanel.SetActive(false);
             }
             else if (firestore.accountFirebase.InviteToGameList.Count != 0)
@@ -486,6 +498,7 @@ namespace UI
 
         private Task UpdatePlayerProfile()
         {
+            playerName.text = firestore.accountFirebase.User;
             gamesPlayed.text = "Games Played: " + firestore.accountFirebase.GamesPlayed.ToString() + " ( " + firestore.accountFirebase.GamesWon.ToString() + " / " + firestore.accountFirebase.GamesLost.ToString() + " ) ";
             profile_winrate.text = "Winrate: " + firestore.accountFirebase.Winrate.ToString() + "%";
             deathCoins.text = "DeathCoins: " + firestore.accountFirebase.RankPoints.ToString();
@@ -497,6 +510,27 @@ namespace UI
 
         #endregion Update UI
 
+        #region Get Friend Profile
+
+        public async void UpdateFriendProfile(string _friendId)
+        {
+            Debug.Log(_friendId);
+            AccountFirebase otherAccount = await firestore.GetAccountFromId(_friendId);
+
+            Debug.Log(otherAccount.GamesWon);
+
+            friendName.text = otherAccount.User;
+            friendGamesPlayed.text = "Games Played: " + otherAccount.GamesPlayed.ToString() + " ( " + otherAccount.GamesWon.ToString() + " / " + otherAccount.GamesLost.ToString() + " ) ";
+            friendProfile_winrate.text = "Winrate: " + otherAccount.Winrate.ToString() + "%";
+            friendDeathCoins.text = "DeathCoins: " + otherAccount.RankPoints.ToString();
+            friendTimePlayed.text = "TimePlayed: " + Mathf.Floor(otherAccount.TimePlayed).ToString();
+            friendRank.text = otherAccount.Rank;
+
+            EnableFriendProfile(true);
+        }
+
+        #endregion Get Friend Profile
+
         #region Setting Panel
 
         public void EnableSettingsPanel(bool _var)
@@ -507,6 +541,11 @@ namespace UI
         #endregion Setting Panel
 
         #region Buttons
+
+        public void EnableFriendProfile(bool _val)
+        {
+            friendProfile.SetActive(_val);
+        }
 
         public void EnableFriendRequestButton(bool _val)
         {

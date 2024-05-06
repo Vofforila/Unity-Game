@@ -152,7 +152,6 @@ namespace Database
 
                 Debug.Log("User Data Updated: " + accountFirebase.User);
 
-                /* UpdateState(true);*/
                 updateUI.Invoke();
             });
         }
@@ -198,9 +197,9 @@ namespace Database
                         otherAccount_doc.UpdateAsync("FriendRequestsList", otherAccountFirebase.FriendRequestsList);
 
                         // Add PendingReqest to Current User
-                        otherAccount_doc = db.Collection("AccountInfo").Document(accountFirebase.Id.ToString());
+                        DocumentReference currentAccont_doc = db.Collection("AccountInfo").Document(accountFirebase.Id.ToString());
                         accountFirebase.SentFriendRequests.Add(otherAccountFirebase.Id);
-                        otherAccount_doc.UpdateAsync("SentFriendRequests", accountFirebase.SentFriendRequests);
+                        currentAccont_doc.UpdateAsync("SentFriendRequests", accountFirebase.SentFriendRequests);
 
                         Debug.Log("Sent Friend Request");
                     }
@@ -208,37 +207,47 @@ namespace Database
             });
         }
 
-        public void AcceptFriendRequest(string _newFriendId)
+        public async void AcceptFriendRequest(string _newFriendId)
         {
             FirebaseFirestore db = FirebaseFirestore.DefaultInstance;
             DocumentReference otherAccount_doc = db.Collection("AccountInfo").Document(_newFriendId.ToString());
 
-            otherAccount_doc.GetSnapshotAsync().ContinueWith(task =>
-            {
-                DocumentSnapshot snapshot = task.Result;
-                AccountFirebase otherAccountFirebase = snapshot.ConvertTo<AccountFirebase>();
+            await otherAccount_doc.GetSnapshotAsync().ContinueWith(async task =>
+              {
+                  DocumentSnapshot snapshot = task.Result;
+                  AccountFirebase otherAccountFirebase = snapshot.ConvertTo<AccountFirebase>();
 
-                Debug.Log("Added Friend");
+                  Debug.Log("Added Friend");
 
-                // Add Current Id to Other User
-                otherAccountFirebase.FriendList.Add(accountFirebase.Id);
-                otherAccount_doc.UpdateAsync("FriendList", otherAccountFirebase.FriendList).ContinueWith(task =>
-                {
-                    // Remove SentFriendRequest from Other User
-                    otherAccountFirebase.SentFriendRequests.Remove(accountFirebase.Id);
-                    otherAccount_doc.UpdateAsync("SentFriendRequests", otherAccountFirebase.SentFriendRequests);
+                  // Add Current Id to Other User
+                  otherAccountFirebase.FriendList.Add(accountFirebase.Id);
+                  otherAccountFirebase.SentFriendRequests.Remove(accountFirebase.Id);
+                  otherAccountFirebase.Status = true;
 
-                    // Remove FriendRequest from Current User
-                    DocumentReference currentAccount_doc = db.Collection("AccountInfo").Document(accountFirebase.Id.ToString());
-                    accountFirebase.FriendRequestsList.Remove(otherAccountFirebase.Id);
-                    currentAccount_doc.UpdateAsync("FriendRequestsList", accountFirebase.FriendRequestsList).ContinueWith(task =>
-                     {
-                         // Add Other Id to Current User
-                         accountFirebase.FriendList.Add(otherAccountFirebase.Id);
-                         currentAccount_doc.UpdateAsync("FriendList", accountFirebase.FriendList);
-                     });
-                });
-            });
+                  Dictionary<string, object> updates2 = new()
+                  {
+                    {"FriendList",otherAccountFirebase.FriendList },
+                    {"SentFriendRequests",otherAccountFirebase.SentFriendRequests } ,
+                    {"Status",otherAccountFirebase.Status }
+                  };
+
+                  // Remove FriendRequest from Current User
+                  DocumentReference currentAccount_doc = db.Collection("AccountInfo").Document(accountFirebase.Id.ToString());
+                  accountFirebase.FriendRequestsList.Remove(otherAccountFirebase.Id);
+                  accountFirebase.FriendList.Add(otherAccountFirebase.Id);
+
+                  Dictionary<string, object> updates1 = new()
+                  {
+                    {"FriendRequestsList",accountFirebase.FriendRequestsList },
+                    {"FriendList",accountFirebase.FriendList }
+                  };
+
+                  await currentAccount_doc.UpdateAsync(updates1);
+                  await Task.Delay(10000);
+                  await otherAccount_doc.UpdateAsync(updates2);
+                  await Task.Delay(10000);
+                  StateChange(true);
+              });
         }
 
         public void DeclineFriendRequest(string _newFriendId)
@@ -251,15 +260,13 @@ namespace Database
             accountFirebase.FriendRequestsList.Remove(_newFriendId);
             Debug.Log("FriendRequestList Update");
 
-            currentAccount_doc.UpdateAsync("FriendRequestsList", accountFirebase.FriendRequestsList).ContinueWith(task =>
+            Dictionary<string, object> updates = new()
             {
-                // Remove SentFriendRequest from Current User
-                accountFirebase.SentFriendRequests.Remove(_newFriendId);
-                currentAccount_doc.UpdateAsync("SentFriendRequests", accountFirebase.SentFriendRequests).ContinueWith(task =>
-                {
-                    Debug.Log("SentFriendRequest Update");
-                });
-            });
+                {"SentFriendRequest",accountFirebase.SentFriendRequests },
+                {"FriendRequestList",accountFirebase.FriendRequestsList },
+            };
+
+            currentAccount_doc.UpdateAsync(updates);
         }
 
         #endregion FriendRequest
@@ -419,12 +426,17 @@ namespace Database
                 accountFirebase.Rank = "Challanger";
             }
 
-            accountsIdIndex_doc.UpdateAsync("GamesWon", accountFirebase.GamesWon);
-            accountsIdIndex_doc.UpdateAsync("GamesLost", accountFirebase.GamesLost);
-            accountsIdIndex_doc.UpdateAsync("GamesPlayed", accountFirebase.GamesPlayed);
-            accountsIdIndex_doc.UpdateAsync("RankPoints", accountFirebase.RankPoints);
-            accountsIdIndex_doc.UpdateAsync("TimePlayed", accountFirebase.TimePlayed);
-            accountsIdIndex_doc.UpdateAsync("Rank", accountFirebase.Rank);
+            Dictionary<string, object> updates = new()
+            {
+                { "GamesWon", accountFirebase.GamesWon },
+                { "GamesLost", accountFirebase.GamesLost },
+                { "GamesPlayed", accountFirebase.GamesPlayed },
+                { "RankPoints", accountFirebase.RankPoints },
+                { "TimePlayed", accountFirebase.TimePlayed},
+                { "Rank", accountFirebase.Rank},
+            };
+
+            accountsIdIndex_doc.UpdateAsync(updates);
 
             return RankPoints;
         }
@@ -433,40 +445,50 @@ namespace Database
 
         #region State
 
-        public void StateChange(bool _currentState)
+        public async void StateChange(bool _currentState)
         {
             FirebaseFirestore db = FirebaseFirestore.DefaultInstance;
-
             DocumentReference currentAccount_doc = db.Collection("AccountInfo").Document(accountFirebase.Id);
-            accountFirebase.Status = _currentState;
 
-            currentAccount_doc.UpdateAsync("Status", accountFirebase.Status);
+            accountFirebase.Status = _currentState;
+            await currentAccount_doc.UpdateAsync("Status", accountFirebase.Status);
 
             foreach (string friendId in accountFirebase.FriendList)
             {
                 DocumentReference otherAccount_doc = db.Collection("AccountInfo").Document(friendId.ToString());
-                otherAccount_doc.GetSnapshotAsync().ContinueWith((task) =>
-                {
-                    DocumentSnapshot snapshot = task.Result;
-                    AccountFirebase otherAccount = snapshot.ConvertTo<AccountFirebase>();
+                await otherAccount_doc.GetSnapshotAsync().ContinueWith(async (task) =>
+                 {
+                     DocumentSnapshot snapshot = task.Result;
+                     AccountFirebase otherAccount = snapshot.ConvertTo<AccountFirebase>();
 
-                    // If Player is no online dont notify
-                    if (otherAccount.Status == false) return;
-                    if (_currentState == true)
-                    {
-                        otherAccount.OnlineFriends = new();
-                        otherAccount.OnlineFriends.Add(accountFirebase.Id);
-                        otherAccount_doc.UpdateAsync("OnlineFriends", otherAccount.OnlineFriends);
-                    }
-                    else
-                    {
-                        otherAccount.OfflineFriends = new();
-                        otherAccount.OfflineFriends.Add(accountFirebase.Id);
-                        otherAccount_doc.UpdateAsync("OfflineFriends", otherAccount.OfflineFriends);
-                    }
+                     // If Player is no online dont notify
+                     if (_currentState == true)
+                     {
+                         otherAccount.OnlineFriends.Add(accountFirebase.Id);
+                         otherAccount.OfflineFriends.Remove(accountFirebase.Id);
 
-                    Debug.Log("State Changed:" + _currentState);
-                });
+                         Dictionary<string, object> updates = new()
+                         {
+                             { "OnlineFriends", otherAccount.OnlineFriends },
+                             { "OfflineFriends", otherAccount.OfflineFriends },
+                         };
+                         await otherAccount_doc.UpdateAsync(updates);
+                     }
+                     else
+                     {
+                         otherAccount.OnlineFriends.Remove(accountFirebase.Id);
+                         otherAccount.OfflineFriends.Add(accountFirebase.Id);
+
+                         Dictionary<string, object> updates = new()
+                         {
+                             { "OnlineFriends", otherAccount.OnlineFriends },
+                             { "OfflineFriends", otherAccount.OfflineFriends },
+                         };
+                         await otherAccount_doc.UpdateAsync(updates);
+                     }
+
+                     Debug.Log("State Changed:" + _currentState);
+                 });
             }
         }
 
