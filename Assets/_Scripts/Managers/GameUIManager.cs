@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace UI
 {
@@ -38,6 +39,9 @@ namespace UI
         [Header("Loading Screen")]
         [SerializeField] private GameObject loadingPanel;
 
+        [Header("Banner Sprites")]
+        [SerializeField] public List<Sprite> bannerSprites;
+
         public Dictionary<PlayerRef, PlayerData> playerDictionary;
 
         private LocalPlayerData localPlayerData;
@@ -54,18 +58,10 @@ namespace UI
             DontDestroyOnLoad(this);
             playerDictionary = new();
             componentsData = new();
-        }
-
-        #endregion Awake
-
-        #region Start
-
-        private void Start()
-        {
             BannerLayoutTransform = UIManager.Instance.bannerLayout;
         }
 
-        #endregion Start
+        #endregion Awake
 
         #region GameUI State
 
@@ -165,12 +161,10 @@ namespace UI
             GameObject banner = Instantiate(bannerPrefab, BannerLayoutTransform);
             GameObject playerScore = Instantiate(playerScorePrefab, scoreboardPanel.transform);
 
-            // Add the PlayerUI to PlayerData ???????
             componentsData.ScoreList.Add(playerScore);
             componentsData.BannerList.Add(banner);
 
             // Add banner
-
             playerDictionary.Add(_player, playerData);
 
             // Update UI
@@ -180,6 +174,12 @@ namespace UI
         public void UpdateUserName(PlayerRef _player, string _username)
         {
             playerDictionary[_player].UserName = _username;
+            UpdateUI(_player);
+        }
+
+        public void UpdateRank(PlayerRef _player, string _rank)
+        {
+            playerDictionary[_player].Rank = _rank;
             UpdateUI(_player);
         }
 
@@ -209,8 +209,39 @@ namespace UI
                 if (localData.currentLvl == 0)
                 {
                     componentsData.BannerList[x].GetComponentInChildren<TMP_Text>().text = playerDataScore.UserName;
+                    Image bannerImage = componentsData.BannerList[x].GetComponentInChildren<Image>();
+                    switch (playerDataScore.Rank)
+                    {
+                        case "Iron":
+                            bannerImage.sprite = bannerSprites[0];
+                            break;
+                        case "Bronze":
+                            bannerImage.sprite = bannerSprites[1];
+                            break;
+                        case "Silver":
+                            bannerImage.sprite = bannerSprites[2];
+                            break;
+                        case "Gold":
+                            bannerImage.sprite = bannerSprites[3];
+                            break;
+                        case "Platinum":
+                            bannerImage.sprite = bannerSprites[4];
+                            break;
+                        case "Diamond":
+                            bannerImage.sprite = bannerSprites[5];
+                            break;
+                        case "Master":
+                            bannerImage.sprite = bannerSprites[6];
+                            break;
+                        case "GrandMaster":
+                            bannerImage.sprite = bannerSprites[7];
+                            break;
+                        case "Challanger":
+                            bannerImage.sprite = bannerSprites[8];
+                            break;
+                    }
+                    x++;
                 }
-                x++;
             }
         }
 
@@ -233,44 +264,47 @@ namespace UI
             string playerHp = localPlayerData.UserName + "\n " + localPlayerData.Hp + " / 100";
             localPlayerData.PlayerHp.GetComponent<TMP_Text>().text = playerHp;
         }
+    }
 
-        #endregion GameUiListener Functions
+    #endregion GameUiListener Functions
 
-        public class UIComponentsData
+    public class UIComponentsData
+    {
+        public List<GameObject> ScoreList { get; set; }
+        public List<GameObject> BannerList { get; set; }
+
+        public UIComponentsData()
         {
-            public List<GameObject> ScoreList { get; set; }
-            public List<GameObject> BannerList { get; set; }
-
-            public UIComponentsData()
-            {
-                ScoreList = new();
-                BannerList = new();
-            }
+            ScoreList = new();
+            BannerList = new();
         }
+    }
 
-        public class PlayerData
+    public class PlayerData
+    {
+        public string UserName { get; set; }
+
+        public string Rank { get; set; }
+        public int Score { get; set; }
+
+        public PlayerData()
         {
-            public string UserName { get; set; }
-            public int Score { get; set; }
-
-            public PlayerData()
-            {
-                UserName = "";
-                Score = 0;
-            }
+            UserName = "";
+            Rank = "Bronze";
+            Score = 0;
         }
+    }
 
-        public class LocalPlayerData
+    public class LocalPlayerData
+    {
+        public string UserName { get; set; }
+        public int Hp { get; set; }
+        public GameObject PlayerHp { get; set; }
+
+        public LocalPlayerData()
         {
-            public string UserName { get; set; }
-            public int Hp { get; set; }
-            public GameObject PlayerHp { get; set; }
-
-            public LocalPlayerData()
-            {
-                UserName = "";
-                Hp = 20;
-            }
+            UserName = "";
+            Hp = 20;
         }
     }
 }

@@ -2,6 +2,7 @@ using Data;
 using Fusion;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UI;
 using UnityEngine;
 using UnityEngine.Events;
@@ -67,7 +68,7 @@ namespace Host
             }
         }
 
-        public void UpdateGameState(GameState newState)
+        public async void UpdateGameState(GameState newState)
         {
             State = newState;
             switch (newState)
@@ -87,7 +88,7 @@ namespace Host
                     DespawnPlayers();
                     break;
                 case GameState.EndLevel:
-                    EndLevel();
+                    await EndLevelAsync();
                     break;
             }
         }
@@ -121,9 +122,17 @@ namespace Host
             UpdateGameState(GameState.EndLevel);
         }
 
-        public void EndLevel()
+        public async Task EndLevelAsync()
         {
+            RPC_ShowMainMenu();
+            await Task.Delay(5000);
             loadMainMenuEvent.Invoke();
+        }
+
+        [Rpc(sources: RpcSources.StateAuthority, targets: RpcTargets.All)]
+        private void RPC_ShowMainMenu()
+        {
+            localData.currentLvl = -1;
         }
     }
 }

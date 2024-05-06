@@ -1,8 +1,8 @@
-using UnityEngine;
-using Fusion;
 using Data;
-using SpecialFunction;
 using Database;
+using Fusion;
+using SpecialFunction;
+using UnityEngine;
 
 namespace UI
 {
@@ -14,6 +14,7 @@ namespace UI
         [SerializeField] private Firestore firestore;
 
         [Networked, Capacity(5), HideInInspector] public NetworkString<_16> Username { get; set; }
+        [Networked, Capacity(5), HideInInspector] public NetworkString<_16> Rank { get; set; }
         [Networked, HideInInspector] public int Score { get; set; }
 
         private GameUIManager gameUIManager;
@@ -41,6 +42,7 @@ namespace UI
                 if (Object.HasInputAuthority)
                 {
                     RPC_SendUsername(firestore.accountFirebase.User);
+                    RPC_SendRank(firestore.accountFirebase.Rank);
                 }
                 if (Object.HasStateAuthority)
                 {
@@ -50,6 +52,7 @@ namespace UI
                 gameUIManager.CreateUI(Object.InputAuthority);
 
                 gameUIManager.UpdateUserName(Object.InputAuthority, Username.ToString());
+                gameUIManager.UpdateRank(Object.InputAuthority, Rank.ToString());
                 gameUIManager.UpdateScore(Object.InputAuthority, 0);
             }
 
@@ -67,6 +70,9 @@ namespace UI
                         break;
                     case nameof(Username):
                         gameUIManager.UpdateUserName(Object.InputAuthority, Username.ToString());
+                        break;
+                    case nameof(Rank):
+                        gameUIManager.UpdateRank(Object.InputAuthority, Rank.ToString());
                         break;
                     default:
                         break;
@@ -97,6 +103,12 @@ namespace UI
         private void RPC_SendUsername(string _username)
         {
             Username = _username;
+        }
+
+        [Rpc(sources: RpcSources.InputAuthority, targets: RpcTargets.StateAuthority)]
+        private void RPC_SendRank(string _rank)
+        {
+            Rank = _rank;
         }
 
         #endregion RPC

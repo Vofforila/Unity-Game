@@ -15,6 +15,8 @@ GameObject:
   - component: {fileID: 5650441328769155028}
   - component: {fileID: 9057321429718084276}
   - component: {fileID: 6892061474058344282}
+  - component: {fileID: 6598108968705753419}
+  - component: {fileID: 2538616795743178475}
   - component: {fileID: 8554280924895365573}
   m_Layer: 0
   m_Name: FusionManagerPrefab
@@ -50,7 +52,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0cf34861abe642442b688cdd33361a05, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  test: 1
+  test: 0
   runner: {fileID: 0}
   firestore: {fileID: 11400000, guid: 883b834f3dfdf5a45aee970fc4e238bd, type: 2}
   localData: {fileID: 11400000, guid: 9ae0573c8cfccd741b7423eb0db11b79, type: 2}
@@ -114,21 +116,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-  showStatisticEvent:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 11400000, guid: b26073e36c88f7546b7096ae61394e85, type: 2}
-        m_TargetAssemblyTypeName: ShowStatisticPanelEvent, Assembly-CSharp
-        m_MethodName: Raise
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+  timePlayed: 0
 --- !u!114 &2050809665775088999
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -202,7 +190,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 4144643866391734399}
-        m_TargetAssemblyTypeName: FusionManager, Assembly-CSharp
+        m_TargetAssemblyTypeName: Server.FusionManager, Assembly-CSharp
         m_MethodName: LoadLevel2Event
         m_Mode: 1
         m_Arguments:
@@ -260,6 +248,62 @@ MonoBehaviour:
       - m_Target: {fileID: 4144643866391734399}
         m_TargetAssemblyTypeName: FusionManager, Assembly-CSharp
         m_MethodName: LoadLevel4Event
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+--- !u!114 &6598108968705753419
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7520326108993887970}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5e0daf5577e16fe41bf868f2a8b12dc0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Event: {fileID: 11400000, guid: 9e4833116f0ee834885be21392c31638, type: 2}
+  Response:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 4144643866391734399}
+        m_TargetAssemblyTypeName: Server.FusionManager, Assembly-CSharp
+        m_MethodName: CreateLobby
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+--- !u!114 &2538616795743178475
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7520326108993887970}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 26861be4531c3034086371e1a3e8690f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Event: {fileID: 11400000, guid: f53e9a5588efefb4494871cd023c9144, type: 2}
+  Response:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 4144643866391734399}
+        m_TargetAssemblyTypeName: Server.FusionManager, Assembly-CSharp
+        m_MethodName: LoadLevel1
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

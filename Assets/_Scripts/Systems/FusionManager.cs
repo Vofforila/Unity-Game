@@ -31,7 +31,9 @@ namespace Server
         public UnityEvent playLevel2Event;
         public UnityEvent playLevel3Event;
         public UnityEvent playLevel4Event;
-        public UnityEvent showStatisticEvent;
+
+        [HideInInspector]
+        public float timePlayed = 0;
 
         public static FusionManager Instance;
 
@@ -40,6 +42,7 @@ namespace Server
         private void Awake()
         {
             localData.currentLvl = 0;
+            timePlayed = 0;
             // Disable firestore duplication
             FirebaseFirestore.DefaultInstance.Settings.PersistenceEnabled = false;
             Instance = this;
@@ -132,11 +135,11 @@ namespace Server
             localData.currentLvl = -1;
             await runner.LoadScene(SceneRef.FromIndex(0), LoadSceneMode.Single);
             GameUIManager.Instance.UpdateLevelState(localData.currentLvl);
-            showStatisticEvent.Invoke();
         }
 
         public async void LoadLevel1()
         {
+            Debug.Log("Callback");
             StartCoroutine(SettingManager.Instance.IChangeResolution(true));
             await runner.LoadScene(SceneRef.FromIndex(1), LoadSceneMode.Single);
             Debug.Log("<color=green>Play Level 1 - Event</color>");
@@ -173,7 +176,7 @@ namespace Server
 
         public async void CreateLobby()
         {
-            Debug.Log("Callback Lobby");
+            Debug.Log("Callback");
             localData.currentLvl = 0;
             UIManager.Instance.AwaitStartButton(true);
             GameUIManager.Instance.UpdateLevelState(localData.currentLvl);
@@ -263,6 +266,18 @@ namespace Server
         }
 
         #endregion Create/Join Lobby
+
+        #region TimePlayed
+
+        private void Update()
+        {
+            if (localData.currentLvl >= 1)
+            {
+                timePlayed++;
+            }
+        }
+
+        #endregion TimePlayed
 
         #region Leave Lobby
 

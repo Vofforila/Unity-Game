@@ -1,6 +1,7 @@
 using Data;
 using Database;
 using Fusion;
+using Server;
 using SpecialFunction;
 using System;
 using System.Collections.Generic;
@@ -11,7 +12,6 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using static Database.Firestore;
-using static UI.GameUIManager;
 
 namespace UI
 {
@@ -48,6 +48,15 @@ namespace UI
         [SerializeField] private TMP_Text winrate;
         [SerializeField] private TMP_Text rankPoints;
         [SerializeField] private Image playerIcon;
+        [SerializeField] private Button playerProfileButton;
+
+        [Header("Player Profile")]
+        [SerializeField] private GameObject playerProfile;
+        [SerializeField] private TMP_Text gamesPlayed;
+        [SerializeField] private TMP_Text profile_winrate;
+        [SerializeField] private TMP_Text deathCoins;
+        [SerializeField] private TMP_Text timePlayed;
+        [SerializeField] private TMP_Text rank;
 
         [Header("Add Freind Panel")]
         [SerializeField] private GameObject addFriendPanel;
@@ -121,10 +130,9 @@ namespace UI
 
         private void Start()
         {
-            if (localdata.currentLvl > 0)
+            if (localdata.currentLvl == -1)
             {
                 ShowStatisticPanelEvent();
-                localdata.currentLvl = 0;
             }
         }
 
@@ -207,7 +215,6 @@ namespace UI
 
         public async void ShowStatisticPanelEvent()
         {
-            Debug.Log("Callback");
             mainMenuCanvas.SetActive(true);
             homePanel.SetActive(false);
             matchStatisticsPanel.SetActive(true);
@@ -226,7 +233,16 @@ namespace UI
 
                 await firestore.GetPlayerIcon(key.Value.UserName);
 
-                Debug.Log(firestore.playerIcon);
+                int rankPoints;
+
+                if (key.Value.UserName == firestore.accountFirebase.User && (place == 1 || place == 2))
+                {
+                    rankPoints = firestore.UpdatePlayerProfile(_win: true, FusionManager.Instance.timePlayed);
+                }
+                else
+                {
+                    rankPoints = firestore.UpdatePlayerProfile(_win: false, FusionManager.Instance.timePlayed);
+                }
 
                 playerStatistics.GetComponentInChildren<Image>().sprite = playerIcons[firestore.playerIcon];
 
@@ -236,7 +252,14 @@ namespace UI
                 stats[i++].text = key.Value.UserName;
                 stats[i++].text = key.Value.Score.ToString();
 
-                rankPointsGained.GetComponent<TMP_Text>().text = key.Value.Score.ToString();
+                if (rankPoints >= 0)
+                {
+                    rankPointsGained.GetComponent<TMP_Text>().text = "+ " + rankPoints.ToString();
+                }
+                else
+                {
+                    rankPointsGained.GetComponent<TMP_Text>().text = rankPoints.ToString();
+                }
             }
         }
 
@@ -252,6 +275,7 @@ namespace UI
         public void EnableHomePanel(bool _var)
         {
             homePanel.SetActive(_var);
+            playerProfileButton.interactable = _var;
         }
 
         public void EnableLobbyPanel(bool _var)
@@ -320,6 +344,7 @@ namespace UI
             await UpdateSentFriendRequestsPanel();
             await UpdateFriendRequestPanel();
             await UpdateInviteToLobbyPanel();
+            await UpdatePlayerProfile();
             loadingUITask = true;
         }
 
@@ -327,7 +352,7 @@ namespace UI
         {
             currentUserName.text = firestore.accountFirebase.User;
             playerIcon.sprite = playerIcons[firestore.accountFirebase.PlayerIcon];
-            winrate.text = firestore.accountFirebase.Winrate.ToString() + " %";
+            winrate.text = firestore.accountFirebase.Winrate.ToString() + "%";
             rankPoints.text = firestore.accountFirebase.RankPoints.ToString();
             return Task.CompletedTask;
         }
@@ -459,6 +484,17 @@ namespace UI
             }
         }
 
+        private Task UpdatePlayerProfile()
+        {
+            gamesPlayed.text = "Games Played: " + firestore.accountFirebase.GamesPlayed.ToString() + " ( " + firestore.accountFirebase.GamesWon.ToString() + " / " + firestore.accountFirebase.GamesLost.ToString() + " ) ";
+            profile_winrate.text = "Winrate: " + firestore.accountFirebase.Winrate.ToString() + "%";
+            deathCoins.text = "DeathCoins: " + firestore.accountFirebase.RankPoints.ToString();
+            timePlayed.text = "TimePlayed: " + Mathf.Floor(firestore.accountFirebase.TimePlayed).ToString();
+            rank.text = firestore.accountFirebase.Rank;
+
+            return Task.CompletedTask;
+        }
+
         #endregion Update UI
 
         #region Setting Panel
@@ -512,6 +548,12 @@ namespace UI
         public void AwaitStartButton(bool _var)
         {
             startButton.GetComponent<Button>().interactable = !_var;
+        }
+
+        public void EnableProfilePanel(bool _var)
+        {
+            homePanel.SetActive(!_var);
+            playerProfile.SetActive(_var);
         }
 
         #endregion Buttons

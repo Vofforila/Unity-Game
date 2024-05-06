@@ -2,28 +2,50 @@ using Data;
 using Server;
 using UnityEngine;
 
-public class GameManager : MonoBehaviour
+namespace Host
 {
-    [Header("Scriptable")]
-    [SerializeField] private LocalData localdaData;
-
-    [Header("GameObjects")]
-    [SerializeField] private GameObject fusionManagerPrefab;
-    [SerializeField] private GameObject gameUICanvasPrefab;
-
-    private void Awake()
+    public class GameManager : MonoBehaviour
     {
-        if (FusionManager.Instance == null)
+        [Header("Scriptable")]
+        [SerializeField] private LocalData localdaData;
+
+        [Header("GameObjects")]
+        [SerializeField] private GameObject fusionManagerPrefab;
+        [SerializeField] private GameObject gameUICanvasPrefab;
+
+        private GameObject fusionManager;
+        private GameObject gameUICanvas;
+
+        public static GameManager Instance;
+
+        private void Awake()
+        {
+            Instance = this;
+            if (FusionManager.Instance == null)
+            {
+                CreateServer();
+            }
+            else
+            {
+                localdaData.currentLvl = -1;
+            }
+        }
+
+        public void CreateServer()
         {
             localdaData.currentLvl = 0;
-            GameObject fusionManager = Instantiate(fusionManagerPrefab);
+            fusionManager = Instantiate(fusionManagerPrefab);
             fusionManager.name = "FusionManager";
-            GameObject gameUICanvas = Instantiate(gameUICanvasPrefab);
+            gameUICanvas = Instantiate(gameUICanvasPrefab);
             gameUICanvas.name = "GameUICanvas";
         }
-        else
+
+        public void DestoryServer()
         {
-            localdaData.currentLvl = -1;
+            localdaData.currentLvl = 0;
+            Destroy(fusionManager);
+            Destroy(gameUICanvas);
+            CreateServer();
         }
     }
 }

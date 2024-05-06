@@ -636,6 +636,16 @@ MonoBehaviour:
   bannerPrefab: {fileID: 3094471855483583679, guid: bd06aad3179a5754e9881a5504d32ebb,
     type: 3}
   loadingPanel: {fileID: 4498963649517038581}
+  bannerSprites:
+  - {fileID: 21300000, guid: 3db0a9a39463ef84199e9ee7a71e7766, type: 3}
+  - {fileID: 21300000, guid: 0e6a9feabfaaabd40b61a5f33fa44dd3, type: 3}
+  - {fileID: 21300000, guid: 79704037cf0983049afc2aae2cf36b59, type: 3}
+  - {fileID: 21300000, guid: 9469ad011c19f8740a22fdb7cbcc46de, type: 3}
+  - {fileID: 21300000, guid: 15a6ee17a5d5bb040a47eed23eee9a15, type: 3}
+  - {fileID: 21300000, guid: 5613b32f4a2d31f43a1f1f34c36ed6a9, type: 3}
+  - {fileID: 21300000, guid: bffec663388a38b4b9389c4c1e3bdccc, type: 3}
+  - {fileID: 21300000, guid: 320ec409c8a95d44b8f9a146c087c2b4, type: 3}
+  - {fileID: 21300000, guid: ff6a1fff73132b54dae1baea4d856231, type: 3}
 --- !u!1 &3921161628518809651
 GameObject:
   m_ObjectHideFlags: 0
