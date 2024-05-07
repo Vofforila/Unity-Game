@@ -3,31 +3,53 @@ using UnityEngine;
 
 public class SoundManager : MonoBehaviour
 {
-    [Header("Music")]
-    [SerializeField] private AudioClip music;
-
-    [Header("Sound Effects")]
-    [SerializeField] private List<AudioClip> sound;
-    [SerializeField] private List<AudioClip> lightOpens;
-
-    [Header("Sound Sources")]
-    [SerializeField] private List<AudioSource> soundSourcer;
+    [SerializeField] private List<Sound> sounds;
 
     public static SoundManager Instance;
 
     private void Awake()
     {
         Instance = this;
-        DontDestroyOnLoad(this);
+
+        foreach (Sound sound in sounds)
+        {
+            sound.source = gameObject.AddComponent<AudioSource>();
+            sound.source.clip = sound.clip;
+            sound.source.mute = sound.mute;
+            sound.source.bypassEffects = sound.bypassEffect;
+            sound.source.bypassListenerEffects = sound.bypassListenerEffects;
+            sound.source.bypassReverbZones = sound.bypassReverbZones;
+            sound.source.loop = sound.loop;
+            sound.source.volume = sound.volume;
+            sound.source.pitch = sound.pitch;
+            sound.source.spatialBlend = sound.spatialBlend;
+        }
     }
 
-    /*private void Start()
+    public void Start()
     {
-        soundSourcer[0].clip = music;
-    }*/
+        PlaySound("LightSound");
+    }
 
-    public void PlayLightSound(int _var)
+    public void StopSound(string _name)
     {
-        soundSourcer[1].clip = lightOpens[_var];
+        foreach (Sound sound in sounds)
+        {
+            if (sound.name == _name)
+            {
+                sound.source.Stop();
+            }
+        }
+    }
+
+    public void PlaySound(string _name)
+    {
+        foreach (Sound sound in sounds)
+        {
+            if (sound.name == _name)
+            {
+                sound.source.Play();
+            }
+        }
     }
 }

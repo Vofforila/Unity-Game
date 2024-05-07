@@ -1,6 +1,6 @@
 using Fusion;
-using UnityEngine;
 using UI;
+using UnityEngine;
 
 namespace Host
 {
@@ -13,6 +13,7 @@ namespace Host
         {
             if (other.CompareTag("Player") && Object != null)
             {
+                SoundManager.Instance.PlaySound("coin");
                 gameUIListener = other.gameObject.GetComponent<GameUIListener>();
                 gameUIListener.AddScore(coinValue);
 

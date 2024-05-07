@@ -176,10 +176,11 @@ namespace Player
         private void Jump()
         {
             // Generate a random number to where you jump
-            jumpPosition = Random.Range(jumpPosition + 1, 7);
+            jumpPosition = Random.Range(jumpPosition, 8);
             Debug.Log("<color=green>jumpPosition</color>");
             IsJumping = true;
             score = QuadraticCurveManager.Instance.MoveCurve(jumpPosition);
+            RPC_JumpSound();
             sampleTime = 0f;
         }
 
@@ -187,6 +188,12 @@ namespace Player
         {
             gameUIListener.AddScore(score);
             Level1Manager.Instance.PlayerTurn = false;
+        }
+
+        [Rpc(sources: RpcSources.StateAuthority, targets: RpcTargets.All)]
+        private void RPC_JumpSound()
+        {
+            SoundManager.Instance.PlaySound("jump-sound");
         }
     }
 }

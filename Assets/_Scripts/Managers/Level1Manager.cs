@@ -90,6 +90,7 @@ namespace Host
         public void StartLevel()
         {
             networkPlayerDictionary = spawnManager.SpawnNetworkPlayers(_level: 1, _isKinematic: true);
+            RPC_StartSetupLights();
             UpdateGameState(GameState.PlayerTurn);
         }
 
@@ -125,6 +126,12 @@ namespace Host
         public void EndLevel()
         {
             playLevel2Event.Invoke();
+        }
+
+        [Rpc(sources: RpcSources.StateAuthority, targets: RpcTargets.All)]
+        private void RPC_StartSetupLights()
+        {
+            StartCoroutine(LightManager.Instance.SetupLights());
         }
     }
 }

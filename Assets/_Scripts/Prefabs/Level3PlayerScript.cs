@@ -108,6 +108,7 @@ namespace Player
                         if (PlayerHp <= 0)
                         {
                             Debug.Log("Dead");
+                            SoundManager.Instance.PlaySound("dmg");
                             if (Object.HasInputAuthority)
                             {
                                 isAlive = false;
@@ -117,6 +118,7 @@ namespace Player
                         }
                         else if (Object.HasInputAuthority)
                         {
+                            SoundManager.Instance.PlaySound("dmg");
                             gameUIListener.UpdateHp(PlayerHp);
                         }
                         break;

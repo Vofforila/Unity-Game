@@ -1,0 +1,289 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &6130376268741483942
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8424818880751115142}
+  - component: {fileID: 7112520985519509242}
+  m_Layer: 0
+  m_Name: SoundManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8424818880751115142
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6130376268741483942}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7112520985519509242
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6130376268741483942}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29291e37782d940aa978d4dc4545f7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sounds:
+  - name: light-swich-1
+    clip: {fileID: 8300000, guid: dbaff03ad82afde43be9b27b79f753d0, type: 3}
+    mute: 0
+    bypassEffect: 0
+    bypassListenerEffects: 0
+    bypassReverbZones: 0
+    loop: 0
+    volume: 0.8
+    pitch: 1
+    spatialBlend: 0
+    source: {fileID: 0}
+  - name: light-swich-2
+    clip: {fileID: 8300000, guid: 52b97f26b5318284481b9397e48c85f6, type: 3}
+    mute: 0
+    bypassEffect: 0
+    bypassListenerEffects: 0
+    bypassReverbZones: 0
+    loop: 0
+    volume: 0.8
+    pitch: 1
+    spatialBlend: 0
+    source: {fileID: 0}
+  - name: light-swich-3
+    clip: {fileID: 8300000, guid: fbb25e906967d404193d1c778f3684cb, type: 3}
+    mute: 0
+    bypassEffect: 0
+    bypassListenerEffects: 0
+    bypassReverbZones: 0
+    loop: 0
+    volume: 0.8
+    pitch: 1
+    spatialBlend: 0
+    source: {fileID: 0}
+  - name: light-swich-4
+    clip: {fileID: 8300000, guid: 82792fee6814b5948b0c6de64fb29a59, type: 3}
+    mute: 0
+    bypassEffect: 0
+    bypassListenerEffects: 0
+    bypassReverbZones: 0
+    loop: 0
+    volume: 0.8
+    pitch: 1
+    spatialBlend: 0
+    source: {fileID: 0}
+  - name: light-swich-5
+    clip: {fileID: 8300000, guid: e7630749bf36eda409a4d4b21a4b22db, type: 3}
+    mute: 0
+    bypassEffect: 0
+    bypassListenerEffects: 0
+    bypassReverbZones: 0
+    loop: 0
+    volume: 0.8
+    pitch: 1
+    spatialBlend: 0
+    source: {fileID: 0}
+  - name: light-swich-6
+    clip: {fileID: 8300000, guid: bfe9478c66cd4714399827f9ef1865ec, type: 3}
+    mute: 0
+    bypassEffect: 0
+    bypassListenerEffects: 0
+    bypassReverbZones: 0
+    loop: 0
+    volume: 0.8
+    pitch: 1
+    spatialBlend: 0
+    source: {fileID: 0}
+  - name: light-swich-7
+    clip: {fileID: 8300000, guid: 3a407a801471d3947aee5a66504ce9eb, type: 3}
+    mute: 0
+    bypassEffect: 0
+    bypassListenerEffects: 0
+    bypassReverbZones: 0
+    loop: 0
+    volume: 0.8
+    pitch: 1
+    spatialBlend: 0
+    source: {fileID: 0}
+  - name: light-swich-8
+    clip: {fileID: 8300000, guid: 655fb8289e884aa4e90e4b9fd3e592aa, type: 3}
+    mute: 0
+    bypassEffect: 0
+    bypassListenerEffects: 0
+    bypassReverbZones: 0
+    loop: 0
+    volume: 0.8
+    pitch: 1
+    spatialBlend: 0
+    source: {fileID: 0}
+  - name: light-swich-9
+    clip: {fileID: 8300000, guid: de247204cc03ff04fa631d28653506a7, type: 3}
+    mute: 0
+    bypassEffect: 0
+    bypassListenerEffects: 0
+    bypassReverbZones: 0
+    loop: 0
+    volume: 0.8
+    pitch: 1
+    spatialBlend: 0
+    source: {fileID: 0}
+  - name: jump-sound
+    clip: {fileID: 8300000, guid: 49bd4915ce50c9044a9c4df3d289aef2, type: 3}
+    mute: 0
+    bypassEffect: 0
+    bypassListenerEffects: 0
+    bypassReverbZones: 0
+    loop: 0
+    volume: 0.8
+    pitch: 1
+    spatialBlend: 0
+    source: {fileID: 0}
+  - name: running-sound
+    clip: {fileID: 8300000, guid: 69036551d630d8742a549be6c85aec09, type: 3}
+    mute: 0
+    bypassEffect: 0
+    bypassListenerEffects: 0
+    bypassReverbZones: 0
+    loop: 1
+    volume: 0.8
+    pitch: 1
+    spatialBlend: 0
+    source: {fileID: 0}
+  - name: acceleration-sound
+    clip: {fileID: 8300000, guid: 25b987aaf2749424d90bbbe4bbe5de05, type: 3}
+    mute: 0
+    bypassEffect: 0
+    bypassListenerEffects: 0
+    bypassReverbZones: 0
+    loop: 0
+    volume: 0.8
+    pitch: 1
+    spatialBlend: 0
+    source: {fileID: 0}
+  - name: race-beep-1
+    clip: {fileID: 8300000, guid: 1b2942998c17a1447b90bc24f73fa643, type: 3}
+    mute: 0
+    bypassEffect: 0
+    bypassListenerEffects: 0
+    bypassReverbZones: 0
+    loop: 0
+    volume: 0.8
+    pitch: 1
+    spatialBlend: 0
+    source: {fileID: 0}
+  - name: race-beep-2
+    clip: {fileID: 8300000, guid: 58f47888f1cbf264a94a55378b03903b, type: 3}
+    mute: 0
+    bypassEffect: 0
+    bypassListenerEffects: 0
+    bypassReverbZones: 0
+    loop: 0
+    volume: 0.8
+    pitch: 1
+    spatialBlend: 0
+    source: {fileID: 0}
+  - name: race-beep-3
+    clip: {fileID: 8300000, guid: ec6740af9d1662948b56c9bd55f64244, type: 3}
+    mute: 0
+    bypassEffect: 0
+    bypassListenerEffects: 0
+    bypassReverbZones: 0
+    loop: 1
+    volume: 0.8
+    pitch: 1
+    spatialBlend: 0
+    source: {fileID: 0}
+  - name: gun-shot-sound
+    clip: {fileID: 8300000, guid: 63ad7f633e1d8e445947000419ae05f0, type: 3}
+    mute: 0
+    bypassEffect: 0
+    bypassListenerEffects: 0
+    bypassReverbZones: 0
+    loop: 0
+    volume: 0.8
+    pitch: 1
+    spatialBlend: 0
+    source: {fileID: 0}
+  - name: catapult
+    clip: {fileID: 8300000, guid: f6e8dd058fe75974bad65eee9b5cef9c, type: 3}
+    mute: 0
+    bypassEffect: 0
+    bypassListenerEffects: 0
+    bypassReverbZones: 0
+    loop: 0
+    volume: 0.8
+    pitch: 1
+    spatialBlend: 0
+    source: {fileID: 0}
+  - name: dmg
+    clip: {fileID: 8300000, guid: 916b446a0cd26494faf455e1810283b8, type: 3}
+    mute: 0
+    bypassEffect: 0
+    bypassListenerEffects: 0
+    bypassReverbZones: 0
+    loop: 0
+    volume: 0.8
+    pitch: 1
+    spatialBlend: 0
+    source: {fileID: 0}
+  - name: coin
+    clip: {fileID: 8300000, guid: 69cc6ce807135b84fb86e129a75d7211, type: 3}
+    mute: 0
+    bypassEffect: 0
+    bypassListenerEffects: 0
+    bypassReverbZones: 0
+    loop: 0
+    volume: 0.8
+    pitch: 1
+    spatialBlend: 0
+    source: {fileID: 0}
+  - name: crush
+    clip: {fileID: 8300000, guid: e1afa61ea6c81c64fb96bd789d0fc83d, type: 3}
+    mute: 0
+    bypassEffect: 0
+    bypassListenerEffects: 0
+    bypassReverbZones: 0
+    loop: 0
+    volume: 0.8
+    pitch: 1
+    spatialBlend: 0
+    source: {fileID: 0}
+  - name: win
+    clip: {fileID: 8300000, guid: ce59b7e2bfc42854cbcfe7e2d00ffe44, type: 3}
+    mute: 0
+    bypassEffect: 0
+    bypassListenerEffects: 0
+    bypassReverbZones: 0
+    loop: 0
+    volume: 0.8
+    pitch: 1
+    spatialBlend: 0
+    source: {fileID: 0}
+  - name: lose
+    clip: {fileID: 8300000, guid: b11aeb89b6ba8cf4b90804ad6c5a5ab5, type: 3}
+    mute: 0
+    bypassEffect: 0
+    bypassListenerEffects: 0
+    bypassReverbZones: 0
+    loop: 0
+    volume: 0.8
+    pitch: 1
+    spatialBlend: 0
+    source: {fileID: 0}

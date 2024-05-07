@@ -80,6 +80,10 @@ namespace Player
                 if (pressed.IsSet(GameButton.Z) && KeyCooldown.Expired(Runner) == true)
                 {
                     HorseSpeed++;
+                    if (HorseSpeed % 10 == 0)
+                    {
+                        SoundManager.Instance.PlaySound("acceleration-sound");
+                    }
                     KeyCooldown = TickTimer.CreateFromSeconds(Runner, 0.2f);
                 }
             }

@@ -265,10 +265,12 @@ namespace UI
 
                 if (key.Value.UserName == firestore.accountFirebase.User && (place == 1 || place == 2))
                 {
+                    SoundManager.Instance.PlaySound("win");
                     rankPoints = firestore.UpdatePlayerProfile(_win: true, FusionManager.Instance.timePlayed);
                 }
                 else
                 {
+                    SoundManager.Instance.PlaySound("lose");
                     rankPoints = firestore.UpdatePlayerProfile(_win: false, FusionManager.Instance.timePlayed);
                 }
 

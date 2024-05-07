@@ -9,14 +9,19 @@ public class LightManager : MonoBehaviour
     private bool night;
     private bool firstTime;
 
+    public static LightManager Instance;
+
+    private void Awake()
+    {
+        Instance = this;
+    }
+
     private void Start()
     {
         lights = GameObject.Find("Lights").GetComponentsInChildren<Light>();
         setupLights = GameObject.Find("SetupLights").GetComponentsInChildren<Light>();
         night = false;
         firstTime = true;
-        StopLights();
-        StartCoroutine(SetupLights());
     }
 
     public async void StartLights()
@@ -31,38 +36,39 @@ public class LightManager : MonoBehaviour
 
     public IEnumerator SetupLights()
     {
-        if (firstTime == true && night == true)
+        while (true)
         {
-            Debug.Log("Setuo");
-            for (int i = 0; i < setupLights.Length; i++)
+            if (firstTime == true)
             {
-                Debug.Log("Light");
-                Light light = setupLights[i];
-                SoundManager.Instance.PlayLightSound(i);
-                light.enabled = true;
-                yield return new WaitForSeconds(100);
+                for (int i = 0; i < setupLights.Length; i++)
+                {
+                    Light light = setupLights[i];
+                    SoundManager.Instance.PlaySound("light-swich-" + i);
+                    light.enabled = true;
+                    yield return new WaitForSeconds(0.5f);
+                }
+                yield return new WaitForSeconds(1f);
+                SoundManager.Instance.PlaySound("light-swich-9");
+                setupLights[setupLights.Length - 1].enabled = true;
+                firstTime = false;
+                yield return new WaitForSeconds(10f);
             }
-            yield return new WaitForSeconds(1000);
-            SoundManager.Instance.PlayLightSound(9);
-            setupLights[setupLights.Length - 1].enabled = true;
-            firstTime = false;
-        }
-        else if (night == true)
-        {
-            foreach (Light light in setupLights)
+            else if (night == true)
             {
-                light.enabled = true;
-                yield return new WaitForSeconds(100);
+                foreach (Light light in setupLights)
+                {
+                    light.enabled = true;
+                    yield return new WaitForSeconds(0.1f);
+                }
             }
             foreach (Light light in setupLights)
             {
                 light.enabled = false;
-                yield return new WaitForSeconds(100);
+                yield return new WaitForSeconds(0.1f);
             }
-        }
 
-        yield return new WaitUntil(() => night == true);
-        StartCoroutine(SetupLights());
+            yield return new WaitUntil(() => night == true);
+        }
     }
 
     public async void StopLights()

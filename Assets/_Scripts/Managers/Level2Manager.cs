@@ -91,7 +91,16 @@ namespace Host
 
         public IEnumerator IStartLevel()
         {
-            yield return new WaitForSecondsRealtime(5f);
+            yield return new WaitForSecondsRealtime(2f);
+            SoundManager.Instance.PlaySound("race-beep-1");
+            yield return new WaitForSecondsRealtime(0.601f);
+            SoundManager.Instance.PlaySound("race-beep-2");
+            yield return new WaitForSecondsRealtime(0.627f);
+            SoundManager.Instance.PlaySound("race-beep-3");
+            yield return new WaitForSecondsRealtime(0.601f);
+            SoundManager.Instance.PlaySound("gun-shot-shound");
+            SoundManager.Instance.PlaySound("running-sound");
+
             networkPlayerDictionary = spawnManager.SpawnNetworkPlayers(_level: 2, _isKinematic: true);
             UpdateGameState(GameState.Racing);
         }
@@ -110,12 +119,19 @@ namespace Host
             {
                 Runner.Despawn(networkPlayerDictionary[player]);
             }
+            RPC_StopSound();
             UpdateGameState(GameState.EndLevel);
         }
 
         public void EndLevel()
         {
             playLevel3Event.Invoke();
+        }
+
+        [Rpc(sources: RpcSources.StateAuthority, targets: RpcTargets.All)]
+        private void RPC_StopSound()
+        {
+            SoundManager.Instance.StopSound("running-sound");
         }
     }
 }

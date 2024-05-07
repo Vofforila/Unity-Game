@@ -32,6 +32,7 @@ namespace Enemy
         public override void Spawned()
         {
             curveObj.transform.SetParent(null);
+            SoundManager.Instance.PlaySound("catapult");
             sampleTime = 1f;
             MoveCurve();
         }
