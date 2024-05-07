@@ -106,6 +106,7 @@ namespace Player
                     case nameof(Player):
                         if (Object.HasInputAuthority)
                         {
+                            SoundManager.Instance.PlaySound("crush");
                             RPC_PlayerDead();
                         }
                         playerVisuals.SetVisuals(false);
