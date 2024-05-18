@@ -48,7 +48,6 @@ namespace UI
                 {
                     Score = 0;
                 }
-                Debug.Log("lol");
 
                 gameUIManager.CreateUI(Object.InputAuthority);
 
@@ -71,7 +70,6 @@ namespace UI
                 switch (change)
                 {
                     case nameof(Score):
-                        Debug.Log("Update Score");
                         gameUIManager.UpdateScore(Object.InputAuthority, Score);
                         break;
                     case nameof(Username):

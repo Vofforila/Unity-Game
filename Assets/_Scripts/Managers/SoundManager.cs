@@ -24,6 +24,8 @@ public class SoundManager : MonoBehaviour
             sound.source.pitch = sound.pitch;
             sound.source.spatialBlend = sound.spatialBlend;
         }
+
+        DontDestroyOnLoad(gameObject);
     }
 
     public void Start()

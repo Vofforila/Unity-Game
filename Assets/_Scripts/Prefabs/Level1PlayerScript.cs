@@ -177,7 +177,7 @@ namespace Player
         {
             // Generate a random number to where you jump
             jumpPosition = Random.Range(jumpPosition, 8);
-            Debug.Log("<color=green>jumpPosition</color>");
+            Debug.Log(jumpPosition);
             IsJumping = true;
             score = QuadraticCurveManager.Instance.MoveCurve(jumpPosition);
             RPC_JumpSound();
