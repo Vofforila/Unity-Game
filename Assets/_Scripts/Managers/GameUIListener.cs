@@ -58,6 +58,7 @@ namespace UI
             else if (Object.HasStateAuthority)
             {
                 Score = gameUIManager.playerDictionary[Object.InputAuthority].Score;
+                Debug.Log("Host:" + Score);
             }
 
             changeDetector = GetChangeDetector(ChangeDetector.Source.SimulationState);

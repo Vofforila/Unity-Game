@@ -98,7 +98,7 @@ namespace Host
             yield return new WaitForSecondsRealtime(0.627f);
             SoundManager.Instance.PlaySound("race-beep-3");
             yield return new WaitForSecondsRealtime(0.601f);
-            SoundManager.Instance.PlaySound("gun-shot-shound");
+            SoundManager.Instance.PlaySound("gun-shot-sound");
             SoundManager.Instance.PlaySound("running-sound");
 
             networkPlayerDictionary = spawnManager.SpawnNetworkPlayers(_level: 2, _isKinematic: true);

@@ -165,7 +165,7 @@ namespace Player
                     {
                         TakeMoney();
                     }
-                    if (score == 0)
+                    else if (score == 0)
                     {
                         TakeMoney();
                     }

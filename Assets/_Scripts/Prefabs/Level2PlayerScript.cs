@@ -129,17 +129,17 @@ namespace Player
                 score = 250;
                 gameUIListener.AddScore(score);
             }
-            if (Level2Manager.Instance.FinishPlace == 2)
+            else if (Level2Manager.Instance.FinishPlace == 2)
             {
                 score = 350;
                 gameUIListener.AddScore(score);
             }
-            if (Level2Manager.Instance.FinishPlace == 3)
+            else if (Level2Manager.Instance.FinishPlace == 3)
             {
                 score = 400;
                 gameUIListener.AddScore(score);
             }
-            if (Level2Manager.Instance.FinishPlace == 4)
+            else if (Level2Manager.Instance.FinishPlace == 4)
             {
                 score = 500;
                 gameUIListener.AddScore(score);
