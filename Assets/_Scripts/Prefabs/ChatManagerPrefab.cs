@@ -1,15 +1,11 @@
-using Data;
 using Database;
 using Fusion;
-using Server;
-using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
 namespace UI
 {
-    public class ChatManagerPrefab : NetworkBehaviour
+    public class ChatManagerPrefab : SimulationBehaviour
     {
         [Header("Scriptable")]
         [SerializeField] private Firestore firestore;
@@ -30,13 +26,15 @@ namespace UI
             }
         }
 
-        [Rpc(sources: RpcSources.All, targets: RpcTargets.StateAuthority)]
-        private void RPC_RelaySendMessage(string _finalmessage, RpcInfo info = default)
+        /*[Rpc(sources: RpcSources.All, targets: RpcTargets.StateAuthority)]*/
+
+        private void RPC_RelaySendMessage(string _finalmessage)
         {
             RPC_SendMessage(_finalmessage);
         }
 
-        [Rpc(sources: RpcSources.StateAuthority, targets: RpcTargets.All)]
+        /*       [Rpc(sources: RpcSources.StateAuthority, targets: RpcTargets.All)]*/
+
         private void RPC_SendMessage(string _finalmessage)
         {
             chatPanelScrollContent.text += _finalmessage;

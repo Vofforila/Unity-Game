@@ -1,11 +1,11 @@
+using Fusion;
+using Fusion.Addons.Physics;
+using Player;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
-using Fusion;
-using Player;
-using Fusion.Addons.Physics;
-using Unity.AI.Navigation;
 using System.Threading.Tasks;
+using Unity.AI.Navigation;
+using UnityEngine;
 
 namespace Host
 {
@@ -111,7 +111,7 @@ namespace Host
             return networkPlayerDictionary;
         }
 
-        public IEnumerator ISpawnCatapults()
+        public async void ISpawnCatapults()
         {
             if (spawnAble == true)
             {
@@ -119,11 +119,11 @@ namespace Host
                 Transform[] catapultSpawnPoints = GameObject.Find("CatapultSpawnPoints").GetComponentsInChildren<Transform>();
                 for (int i = 1; i <= catapultSpawnPoints.Length - 1; i++)
                 {
-                    NetworkObject networkCatapult = Runner.Spawn(catapultPrefab, catapultSpawnPoints[i].position, catapultSpawnPoints[i].rotation);
+                    NetworkObject networkCatapult = await Runner.SpawnAsync(catapultPrefab, catapultSpawnPoints[i].position, catapultSpawnPoints[i].rotation);
 
                     NetworkTransform networkCatapultTransform = networkCatapult.GetComponent<NetworkTransform>();
                     networkCatapultTransform.Teleport(catapultSpawnPoints[i].position, catapultSpawnPoints[i].rotation);
-                    yield return new WaitForSecondsRealtime(1f);
+                    await Task.Delay(1000);
                 }
             }
         }

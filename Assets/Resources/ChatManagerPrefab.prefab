@@ -64,5 +64,4 @@ MonoBehaviour:
   ObjectInterest: 1
   Flags: 262145
   NestedObjects: []
-  NetworkedBehaviours:
-  - {fileID: 1621449596420328685}
+  NetworkedBehaviours: []

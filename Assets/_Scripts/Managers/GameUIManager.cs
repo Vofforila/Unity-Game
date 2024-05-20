@@ -194,7 +194,6 @@ namespace UI
 
         public void UpdateScore(PlayerRef _player, int _score)
         {
-            Debug.Log(_score);
             playerDictionary[_player].Score = _score;
             UpdateUI();
         }

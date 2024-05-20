@@ -109,7 +109,7 @@ namespace Host
         public IEnumerator ISpawnEnemies()
         {
             yield return new WaitForSecondsRealtime(5f);
-            StartCoroutine(spawnManager.ISpawnCatapults());
+            spawnManager.ISpawnCatapults();
             UpdateGameState(GameState.IsPlayerAlive);
         }
 
