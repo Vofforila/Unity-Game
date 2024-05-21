@@ -32,8 +32,8 @@ namespace Player
         private NavMeshSurface surface;
         [SerializeField] private float agentoffset = 1.5f;
         [SerializeField] private float speed = 15f;
-        [SerializeField] private float angularSpeed = 180f;
-        [SerializeField] private float acceleration = 15f;
+        [SerializeField] private float angularSpeed = 129f;
+        [SerializeField] private float acceleration = 8f;
         [SerializeField] private float stoppingDistance = 0.1f;
         [SerializeField] private float obstacleRadius = 0.5f;
         [SerializeField] private float obstacleHeight = 2f;

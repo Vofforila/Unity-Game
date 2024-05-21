@@ -34,8 +34,11 @@ namespace Host
 
         [Networked, HideInInspector] public PlayerRef Player { get; set; }
         [Networked, HideInInspector] public NetworkBool PlayerTurn { get; set; }
+        [Networked, HideInInspector] private NetworkBool StartLights { get; set; }
 
         private Dictionary<PlayerRef, NetworkObject> networkPlayerDictionary;
+
+        private ChangeDetector changeDetector;
 
         // Singleton
         [HideInInspector] public static Level1Manager Instance;
@@ -52,6 +55,28 @@ namespace Host
             localData.currentLvl = 1;
             GameUIManager.Instance.UpdateLevelState(localData.currentLvl);
             UpdateGameState(GameState.Loading);
+        }
+
+        public override void Spawned()
+        {
+            StartLights = false;
+            changeDetector = GetChangeDetector(ChangeDetector.Source.SimulationState);
+        }
+
+        public override void Render()
+        {
+            foreach (var change in changeDetector.DetectChanges(this, out var previousBuffer, out var currentBuffer))
+            {
+                switch (change)
+                {
+                    case nameof(StartLights):
+                        if (StartLights == true)
+                        {
+                            StartCoroutine(LightManager.Instance.SetupLights());
+                        }
+                        break;
+                }
+            }
         }
 
         public void PlayeLevel1Event()
@@ -90,13 +115,13 @@ namespace Host
         public void StartLevel()
         {
             networkPlayerDictionary = spawnManager.SpawnNetworkPlayers(_level: 1, _isKinematic: true);
-            RPC_StartSetupLights();
+            StartLights = true;
             UpdateGameState(GameState.PlayerTurn);
         }
 
         public IEnumerator IPlayerTurn()
         {
-            yield return new WaitForSecondsRealtime(5f);
+            yield return new WaitForSecondsRealtime(4f);
             foreach (PlayerRef player in Runner.ActivePlayers)
             {
                 Player = player;
@@ -126,12 +151,6 @@ namespace Host
         public void EndLevel()
         {
             playLevel2Event.Invoke();
-        }
-
-        [Rpc(sources: RpcSources.StateAuthority, targets: RpcTargets.All)]
-        private void RPC_StartSetupLights()
-        {
-            StartCoroutine(LightManager.Instance.SetupLights());
         }
     }
 }

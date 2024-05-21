@@ -245,6 +245,7 @@ namespace UI
         {
             mainMenuCanvas.SetActive(true);
             homePanel.SetActive(false);
+            lobbyPanel.SetActive(false);
             matchStatisticsPanel.SetActive(true);
 
             Dictionary<PlayerRef, PlayerData> playerDictionary = GameUIManager.Instance.playerDictionary;

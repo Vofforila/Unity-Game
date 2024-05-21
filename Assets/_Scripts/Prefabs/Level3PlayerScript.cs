@@ -38,14 +38,14 @@ namespace Player
         [SerializeField] private float obstacleRadius = 0.5f;
         [SerializeField] private float obstacleHeight = 2f;
 
-        [Networked] private int PlayerHp { get; set; }
         [Networked] public NetworkButtons ButtonsPrevious { get; set; }
+        [Networked, HideInInspector] public NetworkBool PlayerAlive { get; set; }
+        [Networked, HideInInspector] public int PlayerHp { get; set; }
 
         private ChangeDetector changeDetector;
 
         [Header("Game")]
         private int score;
-        private bool isAlive;
 
         public void Awake()
         {
@@ -59,8 +59,8 @@ namespace Player
         {
             if (localData.currentLvl == 3)
             {
-                PlayerHp = 20;
             }
+            PlayerHp = 20;
         }
 
         public override void Spawned()
@@ -74,7 +74,7 @@ namespace Player
                 playerVisuals.SetAgent(agent, agentoffset, speed, angularSpeed, acceleration, stoppingDistance, obstacleRadius, obstacleHeight);
                 playerVisuals.SetPlayer(_visuals: true, _size: size, _isKinematic: isKinematic, _constrains: constrains, _mass: mass);
 
-                isAlive = true;
+                PlayerAlive = true;
                 changeDetector = GetChangeDetector(ChangeDetector.Source.SimulationState);
             }
         }
@@ -104,41 +104,25 @@ namespace Player
             {
                 switch (change)
                 {
+                    case nameof(PlayerAlive):
+
+                        playerVisuals.SetPlayer(_visuals: false, _size: size, _isKinematic: isKinematic, _constrains: constrains, _mass: mass);
+                        break;
                     case nameof(PlayerHp):
-                        if (PlayerHp <= 0)
+                        if (Object.HasInputAuthority)
                         {
-                            Debug.Log("Dead");
                             SoundManager.Instance.PlaySound("dmg");
                             gameUIListener.UpdateHp(PlayerHp);
-                            if (Object.HasInputAuthority)
+                            if (PlayerHp <= 0)
                             {
-                                isAlive = false;
+                                if (Object.HasInputAuthority)
+                                {
+                                    gameUIListener.UpdateHp(PlayerHp);
+                                }
                                 RPC_PlayerDead();
                             }
-                            playerVisuals.SetVisuals(false);
-                        }
-                        else if (Object.HasInputAuthority)
-                        {
-                            SoundManager.Instance.PlaySound("dmg");
-                            gameUIListener.UpdateHp(PlayerHp);
                         }
                         break;
-                }
-            }
-        }
-
-        public void OnTriggerEnter(Collider other)
-        {
-            if (Object.HasStateAuthority && other.gameObject.CompareTag("Bullet") && localData.currentLvl == 3 && isAlive == true)
-            {
-                // take dmg
-                if (PlayerHp > 0)
-                {
-                    PlayerHp -= 10;
-                    if (PlayerHp < 0)
-                    {
-                        PlayerHp = 0;
-                    }
                 }
             }
         }
@@ -151,9 +135,23 @@ namespace Player
             }
         }
 
+        public void OnTriggerEnter(Collider other)
+        {
+            if (Object.HasStateAuthority && other.gameObject.CompareTag("Bullet") && localData.currentLvl == 3 && PlayerAlive == true)
+            {
+                // take dmg
+                if (PlayerHp > 0)
+                {
+                    PlayerHp -= 10;
+                }
+                Debug.Log("<color=green>Collision: </color>" + PlayerHp);
+            }
+        }
+
         [Rpc(sources: RpcSources.InputAuthority, targets: RpcTargets.StateAuthority)]
         private void RPC_PlayerDead()
         {
+            PlayerAlive = false;
             if (Level3Manager.Instance.FinishPlace == 4)
             {
                 score = 250;
@@ -174,7 +172,6 @@ namespace Player
                 score = 500;
                 gameUIListener.AddScore(score);
             }
-
             Level3Manager.Instance.FinishPlace--;
         }
     }

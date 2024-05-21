@@ -34,8 +34,13 @@ namespace Host
 
         [Networked, HideInInspector] public int FinishPlace { get; set; }
         [Networked, HideInInspector] public PlayerRef Player { get; set; }
+        [Networked, HideInInspector] private NetworkBool StartSetup { get; set; }
 
         private Dictionary<PlayerRef, NetworkObject> networkPlayerDictionary;
+
+        private bool setupDone;
+
+        private ChangeDetector changeDetector;
 
         // Singleton
         public static Level2Manager Instance;
@@ -55,7 +60,29 @@ namespace Host
 
         public override void Spawned()
         {
+            StartSetup = false;
             UpdateGameState(GameState.Loading);
+            changeDetector = GetChangeDetector(ChangeDetector.Source.SimulationState);
+        }
+
+        public override void Render()
+        {
+            foreach (var change in changeDetector.DetectChanges(this, out var previousBuffer, out var currentBuffer))
+            {
+                switch (change)
+                {
+                    case nameof(StartSetup):
+                        if (StartSetup == true)
+                        {
+                            StartCoroutine(TimedSetup());
+                        }
+                        else if (StartSetup == false)
+                        {
+                            SoundManager.Instance.StopSound("running-sound");
+                        }
+                        break;
+                }
+            }
         }
 
         public void PlayeLevel2Event()
@@ -91,16 +118,9 @@ namespace Host
 
         public IEnumerator IStartLevel()
         {
-            yield return new WaitForSecondsRealtime(2f);
-            SoundManager.Instance.PlaySound("race-beep-1");
-            yield return new WaitForSecondsRealtime(0.601f);
-            SoundManager.Instance.PlaySound("race-beep-2");
-            yield return new WaitForSecondsRealtime(0.627f);
-            SoundManager.Instance.PlaySound("race-beep-3");
-            yield return new WaitForSecondsRealtime(0.601f);
-            SoundManager.Instance.PlaySound("gun-shot-sound");
-            SoundManager.Instance.PlaySound("running-sound");
-
+            StartSetup = true;
+            setupDone = false;
+            yield return new WaitUntil(() => setupDone == true);
             networkPlayerDictionary = spawnManager.SpawnNetworkPlayers(_level: 2, _isKinematic: true);
             UpdateGameState(GameState.Racing);
         }
@@ -119,7 +139,7 @@ namespace Host
             {
                 Runner.Despawn(networkPlayerDictionary[player]);
             }
-            RPC_StopSound();
+            StartSetup = false;
             UpdateGameState(GameState.EndLevel);
         }
 
@@ -128,10 +148,18 @@ namespace Host
             playLevel3Event.Invoke();
         }
 
-        [Rpc(sources: RpcSources.StateAuthority, targets: RpcTargets.All)]
-        private void RPC_StopSound()
+        public IEnumerator TimedSetup()
         {
-            SoundManager.Instance.StopSound("running-sound");
+            yield return new WaitForSecondsRealtime(2f);
+            SoundManager.Instance.PlaySound("race-beep-1");
+            yield return new WaitForSecondsRealtime(0.601f);
+            SoundManager.Instance.PlaySound("race-beep-2");
+            yield return new WaitForSecondsRealtime(0.627f);
+            SoundManager.Instance.PlaySound("race-beep-3");
+            yield return new WaitForSecondsRealtime(0.601f);
+            SoundManager.Instance.PlaySound("gun-shot-sound");
+            SoundManager.Instance.PlaySound("running-sound");
+            setupDone = true;
         }
     }
 }

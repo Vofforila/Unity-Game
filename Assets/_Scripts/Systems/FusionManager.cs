@@ -59,26 +59,27 @@ namespace Server
         {
             if (test == true)
             {
-                UIManager managerUi = GameObject.Find("UIManager").GetComponent<UIManager>();
-                managerUi.mainMenuCanvas.SetActive(true);
-                managerUi.authCanvas.SetActive(false);
+                UIManager.Instance.mainMenuCanvas.SetActive(true);
+                UIManager.Instance.authCanvas.SetActive(false);
                 if (GUI.Button(new Rect(0, 0, 200, 40), "Play"))
                 {
                     firestore.accountFirebase.User = "Test1";
+                    firestore.accountFirebase.Rank = "Bronze";
                     Debug.Log(firestore.accountFirebase.User);
-                    managerUi.EnablePlayButton(false);
-                    managerUi.EnableStartButton(true);
-                    managerUi.EnableHomePanel(false);
-                    managerUi.EnableLobbyPanel(true);
+                    UIManager.Instance.EnablePlayButton(false);
+                    UIManager.Instance.EnableStartButton(true);
+                    UIManager.Instance.EnableHomePanel(false);
+                    UIManager.Instance.EnableLobbyPanel(true);
                     CreateLobby();
                 }
                 if (GUI.Button(new Rect(0, 40, 200, 40), "Join"))
                 {
                     firestore.accountFirebase.User = "Test2";
-                    managerUi.EnablePlayButton(false);
-                    managerUi.EnableStartButton(true);
-                    managerUi.EnableHomePanel(false);
-                    managerUi.EnableLobbyPanel(true);
+                    firestore.accountFirebase.Rank = "Bronze";
+                    UIManager.Instance.EnablePlayButton(false);
+                    UIManager.Instance.EnableStartButton(true);
+                    UIManager.Instance.EnableHomePanel(false);
+                    UIManager.Instance.EnableLobbyPanel(true);
                     test = false;
                     InviteResponseEvent("Test1");
                 }
@@ -105,12 +106,12 @@ namespace Server
                 if (GUI.Button(new Rect(0, 240, 200, 40), "Join 3"))
                 {
                     firestore.accountFirebase.User = "Test3";
-                    managerUi.EnablePlayButton(false);
-                    managerUi.EnableStartButton(true);
-                    managerUi.EnableHomePanel(false);
-                    managerUi.EnableLobbyPanel(true);
-                    test = false;
+                    UIManager.Instance.EnablePlayButton(false);
+                    UIManager.Instance.EnableStartButton(true);
+                    UIManager.Instance.EnableHomePanel(false);
+                    UIManager.Instance.EnableLobbyPanel(true);
                     InviteResponseEvent("Test1");
+                    test = false;
                 }
                 if (GUI.Button(new Rect(0, 280, 200, 40), "Close Server"))
                 {
