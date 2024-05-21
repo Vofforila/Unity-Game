@@ -120,7 +120,7 @@ namespace Player
         {
             if (Object.HasStateAuthority && other.gameObject.CompareTag("Projectile") && localData.currentLvl == 4 && isAlive == true)
             {
-                Debug.Log("Collision");
+                Debug.Log("<color=green>Collision</color>");
                 Player = Object.InputAuthority;
             }
         }

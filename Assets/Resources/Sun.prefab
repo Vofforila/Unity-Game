@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 1787895766738279041}
   - component: {fileID: 4296146331300252094}
   - component: {fileID: -7870795815320110981}
+  - component: {fileID: 6823933022734232624}
   m_Layer: 0
   m_Name: Sun
   m_TagString: Untagged
@@ -116,3 +117,16 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &6823933022734232624
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5569301906788172476}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 15c27fb773f8b8d4498882b5ec4cd89e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  localData: {fileID: 0}

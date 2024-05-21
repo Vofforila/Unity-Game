@@ -272,9 +272,19 @@ namespace UI
             string playerHp = localPlayerData.UserName + "\n " + localPlayerData.Hp + " / 100";
             localPlayerData.PlayerHp.GetComponent<TMP_Text>().text = playerHp;
         }
-    }
 
-    #endregion GameUiListener Functions
+        #endregion GameUiListener Functions
+
+        public void DestoyYourself()
+        {
+            Destroy(gameObject);
+        }
+
+        public void EnableChatPanel(bool _var)
+        {
+            chatBoxPanel.SetActive(_var);
+        }
+    }
 
     public class UIComponentsData
     {

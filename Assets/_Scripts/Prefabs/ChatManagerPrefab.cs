@@ -1,5 +1,6 @@
 using Database;
 using Fusion;
+using Server;
 using TMPro;
 using UnityEngine;
 
@@ -14,6 +15,13 @@ namespace UI
         [SerializeField] private TMP_InputField chatPanelScrollContent;
         private string finalmessage;
 
+        public static ChatManagerPrefab Instance;
+
+        private void Awake()
+        {
+            Instance = this;
+        }
+
         public void SendMessageToServer()
         {
             if (Input.GetKeyDown(KeyCode.Return) && chatInput.text != "")
@@ -22,22 +30,14 @@ namespace UI
                 string message = chatInput.text;
                 finalmessage = username + " : " + message + "\n";
                 chatInput.text = "";
-                RPC_RelaySendMessage(finalmessage);
+                RPC_SendMessage(FusionManager.Instance.runner, finalmessage);
             }
         }
 
-        /*[Rpc(sources: RpcSources.All, targets: RpcTargets.StateAuthority)]*/
-
-        private void RPC_RelaySendMessage(string _finalmessage)
+        [Rpc]
+        public static void RPC_SendMessage(NetworkRunner runner, string _finalmessage)
         {
-            RPC_SendMessage(_finalmessage);
-        }
-
-        /*       [Rpc(sources: RpcSources.StateAuthority, targets: RpcTargets.All)]*/
-
-        private void RPC_SendMessage(string _finalmessage)
-        {
-            chatPanelScrollContent.text += _finalmessage;
+            Instance.chatPanelScrollContent.text += _finalmessage;
         }
     }
 }

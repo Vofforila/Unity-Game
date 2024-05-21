@@ -205,7 +205,7 @@ MonoBehaviour:
     bypassEffect: 0
     bypassListenerEffects: 0
     bypassReverbZones: 0
-    loop: 1
+    loop: 0
     volume: 0.8
     pitch: 1
     spatialBlend: 0

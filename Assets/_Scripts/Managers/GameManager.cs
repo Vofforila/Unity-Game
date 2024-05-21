@@ -1,4 +1,5 @@
 using Data;
+using Firebase.Firestore;
 using Server;
 using UnityEngine;
 
@@ -12,9 +13,11 @@ namespace Host
         [Header("GameObjects")]
         [SerializeField] private GameObject fusionManagerPrefab;
         [SerializeField] private GameObject gameUICanvasPrefab;
+        [SerializeField] private GameObject soundManagerPrefab;
 
         private GameObject fusionManager;
         private GameObject gameUICanvas;
+        private GameObject soundManager;
 
         public static GameManager Instance;
 
@@ -23,6 +26,7 @@ namespace Host
             Instance = this;
             if (FusionManager.Instance == null)
             {
+                FirebaseFirestore.DefaultInstance.Settings.PersistenceEnabled = false;
                 CreateServer();
             }
             else
@@ -38,6 +42,8 @@ namespace Host
             fusionManager.name = "FusionManager";
             gameUICanvas = Instantiate(gameUICanvasPrefab);
             gameUICanvas.name = "GameUICanvas";
+            soundManager = Instantiate(soundManagerPrefab);
+            soundManager.name = "SoundManager";
         }
 
         public void DestoryServer()

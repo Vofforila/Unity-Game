@@ -47,7 +47,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   firestore: {fileID: 11400000, guid: 883b834f3dfdf5a45aee970fc4e238bd, type: 2}
   chatInput: {fileID: 0}
-  chatPanelScrollContent: {fileID: 0}
 --- !u!114 &2591626552910066309
 MonoBehaviour:
   m_ObjectHideFlags: 0

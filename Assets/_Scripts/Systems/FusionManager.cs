@@ -1,6 +1,5 @@
 using Data;
 using Database;
-using Firebase.Firestore;
 using Fusion;
 using Fusion.Sockets;
 using Settings;
@@ -34,6 +33,7 @@ namespace Server
 
         [HideInInspector]
         public float timePlayed = 0;
+        private float elapsedTime = 0f;
 
         public static FusionManager Instance;
 
@@ -44,7 +44,6 @@ namespace Server
             localData.currentLvl = 0;
             timePlayed = 0;
             // Disable firestore duplication
-            FirebaseFirestore.DefaultInstance.Settings.PersistenceEnabled = false;
             Instance = this;
 
             DontDestroyOnLoad(gameObject);
@@ -66,6 +65,7 @@ namespace Server
                 if (GUI.Button(new Rect(0, 0, 200, 40), "Play"))
                 {
                     firestore.accountFirebase.User = "Test1";
+                    Debug.Log(firestore.accountFirebase.User);
                     managerUi.EnablePlayButton(false);
                     managerUi.EnableStartButton(true);
                     managerUi.EnableHomePanel(false);
@@ -79,28 +79,28 @@ namespace Server
                     managerUi.EnableStartButton(true);
                     managerUi.EnableHomePanel(false);
                     managerUi.EnableLobbyPanel(true);
-                    InviteResponseEvent("Test1");
                     test = false;
+                    InviteResponseEvent("Test1");
                 }
                 if (GUI.Button(new Rect(0, 80, 200, 40), "Level 1"))
                 {
-                    LoadLevel1();
                     test = false;
+                    LoadLevel1();
                 }
                 if (GUI.Button(new Rect(0, 120, 200, 40), "Level 2"))
                 {
-                    LoadLevel2Event();
                     test = false;
+                    LoadLevel2Event();
                 }
                 if (GUI.Button(new Rect(0, 160, 200, 40), "Level 3"))
                 {
-                    LoadLevel3Event();
                     test = false;
+                    LoadLevel3Event();
                 }
                 if (GUI.Button(new Rect(0, 200, 200, 40), "Level 4"))
                 {
-                    LoadLevel4Event();
                     test = false;
+                    LoadLevel4Event();
                 }
                 if (GUI.Button(new Rect(0, 240, 200, 40), "Join 3"))
                 {
@@ -109,8 +109,8 @@ namespace Server
                     managerUi.EnableStartButton(true);
                     managerUi.EnableHomePanel(false);
                     managerUi.EnableLobbyPanel(true);
-                    InviteResponseEvent("Test1");
                     test = false;
+                    InviteResponseEvent("Test1");
                 }
                 if (GUI.Button(new Rect(0, 280, 200, 40), "Close Server"))
                 {
@@ -219,6 +219,9 @@ namespace Server
         {
             await JoinSessionTask(_username);
             UIManager.Instance.EnableStartButton(false);
+            UIManager.Instance.EnableLobbyPanel(true);
+            UIManager.Instance.EnableHomePanel(false);
+            GameUIManager.Instance.EnableChatPanel(true);
         }
 
         public async Task JoinSessionTask(string _username)
@@ -265,9 +268,11 @@ namespace Server
 
         private void Update()
         {
-            if (localData.currentLvl >= 1)
+            elapsedTime += Time.deltaTime;
+            if (elapsedTime >= 1f && localData.currentLvl >= 1)
             {
                 timePlayed++;
+                elapsedTime = 0f;
             }
         }
 
@@ -387,5 +392,10 @@ namespace Server
         }
 
         #endregion Fusion API
+
+        public void DestoryYourself()
+        {
+            Destroy(gameObject);
+        }
     }
 }

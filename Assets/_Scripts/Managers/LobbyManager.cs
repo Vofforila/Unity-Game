@@ -1,6 +1,6 @@
+using Fusion;
 using System.Collections;
 using UnityEngine;
-using Fusion;
 
 namespace Host
 {

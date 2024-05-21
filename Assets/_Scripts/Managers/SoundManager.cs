@@ -3,6 +3,7 @@ using UnityEngine;
 
 public class SoundManager : MonoBehaviour
 {
+    [Header("Sound")]
     [SerializeField] private List<Sound> sounds;
 
     public static SoundManager Instance;
@@ -53,5 +54,10 @@ public class SoundManager : MonoBehaviour
                 sound.source.Play();
             }
         }
+    }
+
+    public void DestoryYourself()
+    {
+        Destroy(gameObject);
     }
 }

@@ -291,6 +291,10 @@ namespace UI
                     rankPointsGained.GetComponent<TMP_Text>().text = rankPoints.ToString();
                 }
             }
+            Debug.Log("Destory");
+            FusionManager.Instance.DestoryYourself();
+            SoundManager.Instance.DestoryYourself();
+            GameUIManager.Instance.DestoyYourself();
         }
 
         public void EnableStatisticsPanel(bool _var)
@@ -522,7 +526,7 @@ namespace UI
             gamesPlayed.text = "Games Played: " + firestore.accountFirebase.GamesPlayed.ToString() + " ( " + firestore.accountFirebase.GamesWon.ToString() + " / " + firestore.accountFirebase.GamesLost.ToString() + " ) ";
             profile_winrate.text = "Winrate: " + firestore.accountFirebase.Winrate.ToString() + "%";
             deathCoins.text = "DeathCoins: " + firestore.accountFirebase.RankPoints.ToString();
-            timePlayed.text = "TimePlayed: " + Mathf.Floor(firestore.accountFirebase.TimePlayed).ToString();
+            timePlayed.text = "TimePlayed: " + Mathf.Floor(firestore.accountFirebase.TimePlayed).ToString() + " h ";
             rank.text = firestore.accountFirebase.Rank;
 
             return Task.CompletedTask;
@@ -607,6 +611,7 @@ namespace UI
         public void AwaitStartButton(bool _var)
         {
             startButton.GetComponent<Button>().interactable = !_var;
+            playButton.GetComponent<Button>().interactable = !_var;
         }
 
         public void EnableProfilePanel(bool _var)

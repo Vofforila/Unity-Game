@@ -113,17 +113,21 @@ namespace Host
 
         public async void ISpawnCatapults()
         {
-            if (spawnAble == true)
+            catapults = new();
+
+            Transform[] catapultSpawnPoints = GameObject.Find("CatapultSpawnPoints").GetComponentsInChildren<Transform>();
+            for (int i = 1; i <= catapultSpawnPoints.Length - 1; i++)
             {
-                catapults = new();
-                Transform[] catapultSpawnPoints = GameObject.Find("CatapultSpawnPoints").GetComponentsInChildren<Transform>();
-                for (int i = 1; i <= catapultSpawnPoints.Length - 1; i++)
+                if (spawnAble == true)
                 {
                     NetworkObject networkCatapult = await Runner.SpawnAsync(catapultPrefab, catapultSpawnPoints[i].position, catapultSpawnPoints[i].rotation);
-
-                    NetworkTransform networkCatapultTransform = networkCatapult.GetComponent<NetworkTransform>();
-                    networkCatapultTransform.Teleport(catapultSpawnPoints[i].position, catapultSpawnPoints[i].rotation);
-                    await Task.Delay(1000);
+                    catapults.Add(networkCatapult);
+                    if (spawnAble == true)
+                    {
+                        NetworkTransform networkCatapultTransform = networkCatapult.GetComponent<NetworkTransform>();
+                        networkCatapultTransform.Teleport(catapultSpawnPoints[i].position, catapultSpawnPoints[i].rotation);
+                        await Task.Delay(1000);
+                    }
                 }
             }
         }

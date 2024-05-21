@@ -88,7 +88,7 @@ namespace UI
 
         public void AddScore(int _score)
         {
-            Debug.Log(Score + "+=" + _score);
+            Debug.Log(Score + " += " + _score);
             Score += _score;
         }
 

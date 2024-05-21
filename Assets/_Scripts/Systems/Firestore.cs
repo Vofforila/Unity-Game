@@ -340,7 +340,7 @@ namespace Database
             });
         }
 
-        public int UpdatePlayerProfile(bool _win, float _timeplayer)
+        public int UpdatePlayerProfile(bool _win, float _timeplayed)
         {
             FirebaseFirestore db = FirebaseFirestore.DefaultInstance;
             DocumentReference accountsIdIndex_doc = db.Collection("AccountInfo").Document(accountFirebase.Id);
@@ -384,7 +384,10 @@ namespace Database
             {
                 accountFirebase.Winrate = (accountFirebase.GamesWon / accountFirebase.GamesLost) * 100;
             }
-            accountFirebase.TimePlayed += _timeplayer;
+
+            _timeplayed = _timeplayed / 60 / 60;
+            accountFirebase.TimePlayed += _timeplayed;
+
             if (accountFirebase.RankPoints >= 100)
             {
                 accountFirebase.Rank = "Iron";
@@ -460,6 +463,7 @@ namespace Database
                      // If Player is no online dont notify
                      if (_currentState == true)
                      {
+                         if (otherAccount.OnlineFriends.Contains(accountFirebase.Id)) return;
                          otherAccount.OnlineFriends.Add(accountFirebase.Id);
                          otherAccount.OfflineFriends.Remove(accountFirebase.Id);
 
