@@ -1,4 +1,3 @@
-using Data;
 using Firebase.Firestore;
 using SpecialFunction;
 using System.Collections.Generic;
@@ -13,7 +12,6 @@ namespace Database
     {
         [Header("Scriptable")]
         public SpecialFunctions specialFunctions;
-        public LocalData localData;
 
         public AccountFirebase accountFirebase = new();
         public LobbyData lobbydata = new();
@@ -22,7 +20,6 @@ namespace Database
 
         [Header("Events")]
         public UnityEvent updateUI;
-        public UnityEvent updateLobbyDataEvent;
 
         #region Test
 

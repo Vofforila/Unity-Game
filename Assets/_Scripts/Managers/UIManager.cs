@@ -17,7 +17,7 @@ namespace UI
 {
     public class UIManager : MonoBehaviour
     {
-        [Header("LocalData")]
+        [Header("Scriptable")]
         [SerializeField] private Firestore firestore;
         [SerializeField] private LocalData localdata;
         [SerializeField] private SpecialFunctions specialFunctions;

@@ -1,4 +1,3 @@
-using Data;
 using Database;
 using Firebase;
 using Firebase.Auth;
@@ -23,13 +22,7 @@ namespace Auth
         public bool test3 = false;
 
         [Header("References to other scripts")]
-        [SerializeField]
-        internal UIManager canvasManager;
-
-        [Header("Data")]
-        [SerializeField] private LocalData localData;
-
-        [Header("Firestore")]
+        [Header("Scriptable")]
         [SerializeField] private Firestore firestore;
 
         [Header("Firebase")]
@@ -61,17 +54,17 @@ namespace Auth
 
         private void Test()
         {
-            canvasManager.LoadingMainMenu("test1@gmail.com");
+            UIManager.Instance.LoadingMainMenu("test1@gmail.com");
         }
 
         private void Test2()
         {
-            canvasManager.LoadingMainMenu("test2@gmail.com");
+            UIManager.Instance.LoadingMainMenu("test2@gmail.com");
         }
 
         private void Test3()
         {
-            canvasManager.LoadingMainMenu("test3@gmail.com");
+            UIManager.Instance.LoadingMainMenu("test3@gmail.com");
         }
 
         private void Awake()
@@ -340,7 +333,7 @@ namespace Auth
             {
                 user = LoginTask.Result.User;
                 Debug.Log("Login");
-                canvasManager.LoadingMainMenu(_email);
+                UIManager.Instance.LoadingMainMenu(_email);
             }
         }
 

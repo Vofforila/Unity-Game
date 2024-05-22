@@ -19454,11 +19454,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   createTest: 0
   manualTest: 0
-  test1: 0
+  test1: 1
   test2: 0
   test3: 0
-  canvasManager: {fileID: 514719944}
-  localData: {fileID: 11400000, guid: 9ae0573c8cfccd741b7423eb0db11b79, type: 2}
   firestore: {fileID: 11400000, guid: 883b834f3dfdf5a45aee970fc4e238bd, type: 2}
   status: 0
   userNameRegisterInput: {fileID: 1840893682}
