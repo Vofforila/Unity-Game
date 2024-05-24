@@ -12,7 +12,7 @@ namespace UI
         [SerializeField] private Firestore firestore;
 
         [SerializeField] private TMP_InputField chatInput;
-        [SerializeField] private TMP_InputField chatPanelScrollContent;
+        [SerializeField] private TMP_InputField chatOutput;
         private string finalmessage;
 
         public static ChatManagerPrefab Instance;
@@ -37,7 +37,7 @@ namespace UI
         [Rpc]
         public static void RPC_SendMessage(NetworkRunner runner, string _finalmessage)
         {
-            Instance.chatPanelScrollContent.text += _finalmessage;
+            Instance.chatOutput.text += _finalmessage;
         }
     }
 }
