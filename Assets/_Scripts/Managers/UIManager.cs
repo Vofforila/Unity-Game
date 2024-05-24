@@ -58,6 +58,7 @@ namespace UI
         [SerializeField] private TMP_Text friendDeathCoins;
         [SerializeField] private TMP_Text friendTimePlayed;
         [SerializeField] private TMP_Text friendRank;
+        [SerializeField] private Image friendStatsIcon;
 
         [Header("Player Profile")]
         [SerializeField] private GameObject playerProfile;
@@ -67,6 +68,8 @@ namespace UI
         [SerializeField] private TMP_Text deathCoins;
         [SerializeField] private TMP_Text timePlayed;
         [SerializeField] private TMP_Text rank;
+        [SerializeField] private Image playerStatsIcon;
+        [SerializeField] private List<Sprite> playerStatsIconSprites;
 
         [Header("Add Freind Panel")]
         [SerializeField] private GameObject addFriendPanel;
@@ -310,7 +313,6 @@ namespace UI
         public void EnableHomePanel(bool _var)
         {
             homePanel.SetActive(_var);
-            playerProfileButton.interactable = _var;
         }
 
         public void EnableLobbyPanel(bool _var)
@@ -498,15 +500,14 @@ namespace UI
 
         public async Task UpdateInviteToLobbyPanel()
         {
-            await specialFunctions.DestroyChildrenOf(inviteToLobbyScrollViewContent);
-
-            if (firestore.accountFirebase.InviteToGameList == null)
+            if (firestore.accountFirebase.InviteToGameList == null || firestore.accountFirebase.InviteToGameList.Count == 0)
             {
                 await specialFunctions.DestroyChildrenOf(inviteToLobbyPanel);
                 inviteToLobbyPanel.SetActive(false);
             }
             else if (firestore.accountFirebase.InviteToGameList.Count != 0)
             {
+                await specialFunctions.DestroyChildrenOf(inviteToLobbyScrollViewContent);
                 inviteToLobbyPanel.SetActive(true);
                 foreach (string inviteId in firestore.accountFirebase.InviteToGameList)
                 {
@@ -529,6 +530,36 @@ namespace UI
             deathCoins.text = "DeathCoins: " + firestore.accountFirebase.RankPoints.ToString();
             timePlayed.text = "TimePlayed: " + Mathf.Floor(firestore.accountFirebase.TimePlayed).ToString() + " h ";
             rank.text = firestore.accountFirebase.Rank;
+            switch (firestore.accountFirebase.Rank)
+            {
+                case "Iron":
+                    playerStatsIcon.sprite = playerStatsIconSprites[0];
+                    break;
+                case "Bronze":
+                    playerStatsIcon.sprite = playerStatsIconSprites[1];
+                    break;
+                case "Silver":
+                    playerStatsIcon.sprite = playerStatsIconSprites[2];
+                    break;
+                case "Gold":
+                    playerStatsIcon.sprite = playerStatsIconSprites[3];
+                    break;
+                case "Platinum":
+                    playerStatsIcon.sprite = playerStatsIconSprites[4];
+                    break;
+                case "Diamond":
+                    playerStatsIcon.sprite = playerStatsIconSprites[5];
+                    break;
+                case "Master":
+                    playerStatsIcon.sprite = playerStatsIconSprites[6];
+                    break;
+                case "GrandMaster":
+                    playerStatsIcon.sprite = playerStatsIconSprites[7];
+                    break;
+                case "Challanger":
+                    playerStatsIcon.sprite = playerStatsIconSprites[8];
+                    break;
+            }
 
             return Task.CompletedTask;
         }
@@ -550,6 +581,37 @@ namespace UI
             friendDeathCoins.text = "DeathCoins: " + otherAccount.RankPoints.ToString();
             friendTimePlayed.text = "TimePlayed: " + Mathf.Floor(otherAccount.TimePlayed).ToString();
             friendRank.text = otherAccount.Rank;
+
+            switch (otherAccount.Rank)
+            {
+                case "Iron":
+                    friendStatsIcon.sprite = playerStatsIconSprites[0];
+                    break;
+                case "Bronze":
+                    friendStatsIcon.sprite = playerStatsIconSprites[1];
+                    break;
+                case "Silver":
+                    friendStatsIcon.sprite = playerStatsIconSprites[2];
+                    break;
+                case "Gold":
+                    friendStatsIcon.sprite = playerStatsIconSprites[3];
+                    break;
+                case "Platinum":
+                    friendStatsIcon.sprite = playerStatsIconSprites[4];
+                    break;
+                case "Diamond":
+                    friendStatsIcon.sprite = playerStatsIconSprites[5];
+                    break;
+                case "Master":
+                    friendStatsIcon.sprite = playerStatsIconSprites[6];
+                    break;
+                case "GrandMaster":
+                    friendStatsIcon.sprite = playerStatsIconSprites[7];
+                    break;
+                case "Challanger":
+                    friendStatsIcon.sprite = playerStatsIconSprites[8];
+                    break;
+            }
 
             EnableFriendProfile(true);
         }
@@ -617,7 +679,6 @@ namespace UI
 
         public void EnableProfilePanel(bool _var)
         {
-            homePanel.SetActive(!_var);
             playerProfile.SetActive(_var);
         }
 
