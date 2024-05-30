@@ -14,7 +14,6 @@ namespace Database
         public SpecialFunctions specialFunctions;
 
         public AccountFirebase accountFirebase = new();
-        public LobbyData lobbydata = new();
 
         public int playerIcon;
 
@@ -74,7 +73,6 @@ namespace Database
             FirebaseFirestore db = FirebaseFirestore.DefaultInstance;
             DocumentReference currentAccount_doc = db.Collection("AccountInfo").Document();
 
-            // Create the new Account
             AccountFirebase newAccountFirebase = new()
             {
                 // Link Data
@@ -102,7 +100,6 @@ namespace Database
                 OfflineFriends = new(),
             };
 
-            // Add the new Account to Firebase
             currentAccount_doc.SetAsync(newAccountFirebase).ContinueWith(task =>
             {
                 Debug.Log("Added Account Info");
@@ -419,7 +416,7 @@ namespace Database
             }
             else if (accountFirebase.RankPoints >= 900)
             {
-                accountFirebase.Rank = "Challanger";
+                accountFirebase.Rank = "Challenger";
             }
 
             Dictionary<string, object> updates = new()
@@ -466,8 +463,8 @@ namespace Database
 
                          Dictionary<string, object> updates = new()
                          {
-                             { "OnlineFriends", otherAccount.OnlineFriends },
-                             { "OfflineFriends", otherAccount.OfflineFriends },
+                                  { "OnlineFriends", otherAccount.OnlineFriends },
+                                  { "OfflineFriends", otherAccount.OfflineFriends },
                          };
                          await otherAccount_doc.UpdateAsync(updates);
                      }
@@ -476,32 +473,25 @@ namespace Database
                          otherAccount.OnlineFriends.Remove(accountFirebase.Id);
                          otherAccount.OfflineFriends.Add(accountFirebase.Id);
 
+                         Dictionary<string, object> otherUpdates = new()
+                         {
+                                  { "OnlineFriends", otherAccount.OnlineFriends },
+                                  { "OfflineFriends", otherAccount.OfflineFriends },
+                         };
+
                          Dictionary<string, object> updates = new()
                          {
-                             { "OnlineFriends", otherAccount.OnlineFriends },
-                             { "OfflineFriends", otherAccount.OfflineFriends },
+                                  { "OnlineFriends", accountFirebase.OnlineFriends },
+                                  { "OfflineFriends", accountFirebase.OfflineFriends },
                          };
-                         await otherAccount_doc.UpdateAsync(updates);
+                         await currentAccount_doc.UpdateAsync(updates);
+                         await otherAccount_doc.UpdateAsync(otherUpdates);
                      }
                  });
             }
         }
 
         #endregion State
-
-        [FirestoreData]
-        public class LobbyData
-
-        {
-            [FirestoreProperty]
-            public List<object> HostPlayerList { get; set; }
-
-            [FirestoreProperty]
-            public Dictionary<string, int> ScoreList { get; set; }
-
-            [FirestoreProperty]
-            public string RoomChat { get; set; }
-        }
 
         [FirestoreData]
         public class AccountFirebase

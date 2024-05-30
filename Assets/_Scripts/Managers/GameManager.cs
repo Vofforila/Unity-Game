@@ -42,8 +42,6 @@ namespace Host
             fusionManager.name = "FusionManager";
             gameUICanvas = Instantiate(gameUICanvasPrefab);
             gameUICanvas.name = "GameUICanvas";
-            soundManager = Instantiate(soundManagerPrefab);
-            soundManager.name = "SoundManager";
         }
 
         public void DestoryServer()

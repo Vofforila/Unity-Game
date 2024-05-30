@@ -6,7 +6,7 @@ AnimationClip:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Sun
+  m_Name: Rise
   serializedVersion: 7
   m_Legacy: 0
   m_Compressed: 0
@@ -20,7 +20,7 @@ AnimationClip:
       - serializedVersion: 3
         time: 0
         value: {x: 0, y: 0, z: 0}
-        inSlope: {x: 0, y: 0, z: 0}
+        inSlope: {x: -3599.999, y: 299.99994, z: -0}
         outSlope: {x: 360, y: -30, z: 0}
         tangentMode: 0
         weightedMode: 0
@@ -30,7 +30,7 @@ AnimationClip:
         time: 1
         value: {x: 360, y: -30, z: 0}
         inSlope: {x: 360, y: 0, z: 0}
-        outSlope: {x: 0, y: 0, z: 0}
+        outSlope: {x: -3599.999, y: 0, z: 0}
         tangentMode: 0
         weightedMode: 0
         inWeight: {x: 0.33333334, y: 0.33333334, z: 0.33333334}
@@ -268,7 +268,7 @@ AnimationClip:
       - serializedVersion: 3
         time: 0
         value: 0
-        inSlope: 0
+        inSlope: -3599.999
         outSlope: 360
         tangentMode: 69
         weightedMode: 0
@@ -278,7 +278,7 @@ AnimationClip:
         time: 1
         value: 360
         inSlope: 360
-        outSlope: 0
+        outSlope: -3599.999
         tangentMode: 69
         weightedMode: 0
         inWeight: 0.33333334
@@ -298,7 +298,7 @@ AnimationClip:
       - serializedVersion: 3
         time: 0
         value: 0
-        inSlope: 0
+        inSlope: 299.99994
         outSlope: -30
         tangentMode: 69
         weightedMode: 0
@@ -328,7 +328,7 @@ AnimationClip:
       - serializedVersion: 3
         time: 0
         value: 0
-        inSlope: 0
+        inSlope: -0
         outSlope: 0
         tangentMode: 69
         weightedMode: 0
@@ -544,7 +544,7 @@ AnimationClip:
   m_HasGenericRootTransform: 1
   m_HasMotionFloatCurves: 0
   m_Events:
-  - time: 0.5
+  - time: 0.48333332
     functionName: StartLights
     data: 
     objectReferenceParameter: {fileID: 0}

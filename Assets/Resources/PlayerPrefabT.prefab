@@ -61,7 +61,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: -3846018093981099296, guid: 76fc74ef9d471a843b88693949fff7e0, type: 3}
+  - {fileID: 2100000, guid: bdf3d6233c2d18148b564a3892827276, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -243,6 +243,9 @@ MonoBehaviour:
   stoppingDistance: 0
   obstacleRadius: 0.5
   obstacleHeight: 2
+  _PlayerAlive:
+    _value: 0
+  _PlayerHp: 0
 --- !u!114 &874038496536998298
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -299,6 +302,10 @@ MonoBehaviour:
   specialFunctions: {fileID: 11400000, guid: cf34ce464e18e9f40b9e68d6da882e60, type: 2}
   firestore: {fileID: 11400000, guid: 883b834f3dfdf5a45aee970fc4e238bd, type: 2}
   _Username:
+    _length: 0
+    _data:
+      Data: 00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+  _Rank:
     _length: 0
     _data:
       Data: 00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000

@@ -216,7 +216,9 @@ namespace UI
                 // Update Lobby Data
                 if (localData.currentLvl == 0)
                 {
-                    componentsData.BannerList[x].GetComponentInChildren<TMP_Text>().text = playerDataScore.UserName;
+                    TMP_Text[] bannertext = componentsData.BannerList[x].GetComponentsInChildren<TMP_Text>();
+                    bannertext[0].text = playerDataScore.UserName;
+                    bannertext[1].text = playerDataScore.Rank;
                     Image bannerImage = componentsData.BannerList[x].GetComponentInChildren<Image>();
                     switch (playerDataScore.Rank)
                     {

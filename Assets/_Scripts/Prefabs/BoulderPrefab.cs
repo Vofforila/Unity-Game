@@ -76,12 +76,12 @@ namespace Enemy
             y = Random.Range(11, 13);
             z = Random.Range(-24, 24);
 
-            B.position = new Vector3(14, 0, 14);
-            C.position = new Vector3((B.localPosition.x - 2) / 2, y, B.localPosition.z / 2);
+            /* Debug Only
+              B.position = new Vector3(14, 0, 14);
+              C.position = new Vector3((B.localPosition.x - 2) / 2, y, B.localPosition.z / 2);*/
 
-            /* Restore on Release
             B.position = new Vector3(x, 0, z);
-            C.localPosition = new Vector3((B.localPosition.x - 2) / 2, y, B.localPosition.z / 2);*/
+            C.localPosition = new Vector3((B.localPosition.x - 2) / 2, y, B.localPosition.z / 2);
 
             speed = Random.Range(0.2f, 1f);
             rotationSpeed = speed * 2;

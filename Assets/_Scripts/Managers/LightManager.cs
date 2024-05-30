@@ -40,7 +40,7 @@ public class LightManager : MonoBehaviour
         {
             if (firstTime == true)
             {
-                for (int i = 0; i < setupLights.Length; i++)
+                for (int i = 0; i < setupLights.Length - 1; i++)
                 {
                     Light light = setupLights[i];
                     SoundManager.Instance.PlaySound("light-swich-" + i);
@@ -49,20 +49,22 @@ public class LightManager : MonoBehaviour
                 }
                 yield return new WaitForSeconds(1f);
                 SoundManager.Instance.PlaySound("light-swich-9");
-                setupLights[setupLights.Length - 1].enabled = true;
+                setupLights[^1].enabled = true;
                 firstTime = false;
                 yield return new WaitForSeconds(10f);
             }
             else if (night == true)
             {
-                foreach (Light light in setupLights)
+                for (int i = 0; i < setupLights.Length - 2; i++)
                 {
+                    Light light = setupLights[i];
                     light.enabled = true;
                     yield return new WaitForSeconds(0.1f);
                 }
             }
-            foreach (Light light in setupLights)
+            for (int i = 0; i < setupLights.Length - 2; i++)
             {
+                Light light = setupLights[i];
                 light.enabled = false;
                 yield return new WaitForSeconds(0.1f);
             }

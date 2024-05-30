@@ -70,7 +70,7 @@ namespace Player
                 surface = GameObject.Find("NavMeshManager").GetComponent<NavMeshSurface>();
                 agent.agentTypeID = surface.agentTypeID;
 
-                playerVisuals.SetPlayer(true, size, isKinematic, constrains, mass);
+                playerVisuals.SetPlayer(true, Object.InputAuthority.AsIndex, size, isKinematic, constrains, mass);
                 playerVisuals.SetAgent(agent, agentoffset, speed, angularSpeed, acceleration, stoppingDistance, obstacleRadius, obstacleHeight);
 
                 isAlive = true;

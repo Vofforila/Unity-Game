@@ -58,7 +58,7 @@ namespace Player
         {
             if (localData.currentLvl == 2)
             {
-                playerVisuals.SetPlayer(_visuals: true, _size: size, _isKinematic: isKinematic, _constrains: constrains, _mass: mass);
+                playerVisuals.SetPlayer(_visuals: true, _material: Object.InputAuthority.AsIndex, _size: size, _isKinematic: isKinematic, _constrains: constrains, _mass: mass);
                 isFinished = false;
                 changeDetector = GetChangeDetector(ChangeDetector.Source.SimulationState);
             }

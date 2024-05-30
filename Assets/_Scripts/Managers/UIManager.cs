@@ -162,13 +162,9 @@ namespace UI
 
         private async void StartHearth()
         {
-            await Task.Delay(25000);
-
-            if (heartbeat == false)
-            {
-                return;
-            }
+            if (heartbeat == false) return;
             firestore.StateChange(true);
+            await Task.Delay(25000);
             StartHearth();
         }
 
@@ -297,7 +293,6 @@ namespace UI
             }
             Debug.Log("Destory");
             FusionManager.Instance.DestoryYourself();
-            SoundManager.Instance.DestoryYourself();
             GameUIManager.Instance.DestoyYourself();
         }
 
@@ -556,7 +551,7 @@ namespace UI
                 case "GrandMaster":
                     playerStatsIcon.sprite = playerStatsIconSprites[7];
                     break;
-                case "Challanger":
+                case "Challenger":
                     playerStatsIcon.sprite = playerStatsIconSprites[8];
                     break;
             }

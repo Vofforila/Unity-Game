@@ -5,6 +5,7 @@ public class SoundManager : MonoBehaviour
 {
     [Header("Sound")]
     [SerializeField] private List<Sound> sounds;
+    [SerializeField] private List<Sound> musics;
 
     public static SoundManager Instance;
 
@@ -26,12 +27,42 @@ public class SoundManager : MonoBehaviour
             sound.source.spatialBlend = sound.spatialBlend;
         }
 
+        foreach (Sound music in musics)
+        {
+            music.source = gameObject.AddComponent<AudioSource>();
+            music.source.clip = music.clip;
+            music.source.mute = music.mute;
+            music.source.bypassEffects = music.bypassEffect;
+            music.source.bypassListenerEffects = music.bypassListenerEffects;
+            music.source.bypassReverbZones = music.bypassReverbZones;
+            music.source.loop = music.loop;
+            music.source.volume = music.volume;
+            music.source.pitch = music.pitch;
+            music.source.spatialBlend = music.spatialBlend;
+        }
+
         DontDestroyOnLoad(gameObject);
     }
 
     public void Start()
     {
-        PlaySound("LightSound");
+        PlayMusic("music");
+    }
+
+    public void ChangeMusicVolume(float _volume)
+    {
+        foreach (Sound music in musics)
+        {
+            music.volume = _volume;
+        }
+    }
+
+    public void ChangeSoundVolume(float _volume)
+    {
+        foreach (Sound sound in sounds)
+        {
+            sound.volume = _volume;
+        }
     }
 
     public void StopSound(string _name)
@@ -56,8 +87,25 @@ public class SoundManager : MonoBehaviour
         }
     }
 
-    public void DestoryYourself()
+    public void PlayMusic(string _name)
     {
-        Destroy(gameObject);
+        foreach (Sound music in musics)
+        {
+            if (music.name == _name)
+            {
+                music.source.Play();
+            }
+        }
+    }
+
+    public void StopMusic(string _name)
+    {
+        foreach (Sound music in musics)
+        {
+            if (music.name == _name)
+            {
+                music.source.Stop();
+            }
+        }
     }
 }

@@ -287,3 +287,14 @@ MonoBehaviour:
     pitch: 1
     spatialBlend: 0
     source: {fileID: 0}
+  - name: music
+    clip: {fileID: 8300000, guid: 9d7d4e797aa36864a8dccbefeaedbc0a, type: 3}
+    mute: 0
+    bypassEffect: 0
+    bypassListenerEffects: 0
+    bypassReverbZones: 0
+    loop: 1
+    volume: 0.8
+    pitch: 1
+    spatialBlend: 0
+    source: {fileID: 0}

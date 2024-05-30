@@ -162,7 +162,7 @@ namespace Host
             // Shuffle the array
 
             // Remove on Release
-            /* Shuffle2DArray(fallingBlockArray);*/
+            Shuffle2DArray(fallingBlockArray);
 
             int coinPosition = 0;
             // Spawn the stones at random positions

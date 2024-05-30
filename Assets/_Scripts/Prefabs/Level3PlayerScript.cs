@@ -60,7 +60,7 @@ namespace Player
             if (localData.currentLvl == 3)
             {
             }
-            PlayerHp = 20;
+            PlayerHp = 100;
         }
 
         public override void Spawned()
@@ -72,7 +72,7 @@ namespace Player
                 agent.agentTypeID = surface.agentTypeID;
 
                 playerVisuals.SetAgent(agent, agentoffset, speed, angularSpeed, acceleration, stoppingDistance, obstacleRadius, obstacleHeight);
-                playerVisuals.SetPlayer(_visuals: true, _size: size, _isKinematic: isKinematic, _constrains: constrains, _mass: mass);
+                playerVisuals.SetPlayer(_visuals: true, _material: Object.InputAuthority.AsIndex, _size: size, _isKinematic: isKinematic, _constrains: constrains, _mass: mass);
 
                 PlayerAlive = true;
                 changeDetector = GetChangeDetector(ChangeDetector.Source.SimulationState);
@@ -106,7 +106,7 @@ namespace Player
                 {
                     case nameof(PlayerAlive):
 
-                        playerVisuals.SetPlayer(_visuals: false, _size: size, _isKinematic: isKinematic, _constrains: constrains, _mass: mass);
+                        playerVisuals.SetPlayer(_visuals: false, _material: Object.InputAuthority.AsIndex, _size: size, _isKinematic: isKinematic, _constrains: constrains, _mass: mass);
                         break;
                     case nameof(PlayerHp):
                         if (Object.HasInputAuthority)

@@ -1,13 +1,11 @@
-using UnityEngine;
-using System.IO;
-using System.Runtime.Serialization.Formatters.Binary;
-using UnityEngine.UI;
 using System;
-using TMPro;
-using Server;
-using UI;
 using System.Collections;
+using System.IO;
 using System.Runtime.InteropServices;
+using System.Runtime.Serialization.Formatters.Binary;
+using TMPro;
+using UnityEngine;
+using UnityEngine.UI;
 
 namespace Settings
 {
@@ -188,6 +186,8 @@ namespace Settings
         private void UpdateSettings()
         {
             StartCoroutine(IChangeResolution(false));
+            SoundManager.Instance.ChangeMusicVolume(music);
+            SoundManager.Instance.ChangeSoundVolume(sound);
 
             // Handle Sound
             SaveSettings();
