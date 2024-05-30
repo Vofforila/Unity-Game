@@ -63,7 +63,7 @@ namespace Host
                     i = 1;
                 }
 
-                if (_isKinematic)
+                if (_isKinematic == true)
                 {
                     playerPrefab = playerPrefabT;
                 }

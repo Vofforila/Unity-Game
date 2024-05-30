@@ -48,6 +48,10 @@ namespace Player
             }
         }
 
+        private void Start()
+        {
+        }
+
         // Start before Sync
         public void Init()
         {
