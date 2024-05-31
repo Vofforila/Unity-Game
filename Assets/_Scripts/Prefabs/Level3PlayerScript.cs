@@ -1,12 +1,12 @@
+using Data;
+using Database;
 using Fusion;
+using Host;
+using PlayerInput;
+using UI;
+using Unity.AI.Navigation;
 using UnityEngine;
 using UnityEngine.AI;
-using Data;
-using Unity.AI.Navigation;
-using UI;
-using Host;
-using Database;
-using PlayerInput;
 
 namespace Player
 {
@@ -38,13 +38,14 @@ namespace Player
         [SerializeField] private float obstacleRadius = 0.5f;
         [SerializeField] private float obstacleHeight = 2f;
 
-        [Networked] private int PlayerHp { get; set; }
         [Networked] public NetworkButtons ButtonsPrevious { get; set; }
+        [Networked, HideInInspector] public NetworkBool PlayerAlive { get; set; }
+        [Networked, HideInInspector] public int PlayerHp { get; set; }
 
         private ChangeDetector changeDetector;
 
         [Header("Game")]
-        [SerializeField] private int score;
+        private int score;
 
         public void Awake()
         {
@@ -68,8 +69,8 @@ namespace Player
         {
             if (localData.currentLvl == 3)
             {
-                PlayerHp = 100;
             }
+            PlayerHp = 100;
         }
 
         public override void Spawned()
@@ -81,8 +82,9 @@ namespace Player
                 agent.agentTypeID = surface.agentTypeID;
 
                 playerVisuals.SetAgent(agent, agentoffset, speed, angularSpeed, acceleration, stoppingDistance, obstacleRadius, obstacleHeight);
-                playerVisuals.SetPlayer(_visuals: true, _size: size, _isKinematic: isKinematic, _constrains: constrains, _mass: mass);
+                playerVisuals.SetPlayer(_visuals: true, _material: Object.InputAuthority.AsIndex, _size: size, _isKinematic: isKinematic, _constrains: constrains, _mass: mass);
 
+                PlayerAlive = true;
                 changeDetector = GetChangeDetector(ChangeDetector.Source.SimulationState);
             }
         }
@@ -112,43 +114,54 @@ namespace Player
             {
                 switch (change)
                 {
+                    case nameof(PlayerAlive):
+
+                        playerVisuals.SetPlayer(_visuals: false, _material: Object.InputAuthority.AsIndex, _size: size, _isKinematic: isKinematic, _constrains: constrains, _mass: mass);
+                        break;
                     case nameof(PlayerHp):
-                        if (PlayerHp == 0)
+                        if (Object.HasInputAuthority)
                         {
-                            RPC_PlayerDead();
-                            playerVisuals.SetVisuals(false);
+                            SoundManager.Instance.PlaySound("dmg");
+                            gameUIListener.UpdateHp(PlayerHp);
+                            if (PlayerHp <= 0)
+                            {
+                                if (Object.HasInputAuthority)
+                                {
+                                    gameUIListener.UpdateHp(PlayerHp);
+                                }
+                                RPC_PlayerDead();
+                            }
                         }
                         break;
                 }
             }
         }
 
-        public void OnTriggerEnter(Collider other)
+        public void MovePlayer(Vector3 _clickPosition)
         {
-            // Update score
-            if (Object.HasInputAuthority && other.gameObject.CompareTag("Bullet"))
+            if (Object.HasStateAuthority)
             {
-                // take dmg
-                Debug.Log("DMG");
-                if (PlayerHp > 0)
-                {
-                    gameUIListener.RemoveHp(10);
-                    PlayerHp -= 10;
-                }
+                agent.SetDestination(_clickPosition);
             }
         }
 
-        public void MovePlayer(Vector3 _clickPosition)
+        public void OnTriggerEnter(Collider other)
         {
-            if (HasStateAuthority)
+            if (Object.HasStateAuthority && other.gameObject.CompareTag("Bullet") && localData.currentLvl == 3 && PlayerAlive == true)
             {
-                agent.SetDestination(_clickPosition);
+                // take dmg
+                if (PlayerHp > 0)
+                {
+                    PlayerHp -= 10;
+                }
+                Debug.Log("<color=green>Collision: </color>" + PlayerHp);
             }
         }
 
         [Rpc(sources: RpcSources.InputAuthority, targets: RpcTargets.StateAuthority)]
         private void RPC_PlayerDead()
         {
+            PlayerAlive = false;
             if (Level3Manager.Instance.FinishPlace == 4)
             {
                 score = 250;
@@ -169,7 +182,6 @@ namespace Player
                 score = 500;
                 gameUIListener.AddScore(score);
             }
-
             Level3Manager.Instance.FinishPlace--;
         }
     }

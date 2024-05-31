@@ -1,120 +1,46 @@
-using Data;
 using Fusion;
+using Settings;
 using System.Collections;
-using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
-using UI;
-using Database;
 
 namespace Host
 {
-    public class LobbyManager : NetworkBehaviour
+    public class LobbyManager : NetworkBehaviour, IPlayerJoined
     {
-        [Header("Scriptable")]
-        [SerializeField] private LocalData localdata;
-        [SerializeField] private Firestore firestore;
+        [Header("Prefab")]
+        [SerializeField] private NetworkPrefabRef lobbyPlayerManagerPrefab;
 
-        private TMP_InputField chatInput;
-        private TMP_InputField chatPanelScrollContent;
+        // For test
+        private int playerCount;
 
-        [HideInInspector] internal UIManager uiManager;
-
-        public override void Spawned()
+        private void Awake()
         {
-            chatInput = GameObject.Find("ChatInput").GetComponent<TMP_InputField>();
-            chatPanelScrollContent = GameObject.Find("ChatPanelScrollContent").GetComponent<TMP_InputField>();
-            uiManager = GameObject.Find("UIManager").GetComponent<UIManager>();
-
-            if (Object.HasInputAuthority)
-            {
-                if (Runner.IsClient == false)
-                {
-                    firestore.CreateLobbyData();
-                }
-                else
-                {
-                    firestore.UpdateLobbyData(localdata.inviteName);
-                }
-                firestore.RaiseLobbyDataListener(Runner.SessionInfo.Name);
-            }
+            playerCount = 0;
         }
 
-        public void Update()
+        public void PlayerJoined(PlayerRef _player)
         {
-            if (Object.HasInputAuthority)
-            {
-                // Send ChatMsg
-                if (localdata.returnKeyPressed == true && chatInput.text != "")
-                {
-                    RPC_SendMessage(chatInput.text, firestore.accountFirebase.User);
-                    chatInput.text = "";
-                    localdata.returnKeyPressed = false;
-                }
-            }
+            StartCoroutine(WaitForUpdate(_player));
         }
 
-        public void UpdatePlayerBannerEvent()
+        // Wait to Process User
+        public IEnumerator WaitForUpdate(PlayerRef _player)
         {
-            Debug.Log("Callback");
-
-            if (Object.HasInputAuthority)
-            {
-                // Enable Player Banner
-                int playerCount = firestore.lobbydata.HostPlayerList.Count + 1;
-
-                uiManager.EnableHomePanel(false);
-                uiManager.EnableLobbyPanel(true);
-
-                if (playerCount > 1)
-                {
-                    uiManager.EnableChatBoxPanel(true);
-                }
-                else
-                {
-                    uiManager.EnableChatBoxPanel(false);
-                }
-
-                if (playerCount == 1)
-                {
-                    uiManager.EnablePlayerBanner1(true);
-                }
-                if (playerCount == 2)
-                {
-                    uiManager.EnablePlayerBanner2(true);
-                }
-                if (playerCount == 3)
-                {
-                    uiManager.EnablePlayerBanner3(true);
-                }
-                if (playerCount == 4)
-                {
-                    uiManager.EnablePlayerBanner4(true);
-                }
-
-                // Update Player Banner Content
-                TMP_Text[] textPlayerBannerList = GameObject.Find("BannerLayout").GetComponentsInChildren<TMP_Text>();
-
-                for (int i = 0; i < firestore.lobbydata.HostPlayerList.Count; i++)
-                {
-                    string username = (firestore.lobbydata.HostPlayerList[i]).ToString();
-                    textPlayerBannerList[i].text = username;
-                }
-            }
+            yield return new WaitForFixedUpdate();
+            playerCount++;
+            NetworkObject player = Runner.Spawn(lobbyPlayerManagerPrefab, Vector3.zero, Quaternion.identity, _player);
+            player.name = "Player " + playerCount;
         }
 
-        // Send Rpc To Server
-        [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority, HostMode = RpcHostMode.SourceIsHostPlayer)]
-        public void RPC_SendMessage(string _message, string _username)
+        public void StartGame()
         {
-            RPC_RelayMessage(_message, _username);
+            RPC_EnterFullScreen();
         }
 
-        // Send Rpc from Server to All Clients
-        [Rpc(RpcSources.StateAuthority, RpcTargets.All, HostMode = RpcHostMode.SourceIsServer)]
-        private void RPC_RelayMessage(string _message, string _username)
+        [Rpc(sources: RpcSources.StateAuthority, targets: RpcTargets.All)]
+        private void RPC_EnterFullScreen()
         {
-            chatPanelScrollContent.text += _username + " : " + _message + "\n";
+            StartCoroutine(SettingManager.Instance.IChangeResolution(true));
         }
     }
 }

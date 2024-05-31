@@ -1,9 +1,11 @@
+using Fusion;
+using Fusion.Addons.Physics;
+using Player;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
+using Unity.AI.Navigation;
 using UnityEngine;
-using Fusion;
-using Player;
-using Fusion.Addons.Physics;
 
 namespace Host
 {
@@ -27,15 +29,19 @@ namespace Host
         [Header("Camera")]
         [SerializeField] private GameObject playerCameraPrefab;
 
+        private List<NetworkObject> catapults;
+        private bool spawnAble;
+
+        private void Awake()
+        {
+            spawnAble = true;
+        }
+
         // Local
-        public void SpawnLocal(bool _enableCamera)
+        public void SpawnLocal()
         {
             Transform cameraSpawnPoint = GameObject.Find("CameraSpawnPoint").GetComponent<Transform>();
             GameObject playerCamera = Instantiate(playerCameraPrefab, cameraSpawnPoint.position, cameraSpawnPoint.rotation);
-            if (_enableCamera == false)
-            {
-                playerCamera.GetComponent<CameraManager>().enabled = false;
-            }
         }
 
         // Host
@@ -52,14 +58,12 @@ namespace Host
             foreach (PlayerRef player in Runner.ActivePlayers)
             {
                 i++;
-                Debug.Log(x);
-                Debug.Log(i);
                 if (i == x)
                 {
                     i = 1;
                 }
 
-                if (_isKinematic)
+                if (_isKinematic == true)
                 {
                     playerPrefab = playerPrefabT;
                 }
@@ -107,17 +111,36 @@ namespace Host
             return networkPlayerDictionary;
         }
 
-        public IEnumerator ISpawnCatapults()
+        public async void ISpawnCatapults()
         {
+            catapults = new();
+
             Transform[] catapultSpawnPoints = GameObject.Find("CatapultSpawnPoints").GetComponentsInChildren<Transform>();
             for (int i = 1; i <= catapultSpawnPoints.Length - 1; i++)
             {
-                NetworkObject networkCatapult = Runner.Spawn(catapultPrefab, catapultSpawnPoints[i].position, catapultSpawnPoints[i].rotation);
-
-                NetworkTransform networkCatapultTransform = networkCatapult.GetComponent<NetworkTransform>();
-                networkCatapultTransform.Teleport(catapultSpawnPoints[i].position, catapultSpawnPoints[i].rotation);
-                yield return new WaitForSecondsRealtime(1f);
+                if (spawnAble == true)
+                {
+                    NetworkObject networkCatapult = await Runner.SpawnAsync(catapultPrefab, catapultSpawnPoints[i].position, catapultSpawnPoints[i].rotation);
+                    catapults.Add(networkCatapult);
+                    if (spawnAble == true)
+                    {
+                        NetworkTransform networkCatapultTransform = networkCatapult.GetComponent<NetworkTransform>();
+                        networkCatapultTransform.Teleport(catapultSpawnPoints[i].position, catapultSpawnPoints[i].rotation);
+                        await Task.Delay(1000);
+                    }
+                }
             }
+        }
+
+        public Task DespawnCatapults()
+        {
+            // Make a bool that disables the IspawnedCataluts
+            spawnAble = false;
+            foreach (NetworkObject catapult in catapults)
+            {
+                Runner.Despawn(catapult);
+            }
+            return Task.CompletedTask;
         }
 
         public IEnumerator ISpawnFallingBlox()
@@ -137,6 +160,8 @@ namespace Host
             }
 
             // Shuffle the array
+
+            // Remove on Release
             Shuffle2DArray(fallingBlockArray);
 
             int coinPosition = 0;
@@ -162,10 +187,11 @@ namespace Host
 
                 // Wait for block to fall
                 yield return new WaitForFixedUpdate();
+                yield return new WaitForEndOfFrame();
                 networkFallingBlock.GetComponent<BoxCollider>().isTrigger = false;
 
                 // Repeat
-                yield return new WaitForSecondsRealtime(6f);
+                yield return new WaitForSecondsRealtime(3f);
             }
         }
 

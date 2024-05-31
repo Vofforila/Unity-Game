@@ -1,16 +1,22 @@
 using Fusion;
+using UI;
 using UnityEngine;
 
 namespace Host
 {
     public class CoinPrefab : NetworkBehaviour
     {
+        private const int coinValue = 50;
+        private GameUIListener gameUIListener;
+
         private void OnTriggerEnter(Collider other)
         {
-            Debug.Log("Coin");
-            if (other.CompareTag("Player"))
+            if (other.CompareTag("Player") && Object != null)
             {
-                Debug.Log("Coin");
+                SoundManager.Instance.PlaySound("coin");
+                gameUIListener = other.gameObject.GetComponent<GameUIListener>();
+                gameUIListener.AddScore(coinValue);
+
                 Runner.Despawn(Object);
             }
         }

@@ -32,8 +32,8 @@ namespace Player
         private NavMeshSurface surface;
         [SerializeField] private float agentoffset = 1.5f;
         [SerializeField] private float speed = 15f;
-        [SerializeField] private float angularSpeed = 180f;
-        [SerializeField] private float acceleration = 15f;
+        [SerializeField] private float angularSpeed = 129f;
+        [SerializeField] private float acceleration = 8f;
         [SerializeField] private float stoppingDistance = 0.1f;
         [SerializeField] private float obstacleRadius = 0.5f;
         [SerializeField] private float obstacleHeight = 2f;
@@ -44,6 +44,7 @@ namespace Player
         private ChangeDetector changeDetector;
 
         private int score;
+        private bool isAlive;
 
         public void Awake()
         {
@@ -69,9 +70,10 @@ namespace Player
                 surface = GameObject.Find("NavMeshManager").GetComponent<NavMeshSurface>();
                 agent.agentTypeID = surface.agentTypeID;
 
-                playerVisuals.SetPlayer(true, size, isKinematic, constrains, mass);
+                playerVisuals.SetPlayer(true, Object.InputAuthority.AsIndex, size, isKinematic, constrains, mass);
                 playerVisuals.SetAgent(agent, agentoffset, speed, angularSpeed, acceleration, stoppingDistance, obstacleRadius, obstacleHeight);
 
+                isAlive = true;
                 changeDetector = GetChangeDetector(ChangeDetector.Source.SimulationState);
             }
         }
@@ -102,7 +104,13 @@ namespace Player
                 switch (change)
                 {
                     case nameof(Player):
+                        if (Object.HasInputAuthority)
+                        {
+                            SoundManager.Instance.PlaySound("crush");
+                            RPC_PlayerDead();
+                        }
                         playerVisuals.SetVisuals(false);
+                        isAlive = false;
                         break;
                 }
             }
@@ -110,13 +118,10 @@ namespace Player
 
         public void OnTriggerEnter(Collider other)
         {
-            Debug.Log("Colld");
-            // Update score
-            if (Object.HasInputAuthority && other.gameObject.CompareTag("Projectile"))
+            if (Object.HasStateAuthority && other.gameObject.CompareTag("Projectile") && localData.currentLvl == 4 && isAlive == true)
             {
-                Debug.Log("Coll");
-                // take dmg
-                RPC_PlayerDead(Object.InputAuthority);
+                Debug.Log("<color=green>Collision</color>");
+                Player = Object.InputAuthority;
             }
         }
 
@@ -129,7 +134,7 @@ namespace Player
         }
 
         [Rpc(sources: RpcSources.InputAuthority, targets: RpcTargets.StateAuthority)]
-        private void RPC_PlayerDead(PlayerRef _player)
+        private void RPC_PlayerDead()
         {
             if (Level4Manager.Instance.FinishPlace == 4)
             {
@@ -152,7 +157,6 @@ namespace Player
                 gameUIListener.AddScore(score);
             }
 
-            Player = _player;
             Level4Manager.Instance.FinishPlace--;
         }
     }

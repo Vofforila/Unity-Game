@@ -2,6 +2,7 @@ using Data;
 using Fusion;
 using System.Collections;
 using System.Collections.Generic;
+using UI;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -16,7 +17,8 @@ namespace Host
             SpawnEnemies = 2,
             IsPlayerAlive = 3,
             DespawnPlayers = 4,
-            EndLevel = 5,
+            DespawnEnemies = 5,
+            EndLevel = 6,
         }
 
         [Header("Internal")]
@@ -47,8 +49,8 @@ namespace Host
 
         public void Start()
         {
-            spawnManager.SpawnLocal(false);
-            localData.currentLvl = 3;
+            spawnManager.SpawnLocal();
+            GameUIManager.Instance.UpdateLevelState(localData.currentLvl);
         }
 
         public override void Spawned()
@@ -58,7 +60,7 @@ namespace Host
 
         public void PlayeLevel3Event()
         {
-            Debug.Log("Callback");
+            Debug.Log("<color=yellow>Callback</color>");
             if (Object.HasStateAuthority)
             {
                 UpdateGameState(GameState.StartLevel);
@@ -77,7 +79,7 @@ namespace Host
                     break;
 
                 case GameState.SpawnEnemies:
-                    SpawnEnemies();
+                    StartCoroutine(ISpawnEnemies());
                     break;
 
                 case GameState.IsPlayerAlive:
@@ -88,6 +90,10 @@ namespace Host
                     DespawnPlayers();
                     break;
 
+                case GameState.DespawnEnemies:
+                    DespawnEnemies();
+                    break;
+
                 case GameState.EndLevel:
                     EndLevel();
                     break;
@@ -96,13 +102,14 @@ namespace Host
 
         public void StartLevel()
         {
-            spawnManager.SpawnNetworkPlayers(_level: 3, _isKinematic: true);
+            networkPlayerDictionary = spawnManager.SpawnNetworkPlayers(_level: 3, _isKinematic: true);
             UpdateGameState(GameState.SpawnEnemies);
         }
 
-        public void SpawnEnemies()
+        public IEnumerator ISpawnEnemies()
         {
-            StartCoroutine(spawnManager.ISpawnCatapults());
+            yield return new WaitForSecondsRealtime(5f);
+            spawnManager.ISpawnCatapults();
             UpdateGameState(GameState.IsPlayerAlive);
         }
 
@@ -110,6 +117,7 @@ namespace Host
         {
             FinishPlace = Runner.SessionInfo.PlayerCount;
             yield return new WaitUntil(() => FinishPlace == 0);
+            yield return new WaitForSecondsRealtime(5f);
             UpdateGameState(GameState.DespawnPlayers);
         }
 
@@ -119,11 +127,18 @@ namespace Host
             {
                 Runner.Despawn(networkPlayerDictionary[player]);
             }
+            UpdateGameState(GameState.DespawnEnemies);
+        }
+
+        public async void DespawnEnemies()
+        {
+            await spawnManager.DespawnCatapults();
             UpdateGameState(GameState.EndLevel);
         }
 
         public void EndLevel()
         {
+            playLevel4Event.Invoke();
         }
     }
 }

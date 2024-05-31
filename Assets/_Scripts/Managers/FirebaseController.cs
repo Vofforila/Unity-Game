@@ -1,30 +1,28 @@
-using Data;
+using Database;
+using Firebase;
 using Firebase.Auth;
 using Firebase.Extensions;
 using System.Collections;
 using TMPro;
-using UnityEngine;
 using UI;
-using Firebase;
-using Database;
+using UnityEngine;
 
 namespace Auth
 {
     public class FirebaseController : MonoBehaviour
     {
         [Header("Test")]
-        public bool test = false;
+        public bool createTest = false;
+        public bool manualTest = false;
+        private bool manualTest1 = false;
+        private bool manualTest2 = false;
+        private bool manualTest3 = false;
+        public bool test1 = false;
         public bool test2 = false;
         public bool test3 = false;
 
         [Header("References to other scripts")]
-        [SerializeField]
-        internal UIManager canvasManager;
-
-        [Header("Data")]
-        [SerializeField] private LocalData localData;
-
-        [Header("Firestore")]
+        [Header("Scriptable")]
         [SerializeField] private Firestore firestore;
 
         [Header("Firebase")]
@@ -56,17 +54,17 @@ namespace Auth
 
         private void Test()
         {
-            canvasManager.LoadingMainMenu("test@gmail.com");
+            UIManager.Instance.LoadingMainMenu("test1@gmail.com");
         }
 
         private void Test2()
         {
-            canvasManager.LoadingMainMenu("test2@gmail.com");
+            UIManager.Instance.LoadingMainMenu("test2@gmail.com");
         }
 
         private void Test3()
         {
-            canvasManager.LoadingMainMenu("test3@gmail.com");
+            UIManager.Instance.LoadingMainMenu("test3@gmail.com");
         }
 
         private void Awake()
@@ -77,20 +75,61 @@ namespace Auth
                 if (status == DependencyStatus.Available)
                 {
                     auth = FirebaseAuth.DefaultInstance;
-                    if (test == true)
-                        StartCoroutine(LoginTest("test@gmail.com", "test123"));
+                    if (test1 == true)
+                    {
+                        StartCoroutine(LoginTest("test1@gmail.com", "test123"));
+                    }
                     if (test2 == true)
+                    {
                         StartCoroutine(LoginTest("test2@gmail.com", "test123"));
+                    }
                     if (test3 == true)
+                    {
                         StartCoroutine(LoginTest("test3@gmail.com", "test123"));
+                    }
+                    if (createTest == true)
+                    {
+                        StartCoroutine(Register("test1@gmail.com", "test123", "Test1"));
+                        StartCoroutine(Register("test2@gmail.com", "test123", "Test2"));
+                        StartCoroutine(Register("test3@gmail.com", "test123", "Test3"));
+                    }
                 }
                 else
                 {
-                    if (Debug.isDebugBuild)
-                        Debug.LogError("Could not resolve all Firebase dependecies " + status);
+                    Debug.LogError("Could not resolve all Firebase dependecies " + status);
                 }
             });
         }
+
+        #region TestGUI
+
+        // Test GUI
+        private void OnGUI()
+        {
+            if (manualTest == true)
+            {
+                if (GUI.Button(new Rect(0, 0, 200, 40), "Test1"))
+                {
+                    manualTest1 = true;
+                    StartCoroutine(LoginTest("test1@gmail.com", "test123"));
+                    manualTest = false;
+                }
+                if (GUI.Button(new Rect(0, 40, 200, 40), "Test2"))
+                {
+                    manualTest2 = true;
+                    StartCoroutine(LoginTest("test2@gmail.com", "test123"));
+                    manualTest = false;
+                }
+                if (GUI.Button(new Rect(0, 80, 200, 40), "Test3"))
+                {
+                    manualTest3 = true;
+                    StartCoroutine(LoginTest("test3@gmail.com", "test123"));
+                    manualTest = false;
+                }
+            }
+        }
+
+        #endregion TestGUI
 
         public void Register()
         {
@@ -189,7 +228,7 @@ namespace Auth
                             passwordRegisterInput.text = "";
                             confirmPasswordRegisterInput.text = "";
 
-                            canvasManager.OpenLoginCanvas();
+                            UIManager.Instance.OpenLoginPanel();
                         }
                     }
                 }
@@ -236,12 +275,21 @@ namespace Auth
             {
                 user = LoginTask.Result.User;
 
-                if (test == true)
+                if (test1 == true || manualTest1 == true)
+                {
                     Test();
-                if (test2 == true)
+                    test1 = false;
+                }
+                else if (test2 == true || manualTest2 == true)
+                {
                     Test2();
-                if (test3 == true)
+                    test2 = false;
+                }
+                else if (test3 == true || manualTest3 == true)
+                {
                     Test3();
+                    test3 = false;
+                }
             }
         }
 
@@ -284,11 +332,8 @@ namespace Auth
             else
             {
                 user = LoginTask.Result.User;
-
-                if (Debug.isDebugBuild)
-                    Debug.Log("Login");
-
-                canvasManager.LoadingMainMenu(_email);
+                Debug.Log("Login");
+                UIManager.Instance.LoadingMainMenu(_email);
             }
         }
 

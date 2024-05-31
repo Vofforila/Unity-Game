@@ -61,7 +61,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: -3846018093981099296, guid: 76fc74ef9d471a843b88693949fff7e0, type: 3}
+  - {fileID: 2100000, guid: bdf3d6233c2d18148b564a3892827276, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -100,6 +100,7 @@ GameObject:
   - component: {fileID: 874038496536998298}
   - component: {fileID: 4247071038701250945}
   - component: {fileID: 3245071185819889457}
+  - component: {fileID: -130977001413094757}
   - component: {fileID: -3201062138382299180}
   - component: {fileID: 1380486486503288905}
   m_Layer: 6
@@ -161,17 +162,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   localData: {fileID: 11400000, guid: 9ae0573c8cfccd741b7423eb0db11b79, type: 2}
-  localInputData: {fileID: 11400000, guid: a1d571e3daee7ce4897fa45e8a11d388, type: 2}
-  serverData: {fileID: 11400000, guid: 6553cc3333b7bd5478ade01648cfb25a, type: 2}
   playerVisuals: {fileID: 4247071038701250945}
   gameUIListener: {fileID: 3245071185819889457}
   size: 0.8
   isKinematic: 1
   constrains: 
   mass: 0
-  speed: 0.8
-  jumpPosition: 0
-  score: 0
 --- !u!114 &7743451054679514735
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -216,7 +212,6 @@ MonoBehaviour:
   firestore: {fileID: 11400000, guid: 883b834f3dfdf5a45aee970fc4e238bd, type: 2}
   playerVisuals: {fileID: 4247071038701250945}
   gameUIListener: {fileID: 3245071185819889457}
-  size: 2
   constrains: 010001000000
   isKinematic: 1
   mass: 0
@@ -248,7 +243,9 @@ MonoBehaviour:
   stoppingDistance: 0
   obstacleRadius: 0.5
   obstacleHeight: 2
-  score: 0
+  _PlayerAlive:
+    _value: 0
+  _PlayerHp: 0
 --- !u!114 &874038496536998298
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -308,8 +305,23 @@ MonoBehaviour:
     _length: 0
     _data:
       Data: 00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+  _Rank:
+    _length: 0
+    _data:
+      Data: 00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
   _Score: 0
-  _Hp: 0
+--- !u!114 &-130977001413094757
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9108376757321683601}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 735f7ded3e71eca49b2d4ac315588d8b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &-3201062138382299180
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -346,7 +358,7 @@ MonoBehaviour:
   m_Script: {fileID: 158639473, guid: e725a070cec140c4caffb81624c8c787, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  SyncScale: 1
+  SyncScale: 0
   SyncParent: 0
   _autoAOIOverride: 1
   DisableSharedModeInterpolation: 0

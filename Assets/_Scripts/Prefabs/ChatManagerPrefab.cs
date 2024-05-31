@@ -1,36 +1,25 @@
-using Data;
 using Database;
 using Fusion;
 using Server;
-using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
-namespace Host
+namespace UI
 {
-    public class ChatManagerPrefab : MonoBehaviour
+    public class ChatManagerPrefab : SimulationBehaviour
     {
-        internal FusionManager fusionManager;
-
+        [Header("Scriptable")]
         [SerializeField] private Firestore firestore;
-        [SerializeField] private LocalData localData;
 
-        private TMP_InputField chatInput;
-        private TMP_InputField chatPanelScrollContent;
+        [SerializeField] private TMP_InputField chatInput;
+        [SerializeField] private TMP_InputField chatOutput;
+        private string finalmessage;
 
-        public void OnEnable()
+        public static ChatManagerPrefab Instance;
+
+        private void Awake()
         {
-            fusionManager = GameObject.Find("FusionManager").GetComponent<FusionManager>();
-            chatInput = GameObject.Find("ChatInput").GetComponent<TMP_InputField>();
-            chatPanelScrollContent = GameObject.Find("ChatPanelScrollContent").GetComponent<TMP_InputField>();
-            chatPanelScrollContent.text = localData.gameChat;
-            localData.gameChat = "";
-        }
-
-        public void OnDisable()
-        {
-            localData.gameChat = chatPanelScrollContent.text;
+            Instance = this;
         }
 
         public void SendMessageToServer()
@@ -39,17 +28,16 @@ namespace Host
             {
                 string username = firestore.accountFirebase.User;
                 string message = chatInput.text;
-                string finalmessage = username + " : " + message + "\n";
-
-                firestore.UpdateChat(finalmessage, fusionManager.runner.SessionInfo.Name);
+                finalmessage = username + " : " + message + "\n";
                 chatInput.text = "";
+                RPC_SendMessage(FusionManager.Instance.runner, finalmessage);
             }
         }
 
-        public void UpdateLobbyDataEvent()
+        [Rpc]
+        public static void RPC_SendMessage(NetworkRunner runner, string _finalmessage)
         {
-            Debug.Log("Callback");
-            chatPanelScrollContent.text = firestore.lobbydata.RoomChat;
+            Instance.chatOutput.text += _finalmessage;
         }
     }
 }

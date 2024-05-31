@@ -1,8 +1,8 @@
-using UnityEngine;
-using Fusion;
 using Data;
-using SpecialFunction;
 using Database;
+using Fusion;
+using SpecialFunction;
+using UnityEngine;
 
 namespace UI
 {
@@ -14,34 +14,51 @@ namespace UI
         [SerializeField] private Firestore firestore;
 
         [Networked, Capacity(5), HideInInspector] public NetworkString<_16> Username { get; set; }
+        [Networked, Capacity(5), HideInInspector] public NetworkString<_16> Rank { get; set; }
         [Networked, HideInInspector] public int Score { get; set; }
-        [Networked, HideInInspector] public int Hp { get; set; }
 
         private GameUIManager gameUIManager;
 
         private ChangeDetector changeDetector;
+
+        #region Awake & Start
 
         private void Awake()
         {
             gameUIManager = GameUIManager.Instance;
         }
 
+        private void Start()
+        {
+            gameUIManager.CreateLocalUI();
+        }
+
+        #endregion Awake & Start
+
         public override void Spawned()
         {
-            if (Object.HasInputAuthority)
+            if (localData.currentLvl == 0)
             {
-                RPC_SendUsername(firestore.accountFirebase.User);
+                if (Object.HasInputAuthority)
+                {
+                    RPC_SendUsername(firestore.accountFirebase.User);
+                    RPC_SendRank(firestore.accountFirebase.Rank);
+                }
+                if (Object.HasStateAuthority)
+                {
+                    Score = 0;
+                }
+
+                gameUIManager.CreateUI(Object.InputAuthority);
+
+                gameUIManager.UpdateUserName(Object.InputAuthority, Username.ToString());
+                gameUIManager.UpdateRank(Object.InputAuthority, Rank.ToString());
+                gameUIManager.UpdateScore(Object.InputAuthority, 0);
             }
-            if (Object.HasStateAuthority)
+            else if (Object.HasStateAuthority)
             {
-                Score = 0;
-                Hp = 100;
+                Score = gameUIManager.playerDictionary[Object.InputAuthority].Score;
             }
-
-            gameUIManager.CreateUI(Object.InputAuthority);
-
-            gameUIManager.UpdateUserName(Object.InputAuthority, Username.ToString());
-            gameUIManager.UpdateScore(Object.InputAuthority, 0);
 
             changeDetector = GetChangeDetector(ChangeDetector.Source.SimulationState);
         }
@@ -58,8 +75,8 @@ namespace UI
                     case nameof(Username):
                         gameUIManager.UpdateUserName(Object.InputAuthority, Username.ToString());
                         break;
-                    case nameof(Hp):
-                        gameUIManager.UpdateHp(Object.InputAuthority, Hp);
+                    case nameof(Rank):
+                        gameUIManager.UpdateRank(Object.InputAuthority, Rank.ToString());
                         break;
                     default:
                         break;
@@ -67,19 +84,22 @@ namespace UI
             }
         }
 
+        #region OnChange
+
         public void AddScore(int _score)
         {
+            Debug.Log(Score + " += " + _score);
             Score += _score;
-            Debug.Log(_score);
-            Debug.Log(Score);
         }
 
-        public void RemoveHp(int _hp)
+        public void UpdateHp(int _hp)
         {
-            Hp -= _hp;
-            Debug.Log(_hp);
-            Debug.Log(Hp);
+            gameUIManager.UpdateHp(_hp);
         }
+
+        #endregion OnChange
+
+        #region RPC
 
         // RPC used to send player information to the Host
         [Rpc(sources: RpcSources.InputAuthority, targets: RpcTargets.StateAuthority)]
@@ -87,5 +107,13 @@ namespace UI
         {
             Username = _username;
         }
+
+        [Rpc(sources: RpcSources.InputAuthority, targets: RpcTargets.StateAuthority)]
+        private void RPC_SendRank(string _rank)
+        {
+            Rank = _rank;
+        }
+
+        #endregion RPC
     }
 }

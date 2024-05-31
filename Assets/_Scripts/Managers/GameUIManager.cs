@@ -1,10 +1,12 @@
+using Data;
+using Database;
+using Fusion;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
-using Fusion;
-using Data;
-using System.Linq;
+using UnityEngine.UI;
 
 namespace UI
 {
@@ -12,31 +14,142 @@ namespace UI
     {
         [Header("Scriptable")]
         [SerializeField] private LocalData localData;
+        [SerializeField] private Firestore firebase;
 
         [Header("HP")]
         [SerializeField] private GameObject playerHp;
 
-        [Header("Scoreboard")]
+        [Header("Tip Panel")]
         [SerializeField] private GameObject gameTipPanel;
+        private const string tipsLvl1 = "Press Z to Jump \nPress X to CashOut";
+        private const string tipsLvl2 = "Press Z to go Faster";
+        private const string tipsLvl3 = "Use Your Mouse to doge the Projectiles";
+        private const string tipsLvl4 = "Don't get crushed by the falling ceiling";
+
+        [Header("Scoreboard")]
         [SerializeField] private GameObject scoreboardPanel;
         [SerializeField] private GameObject playerScorePrefab;
 
-        public Dictionary<PlayerRef, PlayerData> PlayerDictionary;
+        [Header("Chat")]
+        [SerializeField] private GameObject chatBoxPanel;
 
-        //Singleton
+        [Header("Lobby")]
+        [SerializeField] private GameObject bannerPrefab;
+
+        [Header("Loading Screen")]
+        [SerializeField] private GameObject loadingPanel;
+
+        [Header("Banner Sprites")]
+        [SerializeField] public List<Sprite> bannerSprites;
+
+        public Dictionary<PlayerRef, PlayerData> playerDictionary;
+
+        private LocalPlayerData localPlayerData;
+        private UIComponentsData componentsData;
+        private Transform BannerLayoutTransform;
+
         public static GameUIManager Instance;
+
+        #region Awake
 
         private void Awake()
         {
             Instance = this;
-            // Set Panel for Game Tip
             DontDestroyOnLoad(this);
-            PlayerDictionary = new();
+            playerDictionary = new();
+            componentsData = new();
         }
 
-        private void OnEnable()
+        #endregion Awake
+
+        #region Start
+
+        private void Start()
         {
-            StartCoroutine(TipPanel(10f));
+            BannerLayoutTransform = UIManager.Instance.bannerLayout;
+        }
+
+        #endregion Start
+
+        #region GameUI State
+
+        public void UpdateLevelState(int _level)
+        {
+            switch (_level)
+            {
+                case 0:
+                    MainMenu();
+                    break;
+                case 1:
+                    Level1();
+                    break;
+                case 2:
+                    Level2();
+                    break;
+                case 3:
+                    Level3();
+                    break;
+                case 4:
+                    Level4();
+                    break;
+                case -1:
+                    MainMenu();
+                    break;
+            }
+        }
+
+        private void MainMenu()
+        {
+            playerHp.SetActive(false);
+            gameTipPanel.SetActive(false);
+            scoreboardPanel.SetActive(false);
+            chatBoxPanel.SetActive(true);
+            loadingPanel.SetActive(false);
+        }
+
+        private void Level1()
+        {
+            gameTipPanel.SetActive(true);
+            scoreboardPanel.SetActive(true);
+            chatBoxPanel.SetActive(true);
+            playerHp.SetActive(false);
+
+            gameTipPanel.GetComponent<TMP_Text>().text = tipsLvl1;
+            StartCoroutine(TipPanel(5f));
+            UpdateUI();
+        }
+
+        private void Level2()
+        {
+            gameTipPanel.SetActive(true);
+            scoreboardPanel.SetActive(true);
+            chatBoxPanel.SetActive(true);
+            playerHp.SetActive(false);
+
+            gameTipPanel.GetComponent<TMP_Text>().text = tipsLvl2;
+            StartCoroutine(TipPanel(5f));
+        }
+
+        private void Level3()
+        {
+            gameTipPanel.SetActive(true);
+            scoreboardPanel.SetActive(true);
+            chatBoxPanel.SetActive(true);
+            playerHp.SetActive(true);
+
+            gameTipPanel.GetComponent<TMP_Text>().text = tipsLvl3;
+            StartCoroutine(TipPanel(5f));
+        }
+
+        private void Level4()
+        {
+            gameTipPanel.SetActive(true);
+            scoreboardPanel.SetActive(true);
+            chatBoxPanel.SetActive(true);
+            playerHp.SetActive(false);
+
+            gameTipPanel.GetComponent<TMP_Text>().text = tipsLvl4;
+            StartCoroutine(TipPanel(5f));
         }
 
         public IEnumerator TipPanel(float _time)
@@ -45,82 +158,172 @@ namespace UI
             gameTipPanel.SetActive(false);
         }
 
+        #endregion GameUI State
+
+        #region GameUiListener Functions
+
+        // Create new UI
         public void CreateUI(PlayerRef _player)
         {
-            // Make a new Player UI Object
             PlayerData playerData = new();
 
-            // Create the UI
+            GameObject banner = Instantiate(bannerPrefab, BannerLayoutTransform);
             GameObject playerScore = Instantiate(playerScorePrefab, scoreboardPanel.transform);
 
-            // Add the PlayerUI to PlayerData
-            playerData.PlayerScore = playerScore;
-            playerData.PlayerHp = playerHp;
+            componentsData.ScoreList.Add(playerScore);
+            componentsData.BannerList.Add(banner);
 
-            // Attach the PlayerData to a List
-            PlayerDictionary.Add(_player, playerData);
+            // Add banner
+            playerDictionary.Add(_player, playerData);
 
             // Update UI
-            UpdateUI(_player);
-
-            Debug.Log(_player + " - Create UI : " + PlayerDictionary[_player].UserName);
+            UpdateUI();
         }
 
         public void UpdateUserName(PlayerRef _player, string _username)
         {
-            PlayerDictionary[_player].UserName = _username;
-            UpdateUI(_player);
+            playerDictionary[_player].UserName = _username;
+            UpdateUI();
+        }
 
-            Debug.Log(_player + " - Username Update : " + PlayerDictionary[_player].UserName);
+        public void UpdateRank(PlayerRef _player, string _rank)
+        {
+            playerDictionary[_player].Rank = _rank;
+            UpdateUI();
         }
 
         public void UpdateScore(PlayerRef _player, int _score)
         {
-            PlayerDictionary[_player].Score = _score;
-            UpdateUI(_player);
-            Debug.Log(_player + " - Score Update : " + PlayerDictionary[_player].Score);
+            playerDictionary[_player].Score = _score;
+            UpdateUI();
         }
 
-        public void UpdateHp(PlayerRef _player, int _hp)
+        public void UpdateUI()
         {
-            PlayerDictionary[_player].Hp = _hp;
-            UpdateUI(_player);
-            Debug.Log(_player + " -Hp Update : " + PlayerDictionary[_player].Hp);
-        }
+            // Sort Score Ascending
+            Dictionary<PlayerRef, PlayerData> sortedList = playerDictionary.
+                OrderByDescending(pair => pair.Value.Score).
+                ToDictionary(pair => pair.Key, pair => pair.Value);
 
-        public void UpdateUI(PlayerRef _player)
-        {
-            /* // Get the PlayerData
-             PlayerData PlayerData = PlayerDictionary[_player];*/
-
-            Dictionary<PlayerRef, PlayerData> sortedList = PlayerDictionary.OrderBy(pair => pair.Value.Score).ToDictionary(pair => pair.Key, pair => pair.Value);
-
-            PlayerData PlayerData = sortedList[_player];
-
-            // Update Score
-            string playerScore = PlayerData.UserName + " : " + PlayerData.Score;
-            PlayerData.PlayerScore.GetComponent<TMP_Text>().text = playerScore;
-
-            string playerHp = PlayerData.UserName + "\n " + PlayerData.Hp + " / 100";
-            PlayerData.PlayerHp.GetComponent<TMP_Text>().text = playerHp;
-        }
-
-        public class PlayerData
-        {
-            public string UserName { get; set; }
-            public int Score { get; set; }
-            public int Hp { get; set; }
-            public GameObject PlayerScore { get; set; }
-            public GameObject PlayerHp { get; set; }
-
-            public PlayerData()
+            int x = 0;
+            foreach (var key in sortedList)
             {
-                UserName = "";
-                Score = 0;
-                Hp = 100;
-                PlayerScore = null;
-                PlayerHp = null;
+                PlayerData playerDataScore = key.Value;
+
+                string playerScore = playerDataScore.UserName + " : " + playerDataScore.Score;
+                componentsData.ScoreList[x].GetComponent<TMP_Text>().text = playerScore;
+
+                // Update Lobby Data
+                if (localData.currentLvl == 0)
+                {
+                    TMP_Text[] bannertext = componentsData.BannerList[x].GetComponentsInChildren<TMP_Text>();
+                    bannertext[0].text = playerDataScore.UserName;
+                    bannertext[1].text = playerDataScore.Rank;
+                    Image bannerImage = componentsData.BannerList[x].GetComponentInChildren<Image>();
+                    switch (playerDataScore.Rank)
+                    {
+                        case "Iron":
+                            bannerImage.sprite = bannerSprites[0];
+                            break;
+                        case "Bronze":
+                            bannerImage.sprite = bannerSprites[1];
+                            break;
+                        case "Silver":
+                            bannerImage.sprite = bannerSprites[2];
+                            break;
+                        case "Gold":
+                            bannerImage.sprite = bannerSprites[3];
+                            break;
+                        case "Platinum":
+                            bannerImage.sprite = bannerSprites[4];
+                            break;
+                        case "Diamond":
+                            bannerImage.sprite = bannerSprites[5];
+                            break;
+                        case "Master":
+                            bannerImage.sprite = bannerSprites[6];
+                            break;
+                        case "GrandMaster":
+                            bannerImage.sprite = bannerSprites[7];
+                            break;
+                        case "Challanger":
+                            bannerImage.sprite = bannerSprites[8];
+                            break;
+                    }
+                }
+                x++;
             }
+        }
+
+        public void CreateLocalUI()
+        {
+            localPlayerData = new();
+            localPlayerData.UserName = firebase.accountFirebase.User;
+            localPlayerData.PlayerHp = playerHp;
+            UpdateLocalUI();
+        }
+
+        public void UpdateHp(int _hp)
+        {
+            localPlayerData.Hp = _hp;
+            UpdateLocalUI();
+        }
+
+        public void UpdateLocalUI()
+        {
+            string playerHp = localPlayerData.UserName + "\n " + localPlayerData.Hp + " / 100";
+            localPlayerData.PlayerHp.GetComponent<TMP_Text>().text = playerHp;
+        }
+
+        #endregion GameUiListener Functions
+
+        public void DestoyYourself()
+        {
+            Destroy(gameObject);
+        }
+
+        public void EnableChatPanel(bool _var)
+        {
+            chatBoxPanel.SetActive(_var);
+        }
+    }
+
+    public class UIComponentsData
+    {
+        public List<GameObject> ScoreList { get; set; }
+        public List<GameObject> BannerList { get; set; }
+
+        public UIComponentsData()
+        {
+            ScoreList = new();
+            BannerList = new();
+        }
+    }
+
+    public class PlayerData
+    {
+        public string UserName { get; set; }
+        public string Rank { get; set; }
+        public int Score { get; set; }
+
+        public PlayerData()
+        {
+            UserName = "";
+            Rank = "Bronze";
+            Score = 0;
+        }
+    }
+
+    public class LocalPlayerData
+    {
+        public string UserName { get; set; }
+        public int Hp { get; set; }
+        public GameObject PlayerHp { get; set; }
+
+        public LocalPlayerData()
+        {
+            UserName = "";
+            Hp = 100;
         }
     }
 }

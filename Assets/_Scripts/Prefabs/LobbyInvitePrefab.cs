@@ -1,22 +1,25 @@
-using UnityEngine;
-using UnityEngine.UI;
-using TMPro;
-using UnityEngine.Events;
 using Data;
+using Database;
+using Server;
+using TMPro;
+using UnityEngine;
+using UnityEngine.Events;
+using UnityEngine.UI;
 
 namespace TryhardParty
 {
     public class LobbyInvitePrefab : MonoBehaviour
     {
         [Header("Buttons")]
-        public Button acceptInvite;
-        public Button declineInvite;
+        [SerializeField] private Button acceptInvite;
+        [SerializeField] private Button declineInvite;
 
-        [Header("Invite Data")]
-        public TMP_Text inviteName;
+        [Header("Object")]
+        [SerializeField] private TMP_Text username;
 
         [Header("Scriptable")]
-        public LocalData localData;
+        [SerializeField] private LocalData localData;
+        [SerializeField] private Firestore firestore;
 
         [Header("Event")]
         public UnityEvent InviteEvent;
@@ -29,18 +32,13 @@ namespace TryhardParty
 
         public void AcceptInvite()
         {
-            Debug.Log("Invite Response Event");
-            localData.inviteResponse = true;
-            localData.inviteName = inviteName.text;
-            InviteEvent.Invoke();
+            firestore.RemoveInvite(gameObject.name);
+            FusionManager.Instance.InviteResponseEvent(username.text);
         }
 
         public void DeclineInvite()
         {
-            Debug.Log("Invite Response Event");
-            localData.inviteResponse = false;
-            localData.inviteName = inviteName.text;
-            InviteEvent.Invoke();
+            firestore.RemoveInvite(gameObject.name);
         }
     }
 }

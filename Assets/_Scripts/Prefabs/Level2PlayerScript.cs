@@ -1,10 +1,10 @@
 using Data;
-using Fusion;
-using UnityEngine;
-using UI;
-using Host;
 using Database;
+using Fusion;
+using Host;
 using PlayerInput;
+using UI;
+using UnityEngine;
 
 namespace Player
 {
@@ -27,10 +27,11 @@ namespace Player
 
         [Header("Read Only")]
         [Header("Object")]
-        [SerializeField] private float size = 2f;
+        private float size = 2f;
         [SerializeField] private bool[] constrains = { false, false, false, true, true, true };
         [SerializeField] private bool isKinematic = false;
         [SerializeField] private float mass = 10f;
+        private bool isFinished;
 
         [Header("Game")]
         [SerializeField] private int score;
@@ -57,7 +58,8 @@ namespace Player
         {
             if (localData.currentLvl == 2)
             {
-                playerVisuals.SetPlayer(_visuals: true, _size: size, _isKinematic: isKinematic, _constrains: constrains, _mass: mass);
+                playerVisuals.SetPlayer(_visuals: true, _material: Object.InputAuthority.AsIndex, _size: size, _isKinematic: isKinematic, _constrains: constrains, _mass: mass);
+                isFinished = false;
                 changeDetector = GetChangeDetector(ChangeDetector.Source.SimulationState);
             }
         }
@@ -78,6 +80,10 @@ namespace Player
                 if (pressed.IsSet(GameButton.Z) && KeyCooldown.Expired(Runner) == true)
                 {
                     HorseSpeed++;
+                    if (HorseSpeed % 10 == 0)
+                    {
+                        SoundManager.Instance.PlaySound("acceleration-sound");
+                    }
                     KeyCooldown = TickTimer.CreateFromSeconds(Runner, 0.2f);
                 }
             }
@@ -92,7 +98,6 @@ namespace Player
                 switch (change)
                 {
                     case nameof(WinningPlayer):
-                        Debug.Log("Run");
                         playerVisuals.SetVisuals(false);
                         break;
                 }
@@ -108,9 +113,10 @@ namespace Player
         public void OnTriggerEnter(Collider other)
         {
             // Update score
-            if (Object.HasInputAuthority && other.gameObject.CompareTag("Finish"))
+            if (Object.HasInputAuthority && other.gameObject.CompareTag("Finish") && localData.currentLvl == 2 && isFinished == false)
             {
-                Debug.Log("Collision");
+                Debug.Log("<color=green>Collision</color>");
+                isFinished = true;
                 RPC_PlayerFinished(Object.InputAuthority);
             }
         }
@@ -123,17 +129,17 @@ namespace Player
                 score = 250;
                 gameUIListener.AddScore(score);
             }
-            if (Level2Manager.Instance.FinishPlace == 2)
+            else if (Level2Manager.Instance.FinishPlace == 2)
             {
                 score = 350;
                 gameUIListener.AddScore(score);
             }
-            if (Level2Manager.Instance.FinishPlace == 3)
+            else if (Level2Manager.Instance.FinishPlace == 3)
             {
                 score = 400;
                 gameUIListener.AddScore(score);
             }
-            if (Level2Manager.Instance.FinishPlace == 4)
+            else if (Level2Manager.Instance.FinishPlace == 4)
             {
                 score = 500;
                 gameUIListener.AddScore(score);

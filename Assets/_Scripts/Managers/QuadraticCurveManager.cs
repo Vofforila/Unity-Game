@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -17,7 +16,7 @@ namespace SpecialFunction
         [SerializeField] public Transform B;
         [SerializeField] private Transform C;
 
-        private readonly List<int> scoreList = new() { 200, 50, 100, 150, 200, 250, 500 };
+        private readonly List<int> scoreList = new() { 200, 50, 100, 150, 200, 250, 500, 0 };
 
         public static QuadraticCurveManager Instance;
 

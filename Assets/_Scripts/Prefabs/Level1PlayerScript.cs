@@ -1,10 +1,10 @@
 using Data;
 using Fusion;
-using UnityEngine;
-using UI;
 using Host;
-using SpecialFunction;
 using PlayerInput;
+using SpecialFunction;
+using UI;
+using UnityEngine;
 
 namespace Player
 {
@@ -13,11 +13,8 @@ namespace Player
         [Header("Scriptable")]
         [SerializeField] private LocalData localData;
 
-        [SerializeField] private ServerData serverData;
-
         [Header("Internal")]
         [SerializeField] internal PlayerVisuals playerVisuals;
-
         [SerializeField] internal GameUIListener gameUIListener;
         [HideInInspector] internal QuadraticCurve curve;
 
@@ -35,11 +32,11 @@ namespace Player
         [SerializeField] private float mass = 0f;
 
         [Header("Game")]
-        private float sampleTime;
-        [SerializeField] private float speed = 0.8f;
-        [SerializeField] private int jumpPosition;
-        [SerializeField] private int score;
+        private const float speed = 0.8f;
 
+        private float sampleTime;
+        private int jumpPosition;
+        private int score;
         private Vector3 newPosition;
         private Vector3 newRotation;
 
@@ -47,9 +44,12 @@ namespace Player
         {
             if (localData.currentLvl != 1)
             {
-                Debug.Log("Awake");
                 enabled = false;
             }
+        }
+
+        private void Start()
+        {
         }
 
         // Start before Sync
@@ -57,8 +57,6 @@ namespace Player
         {
             if (localData.currentLvl == 1)
             {
-                Debug.Log("Init");
-
                 // Set Game Values
                 sampleTime = 2f;
                 jumpPosition = 0;
@@ -77,8 +75,8 @@ namespace Player
             // Disable player
             if (localData.currentLvl == 1)
             {
-                Debug.Log("Spawned");
-                playerVisuals.SetPlayer(_visuals: false, _size: size, _isKinematic: isKinematic, _constrains: constrains, _mass: mass);
+                Debug.Log(Object.InputAuthority.AsIndex);
+                playerVisuals.SetPlayer(_visuals: false, _material: Object.InputAuthority.AsIndex, _size: size, _isKinematic: isKinematic, _constrains: constrains, _mass: mass);
                 changeDetector = GetChangeDetector(ChangeDetector.Source.SimulationState);
             }
         }
@@ -99,13 +97,19 @@ namespace Player
 
                     if (pressed.IsSet(GameButton.Z) && IsJumping == false)
                     {
-                        Debug.Log("Jump");
-                        Jump();
+                        if (Object.HasStateAuthority)
+                        {
+                            Debug.Log("<color=green>Jump</color>");
+                            Jump();
+                        }
                     }
                     if (pressed.IsSet(GameButton.X) && IsJumping == false && score != 0)
                     {
-                        Debug.Log("Take Money");
-                        TakeMoney();
+                        if (Object.HasStateAuthority)
+                        {
+                            Debug.Log("<color=green>Take Money</color>");
+                            TakeMoney();
+                        }
                     }
                 }
             }
@@ -132,7 +136,7 @@ namespace Player
 
         private void PlayerTurnEvent()
         {
-            Debug.Log("Callback");
+            Debug.Log("<color=yellow>Callback</color>");
             QuadraticCurveManager.Instance.A.position = QuadraticCurveManager.Instance.startPosition.position;
             QuadraticCurveManager.Instance.B.position = QuadraticCurveManager.Instance.startPosition.position;
             CurrentPlayerTurn = Level1Manager.Instance.Player;
@@ -166,7 +170,7 @@ namespace Player
                     {
                         TakeMoney();
                     }
-                    if (score == 0)
+                    else if (score == 0)
                     {
                         TakeMoney();
                     }
@@ -176,24 +180,25 @@ namespace Player
 
         private void Jump()
         {
-            if (Object.HasStateAuthority)
-            {
-                // Generate a random number to where you jump
-                /*  jumpPosition = UnityEngine.Random.Range(jumpPosition, 7);*/
-                IsJumping = true;
-                jumpPosition += 1;
-                score = QuadraticCurveManager.Instance.MoveCurve(jumpPosition);
-                sampleTime = 0f;
-            }
+            // Generate a random number to where you jump
+            jumpPosition = Random.Range(jumpPosition + 1, 8);
+            Debug.Log(jumpPosition);
+            IsJumping = true;
+            score = QuadraticCurveManager.Instance.MoveCurve(jumpPosition);
+            RPC_JumpSound();
+            sampleTime = 0f;
         }
 
         private void TakeMoney()
         {
-            if (Object.HasStateAuthority)
-            {
-                gameUIListener.AddScore(score);
-                Level1Manager.Instance.PlayerTurn = false;
-            }
+            gameUIListener.AddScore(score);
+            Level1Manager.Instance.PlayerTurn = false;
+        }
+
+        [Rpc(sources: RpcSources.StateAuthority, targets: RpcTargets.InputAuthority)]
+        private void RPC_JumpSound()
+        {
+            SoundManager.Instance.PlaySound("jump-sound");
         }
     }
 }

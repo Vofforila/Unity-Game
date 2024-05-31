@@ -1,7 +1,4 @@
 using Database;
-using System.Collections;
-using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -9,25 +6,24 @@ namespace UI
 {
     public class FriendRequestPrefab : MonoBehaviour
     {
-        public TMP_Text newFriend;
+        public string newFriendId;
         public Button acceptFriendRequest;
         public Button declineFriendRequest;
         public Firestore firestore;
 
         private void Awake()
         {
-            acceptFriendRequest.onClick.AddListener(AcceptFriendRequest);
-            declineFriendRequest.onClick.AddListener(DeclineFriendRequest);
+            newFriendId = gameObject.name;
         }
 
         public void AcceptFriendRequest()
         {
-            firestore.AcceptFriendRequest(newFriend.text);
+            firestore.AcceptFriendRequest(newFriendId);
         }
 
         public void DeclineFriendRequest()
         {
-            firestore.AcceptFriendRequest(newFriend.text);
+            firestore.DeclineFriendRequest(newFriendId);
         }
     }
 }

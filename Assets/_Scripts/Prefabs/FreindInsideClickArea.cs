@@ -11,17 +11,19 @@ namespace UI
 {
     public class FreindInsideClickArea : MonoBehaviour, IPointerClickHandler
     {
-        public TMP_Text friendUsername;
+        [Header("Scriptable")]
+        [SerializeField] private LocalData localData;
+
+        [Header("Event")]
         public UnityEvent HandleRightClickPanelEvent;
-        public LocalData localData;
 
         // Listens the Pointer
         public void OnPointerClick(PointerEventData eventData)
         {
             if (eventData.button == PointerEventData.InputButton.Right || eventData.button == PointerEventData.InputButton.Left)
             {
-                Debug.Log("DisableRightClickPanelEvent");
-                localData.FriendClicked = friendUsername.text;
+                Debug.Log("FriendInsideClickEvent");
+                localData.FriendClicked = gameObject.name;
                 localData.pointerData = eventData;
                 HandleRightClickPanelEvent.Invoke();
             }

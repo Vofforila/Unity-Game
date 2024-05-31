@@ -1,24 +1,37 @@
-using UnityEngine;
-using UnityEngine.UI;
 using Data;
 using Database;
+using UnityEngine;
+using UnityEngine.UI;
 
 namespace UI
 {
     public class RightClickPanelPrefab : MonoBehaviour
     {
         [Header("Buttons")]
-        public Button InviteToLobbyButton;
-        public Button ViewProfileButton;
+        [SerializeField] private Button InviteToLobbyButton;
+        [SerializeField] private Button ViewProfileButton;
 
         [Header("Scriptables")]
-        public Firestore firestore;
-        public LocalData localData;
+        [SerializeField] private Firestore firestore;
+        [SerializeField] private LocalData localData;
 
         private void Awake()
         {
             InviteToLobbyButton.onClick.AddListener(InviteToLobby);
-            InviteToLobbyButton.onClick.AddListener(ViewProfile);
+            ViewProfileButton.onClick.AddListener(ViewProfile);
+        }
+
+        private void OnEnable()
+        {
+            GameObject lobbyPanel = GameObject.Find("LobbyPanel");
+            if (lobbyPanel != null)
+            {
+                InviteToLobbyButton.interactable = true;
+            }
+            else
+            {
+                InviteToLobbyButton.interactable = false;
+            }
         }
 
         public void InviteToLobby()
@@ -28,6 +41,7 @@ namespace UI
 
         public void ViewProfile()
         {
+            UIManager.Instance.UpdateFriendProfile(localData.FriendClicked);
         }
     }
 }

@@ -1,5 +1,6 @@
-using UnityEngine;
 using Fusion;
+using System.Collections.Generic;
+using UnityEngine;
 using UnityEngine.AI;
 
 namespace Player
@@ -7,6 +8,8 @@ namespace Player
     public class PlayerVisuals : NetworkBehaviour
     {
         private MeshRenderer visuals;
+        private List<Color> colors = new() { new(0f, 0.97f, 1f, 1f), Color.white, Color.red, new(0f, 0.46f, 1f, 1f) };
+
         [SerializeField] private Rigidbody playerRigidbody;
 
         private void Awake()
@@ -25,8 +28,9 @@ namespace Player
             _agent.height = _obstacleHeight;
         }
 
-        public void SetPlayer(bool _visuals, float _size, bool _isKinematic, bool[] _constrains, float _mass)
+        public void SetPlayer(bool _visuals, int _material, float _size, bool _isKinematic, bool[] _constrains, float _mass)
         {
+            visuals.material.color = colors[_material - 1];
             SetVisuals(_visuals);
             SetSize(_size);
             if (_isKinematic == false)

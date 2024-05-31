@@ -4,56 +4,36 @@ namespace Player
 {
     public class CameraManager : NetworkBehaviour
     {
-        public float cameraSpeed = 20f;
+        private float panSpeed = 35f;
+        private float panBorderThickness = 15f;
+        private Vector2 xPanLimit = new(-100, 100);
+        private Vector2 zPanLimit = new(-80, 80);
 
-        private const int zoomSpeed = 50;
-
-        // Maximum/minimum zoom distance from the ground
-        public int zoomMin = 20;
-        public int zoomMax = 120;
-
-        private const int panSpeed = 40;
-
-        // Minimal/maximal angles for camera
-        private const int panAngleMin = 45;
-        private const int panAngleMax = 85;
-
-        private Vector3 newPosition = Vector3.zero;
-        private float scroll;
-        private int scrollArea = 25;
-
-        private float zoomDelta;
-
-        public void Update()
+        private void Update()
         {
-            newPosition = Vector3.zero;
-            // Camera Movement
-            if (Input.GetKey(KeyCode.W) || Input.mousePosition.y > Screen.height - scrollArea)
-            {
-                newPosition = Vector3.forward;
-            }
-            if (Input.GetKey(KeyCode.S) || Input.mousePosition.y < scrollArea)
-            {
-                newPosition = Vector3.back;
-            }
-            if (Input.GetKey(KeyCode.A) || Input.mousePosition.x < scrollArea)
-            {
-                newPosition = Vector3.left;
-            }
-            if (Input.GetKey(KeyCode.D) || Input.mousePosition.x >= Screen.width - scrollArea)
-            {
-                newPosition = Vector3.right;
-            }
-        }
+            Vector3 pos = transform.position;
 
-        public void FixedUpdate()
-        {
-            MoveCamera();
-        }
+            if (Input.GetKey(KeyCode.UpArrow) || Input.mousePosition.y >= Screen.height - panBorderThickness)
+            {
+                pos.z += panSpeed * Time.deltaTime;
+            }
+            if (Input.GetKey(KeyCode.DownArrow) || Input.mousePosition.y <= panBorderThickness)
+            {
+                pos.z -= panSpeed * Time.deltaTime;
+            }
+            if (Input.GetKey(KeyCode.RightArrow) || Input.mousePosition.x >= Screen.width - panBorderThickness)
+            {
+                pos.x += panSpeed * Time.deltaTime;
+            }
+            if (Input.GetKey(KeyCode.LeftArrow) || Input.mousePosition.x <= panBorderThickness)
+            {
+                pos.x -= panSpeed * Time.deltaTime;
+            }
 
-        public void MoveCamera()
-        {
-            transform.position += cameraSpeed * Time.deltaTime * newPosition;
+            pos.x = Mathf.Clamp(pos.x, xPanLimit.x, xPanLimit.y);
+            pos.z = Mathf.Clamp(pos.z, zPanLimit.x, zPanLimit.y);
+
+            transform.position = pos;
         }
     }
 }

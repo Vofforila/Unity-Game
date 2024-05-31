@@ -1,85 +1,318 @@
-using Data;
-using Firebase.Extensions;
 using Firebase.Firestore;
-using Fusion;
-using System.Collections;
+using SpecialFunction;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Events;
-using SpecialFunction;
 
 namespace Database
 {
-    [CreateAssetMenu(fileName = "Firestore", menuName = "Firestore/Firestore")]
+    [CreateAssetMenu(fileName = "Firestore", menuName = "Firebase/Firestore")]
     public class Firestore : ScriptableObject
     {
         [Header("Scriptable")]
         public SpecialFunctions specialFunctions;
-        public LocalData localData;
+
         public AccountFirebase accountFirebase = new();
-        public LobbyData lobbydata = new();
+
+        public int playerIcon;
 
         [Header("Events")]
         public UnityEvent updateUI;
-        public UnityEvent updateLobbyDataEvent;
 
-        public void RegisterUser(string _username, string _email)
+        #region Test
+
+        public void TestFunction()
         {
-            // Add new user to Database
-
             FirebaseFirestore db = FirebaseFirestore.DefaultInstance;
-            DocumentReference accountsIdIndex_doc = db.Collection("AccountsIdIndex").Document("ids");
+            DocumentReference accountsIdIndex_doc = db.Collection("AccountsIdIndex").Document("2");
 
             accountsIdIndex_doc.GetSnapshotAsync().ContinueWith((task) =>
             {
-                DocumentSnapshot snapshot = task.Result;
+                /*  DocumentSnapshot snapshot = task.Result;
+                  Dictionary<string, object> data = snapshot.ToDictionary();
+                  List<object> Harta = (List<object>)data["FriendList"];
 
-                Dictionary<string, object> data = snapshot.ToDictionary();
+                  // All data needs to be List<obj> when reading we need to use CreateObjectFromDictionary
 
-                // Initialize a newID
-                int newID;
+                  foreach (Dictionary<string, object> friend in Harta)
+                  {
+                      Friend newFriend = CreateObjectFromDictionary<Friend>(friend);
 
-                // Get the lastID
-                newID = (int)(long)data["LastId"];
+                      Debug.Log(newFriend.User);
+                  }*/
+                /*
+                                Test newTest = new()
+                                {
+                                    FriendList = new(),
+                                };
 
-                // Create a new Id
-                newID++;
+                                Friend newFriend = new()
+                                {
+                                    User = "Paul",
+                                    Id = 4,
+                                    Coins = 40,
+                                };
 
-                // Update the LastId available to FireBase
-                accountsIdIndex_doc.UpdateAsync("LastId", newID).ContinueWith(task =>
-                    {
-                        if (Debug.isDebugBuild)
-                            Debug.Log("Added Account ID");
-                    });
+                                newTest.FriendList.Add(newFriend);
+                                newTest.FriendList.Add(newFriend);
 
-                // Create a Account Document refrence
-                DocumentReference accountInfo_Doc = db.Collection("AccountInfo").Document(newID.ToString());
-
-                // Create the new Account
-                AccountFirebase newAccountFirebase = new()
-                {
-                    User = specialFunctions.UpperCase(_username),
-                    Email = _email,
-                    Id = newID,
-                    RankPoints = 0,
-                    Winrate = 0,
-                    FriendList = new(),
-                    FriendRequestsList = new(),
-                    InviteToGameList = new(),
-                    SentFriendRequests = new(),
-                };
-
-                // Add the new Account to Firebase
-                accountInfo_Doc.SetAsync(newAccountFirebase).ContinueWith(task =>
-                    {
-                        if (Debug.isDebugBuild)
-                            Debug.Log("Added Account Info");
-                    });
+                                accountsIdIndex_doc.SetAsync(newTest).ContinueWith(task =>
+                                {
+                                    Debug.Log("Up");
+                                });*/
             });
         }
 
+        #endregion Test
+
+        #region Register
+
+        public void RegisterUser(string _username, string _email)
+        {
+            FirebaseFirestore db = FirebaseFirestore.DefaultInstance;
+            DocumentReference currentAccount_doc = db.Collection("AccountInfo").Document();
+
+            AccountFirebase newAccountFirebase = new()
+            {
+                // Link Data
+                User = specialFunctions.UpperCase(_username),
+                Email = _email,
+                Id = currentAccount_doc.Id, // Generated by the API
+
+                // Player Profile
+                Winrate = 100,
+                GamesPlayed = 0,
+                GamesLost = 0,
+                GamesWon = 0,
+                PlayerIcon = 1,
+                RankPoints = 100,
+                TimePlayed = 0,
+                Rank = "Bronze",
+
+                // FriendList
+                Status = false,
+                FriendList = new(),
+                FriendRequestsList = new(),
+                InviteToGameList = new(),
+                SentFriendRequests = new(),
+                OnlineFriends = new(),
+                OfflineFriends = new(),
+            };
+
+            currentAccount_doc.SetAsync(newAccountFirebase).ContinueWith(task =>
+            {
+                Debug.Log("Added Account Info");
+            });
+        }
+
+        #endregion Register
+
+        #region GetInfo
+
         public async Task GetUserFromEmail(string _email)
+        {
+            // Get User Data from Email for first time
+            FirebaseFirestore db = FirebaseFirestore.DefaultInstance;
+            CollectionReference currentAccount_col = db.Collection("AccountInfo");
+
+            await currentAccount_col.GetSnapshotAsync().ContinueWith((task) =>
+            {
+                QuerySnapshot snapshots = task.Result;
+                foreach (DocumentSnapshot document in snapshots)
+                {
+                    Dictionary<string, object> data = document.ToDictionary(); ;
+                    if (_email == (data["Email"]).ToString())
+                    {
+                        accountFirebase = document.ConvertTo<AccountFirebase>();
+
+                        Debug.Log("Got Account from Email");
+
+                        break;
+                    }
+                }
+            });
+        }
+
+        public void UpdateLocalAccountListener()
+        {
+            // Updates the Current User Local Data
+            FirebaseFirestore db = FirebaseFirestore.DefaultInstance;
+            DocumentReference currentAccount_doc = db.Collection("AccountInfo").Document(accountFirebase.Id.ToString());
+
+            currentAccount_doc.Listen(snapshot =>
+            {
+                accountFirebase = snapshot.ConvertTo<AccountFirebase>();
+
+                updateUI.Invoke();
+            });
+        }
+
+        public async Task<AccountFirebase> GetAccountFromId(string _accountId)
+        {
+            FirebaseFirestore db = FirebaseFirestore.DefaultInstance;
+            DocumentReference currentAccount_doc = db.Collection("AccountInfo").Document(_accountId.ToString());
+            AccountFirebase account = new();
+
+            await currentAccount_doc.GetSnapshotAsync().ContinueWith((task) =>
+            {
+                DocumentSnapshot snapshot = task.Result;
+
+                account = snapshot.ConvertTo<AccountFirebase>();
+            });
+
+            return account;
+        }
+
+        #endregion GetInfo
+
+        #region FriendRequest
+
+        public void SendFriendRequest(string _newFriend)
+        {
+            FirebaseFirestore db = FirebaseFirestore.DefaultInstance;
+            CollectionReference currentAccount_col = db.Collection("AccountInfo");
+
+            currentAccount_col.GetSnapshotAsync().ContinueWith((task) =>
+            {
+                QuerySnapshot snapshots = task.Result;
+                foreach (DocumentSnapshot document in snapshots.Documents)
+                {
+                    Dictionary<string, object> data = document.ToDictionary();
+                    if (_newFriend == data["User"].ToString())
+                    {
+                        // Send FriendRequest to Other
+                        AccountFirebase otherAccountFirebase = document.ConvertTo<AccountFirebase>();
+
+                        otherAccountFirebase.FriendRequestsList.Add(accountFirebase.Id);
+                        DocumentReference otherAccount_doc = db.Collection("AccountInfo").Document(otherAccountFirebase.Id.ToString());
+                        if (accountFirebase.SentFriendRequests.Contains(otherAccountFirebase.Id) || _newFriend == accountFirebase.User || accountFirebase.FriendList.Contains(otherAccountFirebase.Id)) return;
+                        otherAccount_doc.UpdateAsync("FriendRequestsList", otherAccountFirebase.FriendRequestsList);
+
+                        // Add PendingReqest to Current User
+                        DocumentReference currentAccont_doc = db.Collection("AccountInfo").Document(accountFirebase.Id.ToString());
+                        accountFirebase.SentFriendRequests.Add(otherAccountFirebase.Id);
+                        currentAccont_doc.UpdateAsync("SentFriendRequests", accountFirebase.SentFriendRequests);
+
+                        Debug.Log("Sent Friend Request");
+                    }
+                }
+            });
+        }
+
+        public void AcceptFriendRequest(string _newFriendId)
+        {
+            FirebaseFirestore db = FirebaseFirestore.DefaultInstance;
+            DocumentReference otherAccount_doc = db.Collection("AccountInfo").Document(_newFriendId.ToString());
+
+            otherAccount_doc.GetSnapshotAsync().ContinueWith(task =>
+              {
+                  DocumentSnapshot snapshot = task.Result;
+                  AccountFirebase otherAccountFirebase = snapshot.ConvertTo<AccountFirebase>();
+
+                  Debug.Log("Added Friend");
+
+                  // Add Current Id to Other User
+                  otherAccountFirebase.FriendList.Add(accountFirebase.Id);
+                  otherAccountFirebase.SentFriendRequests.Remove(accountFirebase.Id);
+                  otherAccountFirebase.Status = true;
+
+                  Dictionary<string, object> updates = new()
+                  {
+                    {"FriendList",otherAccountFirebase.FriendList },
+                    {"SentFriendRequests",otherAccountFirebase.SentFriendRequests } ,
+                    {"Status",otherAccountFirebase.Status }
+                  };
+
+                  otherAccount_doc.UpdateAsync(updates);
+
+                  // Remove FriendRequest from Current User
+                  DocumentReference currentAccount_doc = db.Collection("AccountInfo").Document(accountFirebase.Id.ToString());
+                  accountFirebase.FriendRequestsList.Remove(otherAccountFirebase.Id);
+                  accountFirebase.FriendList.Add(otherAccountFirebase.Id);
+
+                  updates = new()
+                  {
+                    {"FriendRequestsList",accountFirebase.FriendRequestsList },
+                    {"FriendList",accountFirebase.FriendList }
+                  };
+
+                  currentAccount_doc.UpdateAsync(updates);
+              });
+        }
+
+        public void DeclineFriendRequest(string _newFriendId)
+        {
+            FirebaseFirestore db = FirebaseFirestore.DefaultInstance;
+
+            // Remove FriendRequest from Current User
+            DocumentReference currentAccount_doc = db.Collection("AccountInfo").Document(accountFirebase.Id.ToString());
+
+            accountFirebase.FriendRequestsList.Remove(_newFriendId);
+            Debug.Log("FriendRequestList Update");
+
+            Dictionary<string, object> updates = new()
+            {
+                {"SentFriendRequest",accountFirebase.SentFriendRequests },
+                {"FriendRequestList",accountFirebase.FriendRequestsList },
+            };
+
+            currentAccount_doc.UpdateAsync(updates);
+        }
+
+        #endregion FriendRequest
+
+        #region Lobby
+
+        public void InviteToLobby(string _invitedFriendId)
+        {
+            FirebaseFirestore db = FirebaseFirestore.DefaultInstance;
+            DocumentReference otherAccount_doc = db.Collection("AccountInfo").Document(_invitedFriendId);
+
+            otherAccount_doc.GetSnapshotAsync().ContinueWith((task) =>
+            {
+                DocumentSnapshot snapshot = task.Result;
+
+                AccountFirebase otherAccountFirebase = snapshot.ConvertTo<AccountFirebase>();
+
+                if (otherAccountFirebase.InviteToGameList.Contains(accountFirebase.Id)) return;
+                otherAccountFirebase.InviteToGameList.Add(accountFirebase.Id);
+
+                otherAccount_doc.UpdateAsync("InviteToGameList", otherAccountFirebase.InviteToGameList);
+
+                Debug.Log("Lobby Invite Sent");
+            });
+        }
+
+        public void RemoveInvite(string _inviteId)
+        {
+            FirebaseFirestore db = FirebaseFirestore.DefaultInstance;
+            DocumentReference currentAccount_doc = db.Collection("AccountInfo").Document(accountFirebase.Id.ToString());
+
+            accountFirebase.InviteToGameList.Remove(_inviteId);
+
+            currentAccount_doc.UpdateAsync("InviteToGameList", accountFirebase.InviteToGameList);
+            Debug.Log("Removed Invite");
+        }
+
+        #endregion Lobby
+
+        #region Profile
+
+        public void UpdateUserIcon(int _var)
+        {
+            FirebaseFirestore db = FirebaseFirestore.DefaultInstance;
+            DocumentReference accountInfo_doc = db.Collection("AccountInfo").Document(accountFirebase.Id.ToString());
+
+            accountInfo_doc.GetSnapshotAsync().ContinueWith((task) =>
+            {
+                accountFirebase.PlayerIcon = _var;
+
+                accountInfo_doc.UpdateAsync("PlayerIcon", accountFirebase.PlayerIcon);
+            });
+        }
+
+        public async Task GetPlayerIcon(string _user)
         {
             // Get User Data from Email for first time
 
@@ -94,262 +327,181 @@ namespace Database
                 {
                     Dictionary<string, object> data = document.ToDictionary();
 
-                    if (data.ContainsKey("Email") && (_email == (data["Email"]).ToString()))
+                    if (data.ContainsKey("User") && (_user == (data["User"]).ToString()))
                     {
-                        accountFirebase = document.ConvertTo<AccountFirebase>();
-
-                        Debug.Log("Got Account from Email");
+                        playerIcon = (int)(long)data["PlayerIcon"];
                         break;
                     }
                 }
             });
         }
 
-        public void SendFriendRequest(string _newFriend)
+        public int UpdatePlayerProfile(bool _win, float _timeplayed)
         {
-            //  Get a reference to the firestore service, using the default Firebase App
             FirebaseFirestore db = FirebaseFirestore.DefaultInstance;
-            // Create FriendList Collection refrence
-            CollectionReference accountInfo_col = db.Collection("AccountInfo");
+            DocumentReference accountsIdIndex_doc = db.Collection("AccountInfo").Document(accountFirebase.Id);
 
-            accountInfo_col.GetSnapshotAsync().ContinueWith((task) =>
+            accountFirebase.GamesPlayed++;
+
+            int RankPoints;
+            if (_win == true)
             {
-                QuerySnapshot snapshots = task.Result;
-                foreach (DocumentSnapshot document in snapshots.Documents)
+                accountFirebase.GamesWon++;
+                if (accountFirebase.Winrate >= 60)
                 {
-                    Dictionary<string, object> data = document.ToDictionary();
-                    if (_newFriend == (data["User"]).ToString())
-                    {
-                        // Send FriendRequest to Friend
-                        List<object> newfriendRequestList = (List<object>)data["FriendRequestsList"];
-                        newfriendRequestList.Add(accountFirebase.User);
-                        DocumentReference accountInfo_doc = db.Collection("AccountInfo").Document(data["Id"].ToString());
-                        accountInfo_doc.UpdateAsync("FriendRequestsList", newfriendRequestList);
-
-                        // Add Friend to Current User SentFriendRequests
-                        accountInfo_doc = db.Collection("AccountInfo").Document(accountFirebase.Id.ToString());
-                        List<object> newSentfriendRequestList = (List<object>)data["SentFriendRequests"];
-                        newSentfriendRequestList.Add(_newFriend);
-                        accountInfo_doc.UpdateAsync("SentFriendRequests", newSentfriendRequestList);
-
-                        Debug.Log("Sent Friend Request");
-                    }
+                    RankPoints = 20;
+                    accountFirebase.RankPoints += RankPoints;
                 }
-            });
-        }
-
-        public void UpdateAccountFirebase()
-        {
-            // Updates the Current User Local Data
-
-            FirebaseFirestore db = FirebaseFirestore.DefaultInstance;
-            DocumentReference accountInfo_col = db.Collection("AccountInfo").Document(accountFirebase.Id.ToString());
-
-            accountInfo_col.Listen(snapshot =>
-            {
-                accountFirebase = snapshot.ConvertTo<AccountFirebase>();
-
-                Debug.Log("User Data Updated");
-
-                updateUI.Invoke();
-            });
-        }
-
-        public void AcceptFriendRequest(string newFriend)
-        {
-            FirebaseFirestore db = FirebaseFirestore.DefaultInstance;
-            CollectionReference accountInfo_Col = db.Collection("AccountInfo");
-
-            // Add Current User to Friend
-            accountInfo_Col.GetSnapshotAsync().ContinueWith(task =>
-            {
-                QuerySnapshot snapshots = task.Result;
-                foreach (DocumentSnapshot document in snapshots.Documents)
+                else
                 {
-                    Dictionary<string, object> data = document.ToDictionary();
-                    if (newFriend == (data["User"]).ToString())
-                    {
-                        List<object> FriendList;
-                        FriendList = (List<object>)data["FriendList"];
-                        FriendList.Add(accountFirebase.User);
-
-                        DocumentReference friendRequests_Doc = db.Collection("AccountInfo").Document(data["Id"].ToString());
-
-                        friendRequests_Doc.UpdateAsync("FriendList", FriendList).ContinueWith(task =>
-                        {
-                            if (Debug.isDebugBuild)
-                                Debug.Log("FriendList Update");
-                        });
-                        break;
-                    }
+                    RankPoints = 15;
+                    accountFirebase.RankPoints += RankPoints;
                 }
-            });
-
-            DocumentReference accountInfo_Doc = db.Collection("AccountInfo").Document(accountFirebase.Id.ToString());
-
-            // Add the Friend to the Current User
-            accountFirebase.FriendList.Add(newFriend);
-            accountInfo_Doc.UpdateAsync("FriendList", accountFirebase.FriendList).ContinueWith(task =>
+            }
+            else
             {
-                if (Debug.isDebugBuild)
-                    Debug.Log("FriendList Update");
-            });
-
-            // Remove FriendRequest from Current User
-            accountFirebase.FriendRequestsList.Remove(newFriend);
-            accountInfo_Doc.UpdateAsync("FriendRequestsList", accountFirebase.FriendRequestsList).ContinueWith(task =>
-            {
-                if (Debug.isDebugBuild)
-                    Debug.Log("FriendRequestList Update");
-            });
-
-            // Remove SentFriendRequest from Current User
-            accountInfo_Doc.UpdateAsync("SentFriendRequests", accountFirebase.SentFriendRequests).ContinueWith(task =>
-            {
-                if (Debug.isDebugBuild)
-                    Debug.Log("SentFriendRequest Update");
-            });
-        }
-
-        // Add Functionality
-        public void DeclineFriendRequest(string newFriend)
-        {
-        }
-
-        public void InviteToLobby(string invitedFriend)
-        {
-            FirebaseFirestore db = FirebaseFirestore.DefaultInstance;
-            CollectionReference accountInfo_Col = db.Collection("AccountInfo");
-
-            accountInfo_Col.GetSnapshotAsync().ContinueWith((task) =>
-            {
-                QuerySnapshot snapshots = task.Result;
-
-                foreach (DocumentSnapshot document in snapshots)
+                accountFirebase.GamesLost++;
+                if (accountFirebase.Winrate >= 60)
                 {
-                    Dictionary<string, object> data = document.ToDictionary();
-                    if (invitedFriend == (data["User"]).ToString())
-                    {
-                        List<object> InviteToGameList = (List<object>)data["InviteToGameList"];
-                        InviteToGameList.Add(accountFirebase.User);
-
-                        DocumentReference accountInfo_doc = db.Collection("AccountInfo").Document(data["Id"].ToString());
-
-                        Debug.Log("Lobby Invite Sent");
-                        accountInfo_doc.UpdateAsync("InviteToGameList", InviteToGameList);
-                    }
+                    RankPoints = -10;
+                    accountFirebase.RankPoints += RankPoints;
                 }
-            });
-        }
-
-        public void RemoveInvite()
-        {
-            FirebaseFirestore db = FirebaseFirestore.DefaultInstance;
-            DocumentReference accountInfo_doc = db.Collection("AccountInfo").Document(accountFirebase.Id.ToString());
-
-            accountFirebase.InviteToGameList.Remove(localData.inviteName);
-
-            Debug.Log("Removed Invite");
-            accountInfo_doc.UpdateAsync("InviteToGameList", accountFirebase.InviteToGameList);
-        }
-
-        public void RaiseLobbyDataListener(string _sessionName)
-        {
-            FirebaseFirestore db = FirebaseFirestore.DefaultInstance;
-            DocumentReference lobbies_doc = db.Collection("Lobbies").Document(_sessionName);
-
-            lobbies_doc.Listen(snapshot =>
+                else
+                {
+                    RankPoints = -15;
+                    accountFirebase.RankPoints += RankPoints;
+                }
+            }
+            Debug.Log(_win + accountFirebase.User + RankPoints + accountFirebase.Winrate);
+            if (accountFirebase.GamesLost == 0)
             {
-                lobbydata = snapshot.ConvertTo<LobbyData>();
-                Debug.Log("Update PlayerBanner - Event");
-                updateLobbyDataEvent.Invoke();
-            });
-        }
-
-        public void CreateLobbyData()
-        {
-            FirebaseFirestore db = FirebaseFirestore.DefaultInstance;
-            DocumentReference lobbies_doc = db.Collection("Lobbies").Document(accountFirebase.User);
-
-            lobbydata.HostPlayerList = new();
-            lobbydata.ScoreList = new();
-            lobbydata.RoomChat = "";
-
-            lobbydata.HostPlayerList.Add(accountFirebase.User);
-            lobbydata.ScoreList[accountFirebase.User] = 0;
-
-            lobbies_doc.SetAsync(lobbydata);
-        }
-
-        public void UpdateLobbyData(string _sessionName)
-        {
-            FirebaseFirestore db = FirebaseFirestore.DefaultInstance;
-            DocumentReference lobbies_doc = db.Collection("Lobbies").Document(_sessionName);
-
-            lobbies_doc.GetSnapshotAsync().ContinueWith((task) =>
+                accountFirebase.Winrate = 100;
+            }
+            else
             {
-                DocumentSnapshot snapshot = task.Result;
+                accountFirebase.Winrate = (accountFirebase.GamesWon / accountFirebase.GamesLost) * 100;
+            }
 
-                LobbyData targetLobbyData = snapshot.ConvertTo<LobbyData>();
+            _timeplayed = _timeplayed / 60 / 60;
+            accountFirebase.TimePlayed += _timeplayed;
 
-                targetLobbyData.HostPlayerList.Add(accountFirebase.User);
-                targetLobbyData.ScoreList[accountFirebase.User] = 0;
+            if (accountFirebase.RankPoints >= 100)
+            {
+                accountFirebase.Rank = "Iron";
+            }
+            else if (accountFirebase.RankPoints >= 200)
+            {
+                accountFirebase.Rank = "Bronze";
+            }
+            else if (accountFirebase.RankPoints >= 300)
+            {
+                accountFirebase.Rank = "Silver";
+            }
+            else if (accountFirebase.RankPoints >= 400)
+            {
+                accountFirebase.Rank = "Gold";
+            }
+            else if (accountFirebase.RankPoints >= 500)
+            {
+                accountFirebase.Rank = "Platinum";
+            }
+            else if (accountFirebase.RankPoints >= 600)
+            {
+                accountFirebase.Rank = "Diamond";
+            }
+            else if (accountFirebase.RankPoints >= 700)
+            {
+                accountFirebase.Rank = "Master";
+            }
+            else if (accountFirebase.RankPoints >= 800)
+            {
+                accountFirebase.Rank = "GrandMaster";
+            }
+            else if (accountFirebase.RankPoints >= 900)
+            {
+                accountFirebase.Rank = "Challenger";
+            }
 
-                lobbies_doc.UpdateAsync("HostPlayerList", targetLobbyData.HostPlayerList);
-                lobbies_doc.UpdateAsync("ScoreList", targetLobbyData.ScoreList);
-            });
+            Dictionary<string, object> updates = new()
+            {
+                { "GamesWon", accountFirebase.GamesWon },
+                { "GamesLost", accountFirebase.GamesLost },
+                { "GamesPlayed", accountFirebase.GamesPlayed },
+                { "RankPoints", accountFirebase.RankPoints },
+                { "TimePlayed", accountFirebase.TimePlayed},
+                { "Rank", accountFirebase.Rank},
+            };
+
+            accountsIdIndex_doc.UpdateAsync(updates);
+
+            return RankPoints;
         }
 
-        public void UpdateScore(string _sessionName, int _score)
+        #endregion Profile
+
+        #region State
+
+        public async void StateChange(bool _currentState)
         {
             FirebaseFirestore db = FirebaseFirestore.DefaultInstance;
-            DocumentReference lobbies_doc = db.Collection("Lobbies").Document(_sessionName);
+            DocumentReference currentAccount_doc = db.Collection("AccountInfo").Document(accountFirebase.Id);
 
-            lobbies_doc.GetSnapshotAsync().ContinueWith((task) =>
+            accountFirebase.Status = _currentState;
+            await currentAccount_doc.UpdateAsync("Status", accountFirebase.Status);
+
+            foreach (string friendId in accountFirebase.FriendList)
             {
-                DocumentSnapshot snapshot = task.Result;
+                DocumentReference otherAccount_doc = db.Collection("AccountInfo").Document(friendId.ToString());
+                await otherAccount_doc.GetSnapshotAsync().ContinueWith(async (task) =>
+                 {
+                     DocumentSnapshot snapshot = task.Result;
+                     AccountFirebase otherAccount = snapshot.ConvertTo<AccountFirebase>();
 
-                LobbyData targetLobbyData = snapshot.ConvertTo<LobbyData>();
+                     // If Player is no online dont notify
+                     if (_currentState == true)
+                     {
+                         if (otherAccount.OnlineFriends.Contains(accountFirebase.Id)) return;
+                         otherAccount.OnlineFriends.Add(accountFirebase.Id);
+                         otherAccount.OfflineFriends.Remove(accountFirebase.Id);
 
-                targetLobbyData.ScoreList[accountFirebase.User] = _score;
+                         Dictionary<string, object> updates = new()
+                         {
+                                  { "OnlineFriends", otherAccount.OnlineFriends },
+                                  { "OfflineFriends", otherAccount.OfflineFriends },
+                         };
+                         await otherAccount_doc.UpdateAsync(updates);
+                     }
+                     else
+                     {
+                         otherAccount.OnlineFriends.Remove(accountFirebase.Id);
+                         otherAccount.OfflineFriends.Add(accountFirebase.Id);
 
-                lobbies_doc.UpdateAsync("ScoreList", targetLobbyData.ScoreList);
-            });
+                         Dictionary<string, object> otherUpdates = new()
+                         {
+                                  { "OnlineFriends", otherAccount.OnlineFriends },
+                                  { "OfflineFriends", otherAccount.OfflineFriends },
+                         };
+
+                         Dictionary<string, object> updates = new()
+                         {
+                                  { "OnlineFriends", accountFirebase.OnlineFriends },
+                                  { "OfflineFriends", accountFirebase.OfflineFriends },
+                         };
+                         await currentAccount_doc.UpdateAsync(updates);
+                         await otherAccount_doc.UpdateAsync(otherUpdates);
+                     }
+                 });
+            }
         }
 
-        public void UpdateChat(string _message, string _sessionName)
-        {
-            FirebaseFirestore db = FirebaseFirestore.DefaultInstance;
-            DocumentReference lobbies_doc = db.Collection("Lobbies").Document(_sessionName);
-
-            lobbies_doc.GetSnapshotAsync().ContinueWith((task) =>
-            {
-                DocumentSnapshot snapshot = task.Result;
-
-                LobbyData targetLobbyData = snapshot.ConvertTo<LobbyData>();
-
-                targetLobbyData.RoomChat += _message;
-
-                lobbies_doc.UpdateAsync("RoomChat", targetLobbyData.RoomChat);
-            });
-        }
-
-        [FirestoreData]
-        public class LobbyData
-        {
-            [FirestoreProperty]
-            public List<object> HostPlayerList { get; set; }
-
-            [FirestoreProperty]
-            public Dictionary<string, int> ScoreList { get; set; }
-
-            [FirestoreProperty]
-            public string RoomChat { get; set; }
-        }
+        #endregion State
 
         [FirestoreData]
         public class AccountFirebase
         {
+            [FirestoreProperty]
+            public bool Status { get; set; }
+
             [FirestoreProperty]
             public string User { get; set; }
 
@@ -357,7 +509,22 @@ namespace Database
             public string Email { get; set; }
 
             [FirestoreProperty]
-            public int Id { get; set; }
+            public string Id { get; set; }
+
+            [FirestoreProperty]
+            public int GamesPlayed { get; set; }
+
+            [FirestoreProperty]
+            public int GamesWon { get; set; }
+
+            [FirestoreProperty]
+            public int GamesLost { get; set; }
+
+            [FirestoreProperty]
+            public float TimePlayed { get; set; }
+
+            [FirestoreProperty]
+            public string Rank { get; set; }
 
             [FirestoreProperty]
             public int RankPoints { get; set; }
@@ -366,16 +533,25 @@ namespace Database
             public int Winrate { get; set; }
 
             [FirestoreProperty]
-            public List<object> FriendList { get; set; }
+            public int PlayerIcon { get; set; }
 
             [FirestoreProperty]
-            public List<object> FriendRequestsList { get; set; }
+            public List<string> FriendList { get; set; }
 
             [FirestoreProperty]
-            public List<object> InviteToGameList { get; set; }
+            public List<string> FriendRequestsList { get; set; }
 
             [FirestoreProperty]
-            public List<object> SentFriendRequests { get; set; }
+            public List<string> InviteToGameList { get; set; }
+
+            [FirestoreProperty]
+            public List<string> SentFriendRequests { get; set; }
+
+            [FirestoreProperty]
+            public List<string> OnlineFriends { get; set; }
+
+            [FirestoreProperty]
+            public List<string> OfflineFriends { get; set; }
         }
     }
 }
