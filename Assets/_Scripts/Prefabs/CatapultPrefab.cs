@@ -1,12 +1,9 @@
 using Data;
-using Fusion;
-using System.Collections;
-using System.Collections.Generic;
-using TryhardParty;
-using UnityEngine;
-using UnityEngine.Events;
-using SpecialFunction;
 using Database;
+using Fusion;
+using SpecialFunction;
+using System.Collections;
+using UnityEngine;
 
 namespace Enemy
 {
@@ -23,14 +20,13 @@ namespace Enemy
 
         [Networked] private NetworkBool IsFiring { get; set; }
 
-
         [Header("Animator")]
         [SerializeField] private Animator animator;
         private const string FIRING = "Firing";
         private const string IDLE = "Idle";
         private const string RELOADING = "Reloading";
+
         public override void Spawned()
-        public void Start()
         {
             IsFiring = false;
         }
