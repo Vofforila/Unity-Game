@@ -186,6 +186,7 @@ namespace Database
 
                         otherAccountFirebase.FriendRequestsList.Add(accountFirebase.Id);
                         DocumentReference otherAccount_doc = db.Collection("AccountInfo").Document(otherAccountFirebase.Id.ToString());
+                        if (accountFirebase.SentFriendRequests.Contains(otherAccountFirebase.Id)) return;
                         otherAccount_doc.UpdateAsync("FriendRequestsList", otherAccountFirebase.FriendRequestsList);
 
                         // Add PendingReqest to Current User

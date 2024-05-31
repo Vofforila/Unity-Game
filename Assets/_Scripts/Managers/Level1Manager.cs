@@ -31,13 +31,10 @@ namespace Host
         [Header("Events")]
         [SerializeField] private UnityEvent playerTurnEvent;
         [SerializeField] private UnityEvent playLevel2Event;
-
         [Networked, HideInInspector] public PlayerRef Player { get; set; }
         [Networked, HideInInspector] public NetworkBool PlayerTurn { get; set; }
         [Networked, HideInInspector] private NetworkBool StartLights { get; set; }
-
         private Dictionary<PlayerRef, NetworkObject> networkPlayerDictionary;
-
         private ChangeDetector changeDetector;
 
         // Singleton
