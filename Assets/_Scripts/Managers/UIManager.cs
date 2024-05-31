@@ -253,6 +253,7 @@ namespace UI
 
             int i;
             int place = 1;
+            int rankPoints = 0;
             foreach (var key in sortedList)
             {
                 i = 0;
@@ -261,14 +262,12 @@ namespace UI
 
                 await firestore.GetPlayerIcon(key.Value.UserName);
 
-                int rankPoints;
-
                 if (key.Value.UserName == firestore.accountFirebase.User && (place == 1 || place == 2))
                 {
                     SoundManager.Instance.PlaySound("win");
                     rankPoints = firestore.UpdatePlayerProfile(_win: true, FusionManager.Instance.timePlayed);
                 }
-                else
+                else if (key.Value.UserName == firestore.accountFirebase.User)
                 {
                     SoundManager.Instance.PlaySound("lose");
                     rankPoints = firestore.UpdatePlayerProfile(_win: false, FusionManager.Instance.timePlayed);
@@ -294,6 +293,7 @@ namespace UI
             Debug.Log("Destory");
             FusionManager.Instance.DestoryYourself();
             GameUIManager.Instance.DestoyYourself();
+            SoundManager.Instance.DestoyYourself();
         }
 
         public void EnableStatisticsPanel(bool _var)
@@ -497,12 +497,10 @@ namespace UI
         {
             if (firestore.accountFirebase.InviteToGameList == null || firestore.accountFirebase.InviteToGameList.Count == 0)
             {
-                await specialFunctions.DestroyChildrenOf(inviteToLobbyPanel);
                 inviteToLobbyPanel.SetActive(false);
             }
             else if (firestore.accountFirebase.InviteToGameList.Count != 0)
             {
-                await specialFunctions.DestroyChildrenOf(inviteToLobbyScrollViewContent);
                 inviteToLobbyPanel.SetActive(true);
                 foreach (string inviteId in firestore.accountFirebase.InviteToGameList)
                 {
@@ -603,7 +601,7 @@ namespace UI
                 case "GrandMaster":
                     friendStatsIcon.sprite = playerStatsIconSprites[7];
                     break;
-                case "Challanger":
+                case "Challenger":
                     friendStatsIcon.sprite = playerStatsIconSprites[8];
                     break;
             }

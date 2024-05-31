@@ -1,4 +1,5 @@
 using Fusion;
+using Settings;
 using System.Collections;
 using UnityEngine;
 
@@ -29,6 +30,17 @@ namespace Host
             playerCount++;
             NetworkObject player = Runner.Spawn(lobbyPlayerManagerPrefab, Vector3.zero, Quaternion.identity, _player);
             player.name = "Player " + playerCount;
+        }
+
+        public void StartGame()
+        {
+            RPC_EnterFullScreen();
+        }
+
+        [Rpc(sources: RpcSources.StateAuthority, targets: RpcTargets.All)]
+        private void RPC_EnterFullScreen()
+        {
+            StartCoroutine(SettingManager.Instance.IChangeResolution(true));
         }
     }
 }

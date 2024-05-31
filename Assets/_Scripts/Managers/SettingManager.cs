@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using System.IO;
 using System.Runtime.InteropServices;
@@ -87,8 +86,8 @@ namespace Settings
         private const int defaultgameHeight = 1080;
         private const int defaultclientWidth = 1600;
         private const int defaultclientHeight = 900;
-        private const float defaultmusic = 100f;
-        private const float defaultsound = 100f;
+        private const float defaultmusic = 1f;
+        private const float defaultsound = 1f;
         private const int defaultgameResolutionDropDownValue = 0;
         private const int defaultclientResolutionDropDownValue = 0;
 
@@ -178,13 +177,14 @@ namespace Settings
 
         public void SoundAndMusic()
         {
-            music = (float)Math.Round(musicSlider.value);
-            sound = (float)Math.Round(soundSlider.value);
+            music = musicSlider.value;
+            sound = soundSlider.value;
             UpdateSettings();
         }
 
         private void UpdateSettings()
         {
+            Debug.Log(clientWidth + " " + clientHeight);
             StartCoroutine(IChangeResolution(false));
             SoundManager.Instance.ChangeMusicVolume(music);
             SoundManager.Instance.ChangeSoundVolume(sound);

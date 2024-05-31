@@ -186,6 +186,7 @@ namespace Database
 
                         otherAccountFirebase.FriendRequestsList.Add(accountFirebase.Id);
                         DocumentReference otherAccount_doc = db.Collection("AccountInfo").Document(otherAccountFirebase.Id.ToString());
+                        if (accountFirebase.SentFriendRequests.Contains(otherAccountFirebase.Id) || _newFriend == accountFirebase.User || accountFirebase.FriendList.Contains(otherAccountFirebase.Id)) return;
                         otherAccount_doc.UpdateAsync("FriendRequestsList", otherAccountFirebase.FriendRequestsList);
 
                         // Add PendingReqest to Current User
@@ -274,6 +275,7 @@ namespace Database
 
                 AccountFirebase otherAccountFirebase = snapshot.ConvertTo<AccountFirebase>();
 
+                if (otherAccountFirebase.InviteToGameList.Contains(accountFirebase.Id)) return;
                 otherAccountFirebase.InviteToGameList.Add(accountFirebase.Id);
 
                 otherAccount_doc.UpdateAsync("InviteToGameList", otherAccountFirebase.InviteToGameList);
@@ -370,6 +372,7 @@ namespace Database
                     accountFirebase.RankPoints += RankPoints;
                 }
             }
+            Debug.Log(_win + accountFirebase.User + RankPoints + accountFirebase.Winrate);
             if (accountFirebase.GamesLost == 0)
             {
                 accountFirebase.Winrate = 100;

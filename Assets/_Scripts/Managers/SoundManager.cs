@@ -46,14 +46,14 @@ public class SoundManager : MonoBehaviour
 
     public void Start()
     {
-        PlayMusic("music");
+        PlayMusic("music-1");
     }
 
     public void ChangeMusicVolume(float _volume)
     {
         foreach (Sound music in musics)
         {
-            music.volume = _volume;
+            music.source.volume = _volume;
         }
     }
 
@@ -61,7 +61,7 @@ public class SoundManager : MonoBehaviour
     {
         foreach (Sound sound in sounds)
         {
-            sound.volume = _volume;
+            sound.source.volume = _volume;
         }
     }
 
@@ -107,5 +107,10 @@ public class SoundManager : MonoBehaviour
                 music.source.Stop();
             }
         }
+    }
+
+    public void DestoyYourself()
+    {
+        Destroy(gameObject);
     }
 }

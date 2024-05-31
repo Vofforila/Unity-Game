@@ -1,9 +1,6 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 using TMPro;
+using UnityEngine;
 using UnityEngine.UI;
-using System;
 
 namespace Utility
 {
@@ -13,7 +10,7 @@ namespace Utility
 
         public void UpdateSliderPrecentage()
         {
-            double var = Math.Round(slider.value);
+            double var = Mathf.Round(Mathf.Clamp01(slider.value) * 100);
             gameObject.GetComponent<TMP_Text>().text = var.ToString() + " %";
         }
     }

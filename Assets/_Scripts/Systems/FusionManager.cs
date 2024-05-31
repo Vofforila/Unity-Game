@@ -2,7 +2,6 @@ using Data;
 using Database;
 using Fusion;
 using Fusion.Sockets;
-using Settings;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -135,7 +134,6 @@ namespace Server
         public async void LoadLevel1()
         {
             Debug.Log("<color=yellow>Callback</color>");
-            StartCoroutine(SettingManager.Instance.IChangeResolution(true));
             await runner.LoadScene(SceneRef.FromIndex(1), LoadSceneMode.Single);
             Debug.Log("<color=yellow>Play Level 1 - Event</color>");
             playLevel1Event.Invoke();

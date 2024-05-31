@@ -191,7 +191,7 @@ namespace Host
                 networkFallingBlock.GetComponent<BoxCollider>().isTrigger = false;
 
                 // Repeat
-                yield return new WaitForSecondsRealtime(6f);
+                yield return new WaitForSecondsRealtime(3f);
             }
         }
 

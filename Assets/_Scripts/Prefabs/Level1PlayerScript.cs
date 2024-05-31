@@ -195,7 +195,7 @@ namespace Player
             Level1Manager.Instance.PlayerTurn = false;
         }
 
-        [Rpc(sources: RpcSources.StateAuthority, targets: RpcTargets.All)]
+        [Rpc(sources: RpcSources.StateAuthority, targets: RpcTargets.InputAuthority)]
         private void RPC_JumpSound()
         {
             SoundManager.Instance.PlaySound("jump-sound");
