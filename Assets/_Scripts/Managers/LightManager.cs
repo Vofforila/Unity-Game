@@ -34,6 +34,16 @@ public class LightManager : MonoBehaviour
         }
     }
 
+    public async void StopLights()
+    {
+        night = false;
+        foreach (Light light in lights)
+        {
+            await Task.Delay(Random.Range(0, 100));
+            light.enabled = false;
+        }
+    }
+
     public IEnumerator SetupLights()
     {
         while (true)
@@ -70,16 +80,6 @@ public class LightManager : MonoBehaviour
             }
 
             yield return new WaitUntil(() => night == true);
-        }
-    }
-
-    public async void StopLights()
-    {
-        night = false;
-        foreach (Light light in lights)
-        {
-            await Task.Delay(Random.Range(0, 100));
-            light.enabled = false;
         }
     }
 }
