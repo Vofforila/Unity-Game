@@ -128,6 +128,8 @@ namespace UI
         {
             Instance = this;
 
+            heartbeat = true;
+
             authCanvas.SetActive(true);
             popupCanvas.SetActive(true);
 
@@ -150,12 +152,6 @@ namespace UI
             }
         }
 
-        private void OnApplicationQuit()
-        {
-            heartbeat = false;
-            firestore.StateChange(false);
-        }
-
         #endregion Awake & Start & OnQuit
 
         #region Server Hearth
@@ -163,7 +159,7 @@ namespace UI
         private async void StartHearth()
         {
             if (heartbeat == false) return;
-            firestore.StateChange(true);
+            await firestore.StateChange(true);
             await Task.Delay(25000);
             StartHearth();
         }
@@ -353,6 +349,9 @@ namespace UI
             await Task.Delay(1000);
             mainMenuLoadingCanvas.SetActive(false);
             mainMenuCanvas.SetActive(true);
+            matchStatisticsPanel.SetActive(false);
+            lobbyPanel.SetActive(false);
+            homePanel.SetActive(true);
         }
 
         private async Task WaitUntilCondition(Func<bool> condition)
@@ -563,16 +562,13 @@ namespace UI
 
         public async void UpdateFriendProfile(string _friendId)
         {
-            Debug.Log(_friendId);
             AccountFirebase otherAccount = await firestore.GetAccountFromId(_friendId);
-
-            Debug.Log(otherAccount.GamesWon);
 
             friendName.text = otherAccount.User;
             friendGamesPlayed.text = "Games Played: " + otherAccount.GamesPlayed.ToString() + " ( " + otherAccount.GamesWon.ToString() + " / " + otherAccount.GamesLost.ToString() + " ) ";
             friendProfile_winrate.text = "Winrate: " + otherAccount.Winrate.ToString() + "%";
             friendDeathCoins.text = "DeathCoins: " + otherAccount.RankPoints.ToString();
-            friendTimePlayed.text = "TimePlayed: " + Mathf.Floor(otherAccount.TimePlayed).ToString();
+            friendTimePlayed.text = "TimePlayed: " + Mathf.Floor(otherAccount.TimePlayed).ToString() + "h";
             friendRank.text = otherAccount.Rank;
 
             switch (otherAccount.Rank)
@@ -643,9 +639,11 @@ namespace UI
             BorderlessWindow.MinimizeWindow();
         }
 
-        public void ExitClientButton()
+        public async void ExitClientButton()
         {
             EventSystem.current.SetSelectedGameObject(null);
+            heartbeat = false;
+            await firestore.StateChange(false);
             Application.Quit();
         }
 

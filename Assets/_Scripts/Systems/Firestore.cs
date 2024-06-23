@@ -441,7 +441,7 @@ namespace Database
 
         #region State
 
-        public async void StateChange(bool _currentState)
+        public async Task StateChange(bool _currentState)
         {
             FirebaseFirestore db = FirebaseFirestore.DefaultInstance;
             DocumentReference currentAccount_doc = db.Collection("AccountInfo").Document(accountFirebase.Id);
@@ -457,7 +457,6 @@ namespace Database
                      DocumentSnapshot snapshot = task.Result;
                      AccountFirebase otherAccount = snapshot.ConvertTo<AccountFirebase>();
 
-                     // If Player is no online dont notify
                      if (_currentState == true)
                      {
                          if (otherAccount.OnlineFriends.Contains(accountFirebase.Id)) return;
@@ -482,12 +481,6 @@ namespace Database
                                   { "OfflineFriends", otherAccount.OfflineFriends },
                          };
 
-                         Dictionary<string, object> updates = new()
-                         {
-                                  { "OnlineFriends", accountFirebase.OnlineFriends },
-                                  { "OfflineFriends", accountFirebase.OfflineFriends },
-                         };
-                         await currentAccount_doc.UpdateAsync(updates);
                          await otherAccount_doc.UpdateAsync(otherUpdates);
                      }
                  });

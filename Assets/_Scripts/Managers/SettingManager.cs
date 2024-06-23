@@ -184,7 +184,6 @@ namespace Settings
 
         private void UpdateSettings()
         {
-            Debug.Log(clientWidth + " " + clientHeight);
             StartCoroutine(IChangeResolution(false));
             SoundManager.Instance.ChangeMusicVolume(music);
             SoundManager.Instance.ChangeSoundVolume(sound);

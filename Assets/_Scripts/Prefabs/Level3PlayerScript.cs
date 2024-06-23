@@ -60,7 +60,7 @@ namespace Player
             if (localData.currentLvl == 3)
             {
             }
-            PlayerHp = 100;
+            PlayerHp = 30;
         }
 
         public override void Spawned()

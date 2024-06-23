@@ -323,7 +323,7 @@ namespace UI
         public LocalPlayerData()
         {
             UserName = "";
-            Hp = 100;
+            Hp = 30;
         }
     }
 }

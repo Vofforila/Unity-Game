@@ -75,7 +75,6 @@ namespace Player
             // Disable player
             if (localData.currentLvl == 1)
             {
-                Debug.Log(Object.InputAuthority.AsIndex);
                 playerVisuals.SetPlayer(_visuals: false, _material: Object.InputAuthority.AsIndex, _size: size, _isKinematic: isKinematic, _constrains: constrains, _mass: mass);
                 changeDetector = GetChangeDetector(ChangeDetector.Source.SimulationState);
             }
@@ -182,7 +181,6 @@ namespace Player
         {
             // Generate a random number to where you jump
             jumpPosition = Random.Range(jumpPosition + 1, 8);
-            Debug.Log(jumpPosition);
             IsJumping = true;
             score = QuadraticCurveManager.Instance.MoveCurve(jumpPosition);
             RPC_JumpSound();
