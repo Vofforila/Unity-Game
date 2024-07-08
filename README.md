@@ -10,9 +10,9 @@ This is a Unity Multiplayer 3D Game.
 - **Scalability** - scalable with infinite levels & cosmetics
 - **Arhitecture** - good strucutred arhitecture made with Diagram.io
 
-### API's
+### Tehnologies
 
-| API | Environments | Version |
+| Tehnologies | Environments | Version |
 |-----|--------------|---------|
 | [Firebase](https://firebase.google.com/)  | Cloud | V1 |
 | [Unity](https://unity.com/) | System | 2022.3.11f1 |
