@@ -8,7 +8,7 @@ This is a Unity Multiplayer 3D Game.
 - **Clean UI** - easy to understand UI made with a 60%,30%,10% color pallet
 - **Modularity** - has tools to creat multiple levels without implementing code
 - **Scalability** - scalable with infinite levels & cosmetics
-- **Arhitecture** - good strucutred arhitecture made with Diagram.io
+- **Architecture** - good strucutred arhitecture made with Diagram.io
 
 ### Tehnologies
 
