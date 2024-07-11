@@ -6,9 +6,9 @@ This is a Unity Multiplayer 3D Game.
 - **Online Database** - used Firebase to store player profile data
 - **Networking Service** - used Photon Fusion for handling player interaction and transform syncing
 - **Clean UI** - easy to understand UI made with a 60%,30%,10% color pallet
-- **Modularity** - has tools to creat multiple levels without implementing code
+- **Modularity** - has tools to create multiple levels without implementing code
 - **Scalability** - scalable with infinite levels & cosmetics
-- **Architecture** - good strucutred arhitecture made with Diagram.io
+- **Architecture** - good structured architecture made with Diagram.io
 
 ### Tehnologies
 
