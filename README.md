@@ -14,8 +14,9 @@ This is a Unity Multiplayer 3D Game.
 
 | Tehnologies | Environments | Version |
 |-----|--------------|---------|
-| [Firebase](https://firebase.google.com/)  | Cloud | V1 |
-| [Unity](https://unity.com/) | System | 2022.3.11f1 |
-| [Blender](https://www.blender.org/) | System | 4.0 |
-| [Diagram.io](https://app.diagrams.net/) | System/Cloud | 24.6.1 |
-| [Photon Fusion](https://www.photonengine.com/fusion) | System/Cloud | 2.0 |
+| [.NET](https://dotnet.microsoft.com/en-us/download/dotnet/7.0)  | Compiler | 7.0 |
+| [Firebase](https://firebase.google.com/)  | Database | V1 |
+| [Unity](https://unity.com/) | Game Engine | 2022.3.11f1 |
+| [Blender](https://www.blender.org/) | Art App | 4.0 |
+| [Diagram.io](https://app.diagrams.net/) | Arhitecture | 24.6.1 |
+| [Photon Fusion](https://www.photonengine.com/fusion) | Networking | 2.0 |
