@@ -133,7 +133,6 @@ namespace Database
                 }
             });
         }
-        /// nigger
         public void UpdateLocalAccountListener()
         {
             // Updates the Current User Local Data
