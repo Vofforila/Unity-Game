@@ -10,7 +10,7 @@ This is a Unity Multiplayer 3D Game.
 - **Scalability** - scalable with infinite levels & cosmetics
 - **Architecture** - good structured architecture made with Diagram.io
 
-### Tehnologies
+### Technologies
 
 | Tehnologies | Environments | Version |
 |-----|--------------|---------|
